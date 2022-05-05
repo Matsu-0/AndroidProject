@@ -34,7 +34,7 @@ public class MainActivity extends AppCompatActivity {
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(binding.navView, navController);
 
-        Intent intent = new Intent(this, ActivityLogin.class);
+        Intent intent = new Intent(this, LoginActivity.class);
 //        intent.putExtra(EXTRA_MESSAGE_HEADER, "动态2详情");
         startActivity(intent);
     }

@@ -1,46 +1,31 @@
 package com.example.frontend;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.TextView;
 
 
-import org.jetbrains.annotations.NotNull;
-
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.net.URLEncoder;
 import java.util.Objects;
 
-import javax.net.ssl.HttpsURLConnection;
-
 import okhttp3.Call;
-import okhttp3.Callback;
 import okhttp3.FormBody;
-import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-public class ActivityLogin extends AppCompatActivity {
-
+public class ActivitySignup extends AppCompatActivity {
+    // 注册页面，命名时命错了，懒得改名
     private EditText nickname, email, password, password2, verication;
-    private TextView result;
-    private static final String LOG_TAG = MainActivity.class.getSimpleName();
+    private static final String LOG_TAG = ActivitySignup.class.getSimpleName();
 
     @SuppressLint("HandlerLeak")
     private Handler handler = new Handler(){
@@ -48,7 +33,11 @@ public class ActivityLogin extends AppCompatActivity {
         public void handleMessage(@NonNull Message msg) {
             super.handleMessage(msg);
             String res = (String) msg.obj;
-            result.setText(res);
+            AlertDialog textTips = new AlertDialog.Builder(ActivitySignup.this)
+                    .setTitle("Tips:")
+                    .setMessage(res)
+                    .create();
+            textTips.show();
         }
     };
 
@@ -56,13 +45,12 @@ public class ActivityLogin extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
+        setContentView(R.layout.activity_signup);
         email = findViewById(R.id.email);
         password = findViewById(R.id.password);
         password2 = findViewById(R.id.password2);
         nickname = findViewById(R.id.nickname);
         verication = findViewById(R.id.verication);
-        result = findViewById(R.id.result);
     }
 
     // TO DO
