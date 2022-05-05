@@ -50,13 +50,13 @@ public class SignupActivity extends AppCompatActivity {
         password = findViewById(R.id.password);
         password2 = findViewById(R.id.password2);
         nickname = findViewById(R.id.nickname);
-        verication = findViewById(R.id.verication);
+        verication = findViewById(R.id.verification);
     }
 
     // TO DO
-    class MyThreadSendVerication extends Thread{
+    class MyThreadSendVerification extends Thread{
         private  String requestUrl,outputStr;
-        MyThreadSendVerication(String request, String output){
+        MyThreadSendVerification(String request, String output){
             requestUrl = request;
             outputStr = output;
         }
@@ -91,14 +91,14 @@ public class SignupActivity extends AppCompatActivity {
         }
     }
 
-    public void onSendVericationClick(View v) {
+    public void onSendVerificationClick(View v) {
         String m_email = email.getText().toString();
         if(m_email.isEmpty()){
             return;
         }
 
-        String requestUrl = "http://43.138.84.226:8080/email_vertification_code";
-        MyThreadSendVerication myThread = new MyThreadSendVerication(requestUrl, m_email);// TO DO
+        String requestUrl = "http://43.138.84.226:8080/email_verification_code";
+        MyThreadSendVerification myThread = new MyThreadSendVerification(requestUrl, m_email);// TO DO
         myThread.start();// TO DO
     }
 
@@ -151,14 +151,14 @@ public class SignupActivity extends AppCompatActivity {
         String m_password = password.getText().toString();
         String m_password2 = password2.getText().toString();
         String m_nickname = nickname.getText().toString();
-        String m_verication = verication.getText().toString();
+        String m_verification = verication.getText().toString();
         if (!m_password.equals(m_password2)){
             Message msg = new Message();
             msg.obj = "两次密码不同";
             handler.sendMessage(msg);
             return;
         }
-        if(m_email.isEmpty() || m_password.isEmpty() || m_nickname.isEmpty() || m_verication.isEmpty()){
+        if(m_email.isEmpty() || m_password.isEmpty() || m_nickname.isEmpty() || m_verification.isEmpty()){
             Message msg = new Message();
             msg.obj = "未填写完全";
             handler.sendMessage(msg);
@@ -166,7 +166,7 @@ public class SignupActivity extends AppCompatActivity {
         }
 
         String requestUrl = "http://43.138.84.226:8080/signup";
-        MyThreadSignup myThread = new MyThreadSignup(requestUrl, m_email, m_password, m_nickname, m_verication);// TO DO
+        MyThreadSignup myThread = new MyThreadSignup(requestUrl, m_email, m_password, m_nickname, m_verification);// TO DO
         myThread.start();// TO DO
     }
 
