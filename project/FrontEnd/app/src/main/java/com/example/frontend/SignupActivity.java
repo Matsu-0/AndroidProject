@@ -24,7 +24,7 @@ import okhttp3.Response;
 
 public class SignupActivity extends AppCompatActivity {
     // 注册页面，命名时命错了，懒得改名
-    private EditText nickname, email, password, password2, verication;
+    private EditText nickname, email, password, password2, verification;
     private static final String LOG_TAG = SignupActivity.class.getSimpleName();
 
     @SuppressLint("HandlerLeak")
@@ -50,7 +50,7 @@ public class SignupActivity extends AppCompatActivity {
         password = findViewById(R.id.password);
         password2 = findViewById(R.id.password2);
         nickname = findViewById(R.id.nickname);
-        verication = findViewById(R.id.verification);
+        verification = findViewById(R.id.verification);
     }
 
     // TO DO
@@ -104,13 +104,13 @@ public class SignupActivity extends AppCompatActivity {
 
     // TO DO
     class MyThreadSignup extends Thread{
-        private  String requestUrl,emailStr, passwordStr, nicknameStr, vericationStr;
-        MyThreadSignup(String request, String m_email, String m_password, String m_nickname, String m_verication){
+        private  String requestUrl,emailStr, passwordStr, nicknameStr, verificationStr;
+        MyThreadSignup(String request, String m_email, String m_password, String m_nickname, String m_verification){
             requestUrl = request;
             emailStr = m_email;
             passwordStr = m_password;
             nicknameStr = m_nickname;
-            vericationStr = m_verication;
+            verificationStr = m_verification;
         }
         @Override
         public void run() {
@@ -120,7 +120,7 @@ public class SignupActivity extends AppCompatActivity {
                         .add("email", emailStr)
                         .add("password", passwordStr)
                         .add("nickname", nicknameStr)
-                        .add("code", vericationStr)
+                        .add("code", verificationStr)
                         .build();
 
                 Request request = new Request.Builder()
@@ -151,7 +151,7 @@ public class SignupActivity extends AppCompatActivity {
         String m_password = password.getText().toString();
         String m_password2 = password2.getText().toString();
         String m_nickname = nickname.getText().toString();
-        String m_verification = verication.getText().toString();
+        String m_verification = verification.getText().toString();
         if (!m_password.equals(m_password2)){
             Message msg = new Message();
             msg.obj = "两次密码不同";
