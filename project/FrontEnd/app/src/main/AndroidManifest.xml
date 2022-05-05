@@ -16,7 +16,7 @@
             android:name=".LoginActivity"
             android:exported="false" />
         <activity
-            android:name=".ActivitySignup"
+            android:name=".SignupActivity"
             android:exported="false"
             android:label="注册" />
         <activity
