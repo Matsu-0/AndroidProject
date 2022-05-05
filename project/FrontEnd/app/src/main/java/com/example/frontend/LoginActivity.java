@@ -5,13 +5,16 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Objects;
 
 import okhttp3.Call;
@@ -55,6 +58,7 @@ public class LoginActivity extends AppCompatActivity {
         }
         @Override
         public void run() {
+            String s = "";
             try {
                 OkHttpClient client = new OkHttpClient();
                 RequestBody formBody = new FormBody.Builder()
@@ -69,7 +73,10 @@ public class LoginActivity extends AppCompatActivity {
 
                 Call call = client.newCall(request);
                 Response response = call.execute();
-
+                List<String> cookies = response.headers().values("Set-Cookie");
+                String session = cookies.get(0);
+                Log.d(LOG_TAG, "onResponse-size: " + cookies);
+                s = session.substring(0, session.indexOf(";"));
                 if (response.isSuccessful()) {
                     Message msg = new Message();
                     msg.obj = Objects.requireNonNull(response.body()).string();
@@ -86,11 +93,13 @@ public class LoginActivity extends AppCompatActivity {
             try {
                 OkHttpClient client = new OkHttpClient();
                 RequestBody formBody = new FormBody.Builder()
+
                         .build();
 
                 Request request = new Request.Builder()
                         .url("http://43.138.84.226:8080/test_session")
                         .post(formBody)
+                        .addHeader("cookie", s)
                         .build();
 
                 Call call = client.newCall(request);
@@ -124,5 +133,10 @@ public class LoginActivity extends AppCompatActivity {
         String requestUrl = "http://43.138.84.226:8080/login";
         LoginActivity.MyThreadLogin myThread = new LoginActivity.MyThreadLogin(requestUrl, m_email, m_password);// TO DO
         myThread.start();// TO DO
+    }
+
+    public void onGoToSignUp(View v) {
+        Intent intent = new Intent(this, SignupActivity.class);
+        startActivity(intent);
     }
 }

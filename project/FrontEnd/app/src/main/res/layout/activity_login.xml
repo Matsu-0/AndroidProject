@@ -12,7 +12,6 @@
         android:layout_width="403dp"
         android:layout_height="229dp"
         android:orientation="vertical"
-
         android:layout_marginTop="50dp">
 
         <TextView
