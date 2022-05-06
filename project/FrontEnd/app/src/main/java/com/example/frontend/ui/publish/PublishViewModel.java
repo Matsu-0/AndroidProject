@@ -1,4 +1,4 @@
-package com.example.frontend.ui.dashboard;
+package com.example.frontend.ui.publish;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
