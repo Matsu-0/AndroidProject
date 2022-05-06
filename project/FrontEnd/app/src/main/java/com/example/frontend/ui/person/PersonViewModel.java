@@ -1,16 +1,16 @@
-package com.example.frontend.ui.notifications;
+package com.example.frontend.ui.person;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-public class NotificationsViewModel extends ViewModel {
+public class PersonViewModel extends ViewModel {
 
     private final MutableLiveData<String> mText;
 
-    public NotificationsViewModel() {
+    public PersonViewModel() {
         mText = new MutableLiveData<>();
-        mText.setValue("This is notifications fragment");
+        mText.setValue("这里是个人主页页面");
     }
 
     public LiveData<String> getText() {
