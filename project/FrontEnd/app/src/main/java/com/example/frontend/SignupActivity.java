@@ -97,7 +97,7 @@ public class SignupActivity extends AppCompatActivity {
             return;
         }
 
-        String requestUrl = "http://43.138.84.226:8080/email_verification_code";
+        String requestUrl = "http://43.138.84.226:8080/user/email_verification_code";
         MyThreadSendVerification myThread = new MyThreadSendVerification(requestUrl, m_email);// TO DO
         myThread.start();// TO DO
     }
@@ -165,7 +165,7 @@ public class SignupActivity extends AppCompatActivity {
             return;
         }
 
-        String requestUrl = "http://43.138.84.226:8080/signup";
+        String requestUrl = "http://43.138.84.226:8080/user/signup";
         MyThreadSignup myThread = new MyThreadSignup(requestUrl, m_email, m_password, m_nickname, m_verification);// TO DO
         myThread.start();// TO DO
     }

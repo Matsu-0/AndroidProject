@@ -5,32 +5,88 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".InfoeditActivity">
-
     <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-            xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/person_Info_edit"
+        android:layout_width="380dp"
+        android:layout_height="230dp"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.515"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.031">
+
+        <EditText
+            android:id="@+id/person_name_edit"
+            android:layout_width="110dp"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_marginStart="12dp"
+            android:layout_marginTop="42dp"
+            android:layout_marginEnd="22dp"
+            android:layout_toStartOf="@+id/person_Info_edit"
+            android:layout_toEndOf="@+id/pic"
+            android:textAlignment="center"
+            android:textSize="16sp"
+            tools:layout_editor_absoluteX="199dp"
+            tools:layout_editor_absoluteY="101dp"
+            android:padding="10dp"
+            android:inputType="textPersonName"
+            android:background="@drawable/imageviewboundshape"
+            android:text="Name"/>
+
+        <ImageView
+            android:id="@+id/pic"
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginStart="14dp"
+            android:layout_marginTop="34dp"
+            tools:src="@tools:sample/avatars"
+            android:background="@drawable/imageviewboundshape"
+            android:padding="3dip"/>
+
+        <Button
+            android:id="@+id/pic_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentBottom="true"
+            android:layout_gravity="center"
+            android:layout_marginStart="12dp"
+            android:layout_marginBottom="20dp"
+            android:text="选取头像图片" />
+
+        <Button
+            android:id="@+id/confirm_edit"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginTop="42dp"
+            android:layout_marginEnd="13dp"
+            android:text="确认修改"
+            android:textSize="13sp" />
+
+        <EditText
+            android:id="@+id/person_Introduction_edit"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical"
-            tools:context=".MainActivity" >
+            android:layout_below="@+id/person_name_edit"
+            android:layout_marginStart="10dp"
+            android:layout_marginBottom="20dp"
+            android:layout_marginTop="25dp"
+            android:layout_marginEnd="13dp"
+            android:layout_toEndOf="@+id/pic"
+            android:padding="10dp"
+            android:text="Introduction"
+            android:inputType="textMultiLine"
+            android:scrollbars="vertical"
+            android:background="@drawable/imageviewboundshape"/>
 
-            <ImageView
-                android:id="@+id/pic"
-                android:layout_width="200dp"
-                android:layout_height="200dp"
-                android:layout_gravity="center"
-                android:background="@drawable/imageviewboundshape"
-                android:contentDescription="@string/app_name"/>
 
-            <Button
-                android:id="@+id/button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:text="选取头像图片"/>
-        </LinearLayout>
     </RelativeLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -5,7 +5,9 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -47,6 +49,9 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
         email = findViewById(R.id.email_login);
         password = findViewById(R.id.password_login);
+
+
+
     }
 
     class MyThreadLogin extends Thread{
@@ -73,42 +78,24 @@ public class LoginActivity extends AppCompatActivity {
 
                 Call call = client.newCall(request);
                 Response response = call.execute();
-                List<String> cookies = response.headers().values("Set-Cookie");
-                String session = cookies.get(0);
-                Log.d(LOG_TAG, "onResponse-size: " + cookies);
-                s = session.substring(0, session.indexOf(";"));
+
                 if (response.isSuccessful()) {
+                    if(response.code() == 200) {
+                        List<String> cookies = response.headers().values("Set-Cookie");
+                        String session = cookies.get(0);
+                        s = session.substring(0, session.indexOf(";"));
+
+                        SharedPreferences sharedPreferences = getSharedPreferences("login", MODE_PRIVATE);
+                        SharedPreferences.Editor editor = sharedPreferences.edit();
+                        editor.putString("session", s);
+                        editor.commit();
+                    }
+
                     Message msg = new Message();
                     msg.obj = Objects.requireNonNull(response.body()).string();
                     handler.sendMessage(msg);
-                } else {
-                    throw new IOException("Unexpected code " + response);
-                }
-            }
-            catch (Exception e)
-            {
-                e.printStackTrace();
-            }
 
-            try {
-                OkHttpClient client = new OkHttpClient();
-                RequestBody formBody = new FormBody.Builder()
 
-                        .build();
-
-                Request request = new Request.Builder()
-                        .url("http://43.138.84.226:8080/test_session")
-                        .post(formBody)
-                        .addHeader("cookie", s)
-                        .build();
-
-                Call call = client.newCall(request);
-                Response response = call.execute();
-
-                if (response.isSuccessful()) {
-                    Message msg = new Message();
-                    msg.obj = Objects.requireNonNull(response.body()).string();
-                    handler.sendMessage(msg);
                 } else {
                     throw new IOException("Unexpected code " + response);
                 }
@@ -130,7 +117,7 @@ public class LoginActivity extends AppCompatActivity {
             return;
         }
 
-        String requestUrl = "http://43.138.84.226:8080/login";
+        String requestUrl = "http://43.138.84.226:8080/user/login";
         LoginActivity.MyThreadLogin myThread = new LoginActivity.MyThreadLogin(requestUrl, m_email, m_password);// TO DO
         myThread.start();// TO DO
     }
