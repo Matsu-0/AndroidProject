@@ -24,7 +24,7 @@ public class PersonFragment extends Fragment {
         binding = FragmentPersonBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
-        final TextView textView = binding.textPerson;
+        final TextView textView = binding.personName;
         personViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
         return root;
     }

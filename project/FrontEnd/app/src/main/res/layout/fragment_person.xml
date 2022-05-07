@@ -6,17 +6,120 @@
     android:layout_height="match_parent"
     tools:context=".ui.person.PersonFragment">
 
-    <TextView
-        android:id="@+id/text_person"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:textAlignment="center"
-        android:textSize="20sp"
+
+    <RelativeLayout
+        android:id="@+id/person_Info"
+        android:layout_width="380dp"
+        android:layout_height="230dp"
+        android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.515"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.031">
+
+        <TextView
+            android:id="@+id/person_name"
+            android:layout_width="110dp"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_marginStart="12dp"
+            android:layout_marginTop="42dp"
+            android:layout_marginEnd="22dp"
+            android:layout_toStartOf="@+id/edit"
+            android:layout_toEndOf="@+id/person_image"
+            android:textAlignment="center"
+            android:textSize="16sp"
+            tools:layout_editor_absoluteX="199dp"
+            tools:layout_editor_absoluteY="101dp"
+            android:text="Name"/>
+
+        <ImageView
+            android:id="@+id/person_image"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginStart="14dp"
+            android:layout_marginTop="34dp"
+            tools:layout_editor_absoluteX="44dp"
+            tools:layout_editor_absoluteY="83dp"
+            tools:src="@tools:sample/avatars" />
+
+        <Button
+            android:id="@+id/edit"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginTop="34dp"
+            android:layout_marginEnd="3dp"
+            android:text="修改信息"
+            android:textSize="13sp"
+            tools:layout_editor_absoluteX="295dp"
+            tools:layout_editor_absoluteY="144dp" />
+
+        <TextView
+            android:id="@+id/person_Introduction"
+            android:layout_width="221dp"
+            android:layout_height="68dp"
+            android:layout_below="@+id/person_name"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="25dp"
+            android:layout_toEndOf="@+id/person_image"
+            android:text="Introduction"/>
+
+        <TextView
+            android:id="@+id/notice"
+            android:layout_width="90dp"
+            android:layout_height="35dp"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginStart="25dp"
+            android:layout_marginBottom="20dp"
+            android:textAlignment="center"
+            android:text="通知" />
+
+        <TextView
+            android:id="@+id/follow"
+            android:layout_width="90dp"
+            android:layout_height="35dp"
+            android:layout_alignParentBottom="true"
+            android:layout_marginStart="30dp"
+            android:layout_marginEnd="30dp"
+            android:layout_marginBottom="20dp"
+            android:layout_toStartOf="@+id/fans"
+            android:layout_toEndOf="@+id/notice"
+            android:textAlignment="center"
+            android:text="关注" />
+
+        <TextView
+            android:id="@+id/fans"
+            android:layout_width="90dp"
+            android:layout_height="35dp"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginEnd="25dp"
+            android:layout_marginBottom="20dp"
+            android:textAlignment="center"
+            android:text="粉丝" />
+
+    </RelativeLayout>
+
+    <ScrollView
+        android:layout_width="380dp"
+        android:layout_height="450dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.516"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/person_Info"
+        app:layout_constraintVertical_bias="0.542">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" />
+    </ScrollView>
 </androidx.constraintlayout.widget.ConstraintLayout>
