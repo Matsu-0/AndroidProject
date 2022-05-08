@@ -21,28 +21,32 @@
 
         <TextView
             android:id="@+id/person_name"
-            android:layout_width="110dp"
+            android:layout_width="116dp"
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
             android:layout_marginStart="12dp"
             android:layout_marginTop="42dp"
-            android:layout_marginEnd="22dp"
+            android:layout_marginEnd="20dp"
             android:layout_toStartOf="@+id/edit"
             android:layout_toEndOf="@+id/person_image"
+            android:background="@drawable/imageviewboundshape"
+            android:padding="3dip"
+            android:text="Name"
             android:textAlignment="center"
             android:textSize="16sp"
             tools:layout_editor_absoluteX="199dp"
-            tools:layout_editor_absoluteY="101dp"
-            android:text="Name"/>
+            tools:layout_editor_absoluteY="101dp" />
 
         <ImageView
             android:id="@+id/person_image"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="120dp"
+            android:layout_height="120dp"
             android:layout_alignParentStart="true"
             android:layout_alignParentTop="true"
-            android:layout_marginStart="14dp"
-            android:layout_marginTop="34dp"
+            android:layout_marginStart="15dp"
+            android:layout_marginTop="42dp"
+            android:background="@drawable/imageviewboundshape"
+            android:padding="3dip"
             tools:layout_editor_absoluteX="44dp"
             tools:layout_editor_absoluteY="83dp"
             tools:src="@tools:sample/avatars" />
@@ -54,7 +58,7 @@
             android:layout_alignParentTop="true"
             android:layout_alignParentEnd="true"
             android:layout_marginTop="34dp"
-            android:layout_marginEnd="3dp"
+            android:layout_marginEnd="8dp"
             android:text="修改信息"
             android:textSize="13sp"
             tools:layout_editor_absoluteX="295dp"
@@ -62,13 +66,15 @@
 
         <TextView
             android:id="@+id/person_Introduction"
-            android:layout_width="221dp"
-            android:layout_height="68dp"
+            android:layout_width="228dp"
+            android:layout_height="77dp"
             android:layout_below="@+id/person_name"
-            android:layout_marginStart="10dp"
-            android:layout_marginTop="25dp"
+            android:layout_marginStart="12dp"
+            android:layout_marginTop="13dp"
             android:layout_toEndOf="@+id/person_image"
-            android:text="Introduction"/>
+            android:background="@drawable/imageviewboundshape"
+            android:padding="3dip"
+            android:text="Introduction" />
 
         <TextView
             android:id="@+id/notice"
@@ -78,8 +84,10 @@
             android:layout_alignParentBottom="true"
             android:layout_marginStart="25dp"
             android:layout_marginBottom="20dp"
-            android:textAlignment="center"
-            android:text="通知" />
+            android:background="@drawable/imageviewboundshape"
+            android:padding="3dip"
+            android:text="通知"
+            android:textAlignment="center" />
 
         <TextView
             android:id="@+id/follow"
@@ -91,6 +99,8 @@
             android:layout_marginBottom="20dp"
             android:layout_toStartOf="@+id/fans"
             android:layout_toEndOf="@+id/notice"
+            android:background="@drawable/imageviewboundshape"
+            android:padding="3dip"
             android:textAlignment="center"
             android:text="关注" />
 
@@ -102,6 +112,8 @@
             android:layout_alignParentBottom="true"
             android:layout_marginEnd="25dp"
             android:layout_marginBottom="20dp"
+            android:background="@drawable/imageviewboundshape"
+            android:padding="3dip"
             android:textAlignment="center"
             android:text="粉丝" />
 
