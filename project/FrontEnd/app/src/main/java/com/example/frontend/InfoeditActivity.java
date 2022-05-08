@@ -197,7 +197,7 @@ public class InfoeditActivity extends AppCompatActivity {
 
 
     class MyThreadPhoto extends Thread{
-        private  String requestUrl;
+        private String requestUrl;
         MyThreadPhoto(String request){
             requestUrl = request;
         }
