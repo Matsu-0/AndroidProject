@@ -76,8 +76,7 @@ public class InfoeditActivity extends AppCompatActivity {
                 textTips.show();
             }
             else if (msg.what == handlerStateUpdatePhoto) {
-                InputStream inputStream = (InputStream) msg.obj;
-                image = BitmapFactory.decodeStream(inputStream);
+
                 pic.setImageBitmap(image);
             }
             else if (msg.what == handlerStateUpdateName) {
@@ -359,8 +358,9 @@ public class InfoeditActivity extends AppCompatActivity {
                 if (response.isSuccessful()){
                     if (response.code() == 200){
                         InputStream inputStream = response.body().byteStream();
+                        image = BitmapFactory.decodeStream(inputStream);
                         Message msg = handler.obtainMessage(handlerStateUpdatePhoto);
-                        msg.obj = Objects.requireNonNull(inputStream);
+                        // msg.obj = Objects.requireNonNull(inputStream);
                         handler.sendMessage(msg);
 
                     }
