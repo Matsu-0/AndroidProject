@@ -49,10 +49,11 @@ import okhttp3.Response;
 
 public class InfoeditActivity extends AppCompatActivity {
     private static final String LOG_TAG = InfoeditActivity.class.getSimpleName();
-    private Button button;
+    private String avator_name;
+    private Button button, confirm_edit_button, password_edit_button;
     private Bitmap image;
     private ImageView pic;
-    private EditText name, introduction;
+    private EditText name, introduction, old_password, new_password, new_password_confirm;
     private static final int PERMISSION_APPLY = 1;
     private static final int PHOTO_PICK = 2;
     private static final int PICTURE_CROPPING_CODE = 200;
@@ -101,8 +102,13 @@ public class InfoeditActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_infoedit);
         button = (Button)findViewById(R.id.pic_button);
+        confirm_edit_button = (Button)findViewById(R.id.confirm_edit);
+        password_edit_button = (Button)findViewById(R.id.password_edit);
         pic = (ImageView) findViewById(R.id.pic);
         name = (EditText) findViewById(R.id.person_name_edit);
+        old_password =  (EditText) findViewById(R.id.old_password);
+        new_password =  (EditText) findViewById(R.id.new_password);
+        new_password_confirm =  (EditText) findViewById(R.id.new_password_confirm);
         introduction = (EditText) findViewById(R.id.person_Introduction_edit);
         String requestUrl = "http://43.138.84.226:8080/user/show_user_data";
         InfoeditActivity.MyThreadInitData myThread = new InfoeditActivity.MyThreadInitData(requestUrl);// TO DO
@@ -126,6 +132,39 @@ public class InfoeditActivity extends AppCompatActivity {
                 Intent intent = new Intent(Intent.ACTION_PICK, null);
                 intent.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/*");
                 startActivityForResult(intent, PHOTO_PICK);
+            }
+        });
+
+        confirm_edit_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String name_new = name.getText().toString();
+                String introduction_new = introduction.getText().toString();
+                String requestUrl = "http://43.138.84.226:8080/user/modify_data";
+                InfoeditActivity.MyThreadUpdateInfo myThread = new InfoeditActivity.MyThreadUpdateInfo(requestUrl, name_new, introduction_new );// TO DO
+                myThread.start();// TO DO
+            }
+        });
+
+        password_edit_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String old_passwordStr = old_password.getText().toString();
+                String new_passwordStr = new_password.getText().toString();
+                String new_password_confirmStr = new_password_confirm.getText().toString();
+                if (! new_passwordStr.equals(new_password_confirmStr)){
+                    Message msg = handler.obtainMessage(handlerStateWarning);
+                    msg.obj = "新旧密码不同";
+                    handler.sendMessage(msg);
+                }
+                else {
+                    String requestUrl = "http://43.138.84.226:8080/user/modify_password";
+                    InfoeditActivity.MyThreadModifyPassword myThread = new InfoeditActivity.MyThreadModifyPassword(requestUrl, old_passwordStr, new_passwordStr );// TO DO
+                    myThread.start();// TO DO
+                    old_password.setText("");
+                    new_password.setText("");
+                    new_password_confirm.setText("");
+                }
             }
         });
     }
@@ -370,6 +409,94 @@ public class InfoeditActivity extends AppCompatActivity {
                     }
 
 
+                } else {
+                    throw new IOException("Unexpected code " + response);
+                }
+            }
+            catch (Exception e)
+            {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    class MyThreadUpdateInfo extends Thread{
+        private String requestUrl, name, introduction;
+        MyThreadUpdateInfo(String request, String nameStr, String introductionStr){
+            requestUrl = request;
+            name = nameStr;
+            introduction = introductionStr;
+        }
+        @Override
+        public void run() {
+            try {
+                OkHttpClient client = new OkHttpClient();
+
+                SharedPreferences sharedPreferences = getSharedPreferences("login",MODE_PRIVATE);
+                String cookie = sharedPreferences.getString("session","");
+
+                RequestBody formBody = new FormBody.Builder()
+                        .add("nickname", name)
+                        .add("introduction", introduction)
+                        .build();
+
+                Request request = new Request.Builder()
+                        .url(requestUrl)
+                        .post(formBody)
+                        .addHeader("cookie",cookie)
+                        .build();
+
+                Call call = client.newCall(request);
+                Response response = call.execute();
+
+                if (response.isSuccessful()) {
+                    Message msg = handler.obtainMessage(handlerStateWarning);
+                    msg.obj = Objects.requireNonNull(response.body()).string();
+                    handler.sendMessage(msg);
+                } else {
+                    throw new IOException("Unexpected code " + response);
+                }
+            }
+            catch (Exception e)
+            {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    class MyThreadModifyPassword extends Thread{
+        private String requestUrl, oldPassword, newPassword;
+        MyThreadModifyPassword(String request, String oldStr, String newStr){
+            requestUrl = request;
+            oldPassword = oldStr;
+            newPassword = newStr;
+        }
+        @Override
+        public void run() {
+            try {
+                OkHttpClient client = new OkHttpClient();
+
+                SharedPreferences sharedPreferences = getSharedPreferences("login",MODE_PRIVATE);
+                String cookie = sharedPreferences.getString("session","");
+
+                RequestBody formBody = new FormBody.Builder()
+                        .add("old_password", oldPassword)
+                        .add("new_password", newPassword)
+                        .build();
+
+                Request request = new Request.Builder()
+                        .url(requestUrl)
+                        .post(formBody)
+                        .addHeader("cookie",cookie)
+                        .build();
+
+                Call call = client.newCall(request);
+                Response response = call.execute();
+
+                if (response.isSuccessful()) {
+                    Message msg = handler.obtainMessage(handlerStateWarning);
+                    msg.obj = Objects.requireNonNull(response.body()).string();
+                    handler.sendMessage(msg);
                 } else {
                     throw new IOException("Unexpected code " + response);
                 }
