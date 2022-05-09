@@ -10,14 +10,14 @@
     <RelativeLayout
         android:id="@+id/person_Info"
         android:layout_width="380dp"
-        android:layout_height="230dp"
+        android:layout_height="200dp"
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.515"
+        app:layout_constraintHorizontal_bias="0.483"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.031">
+        app:layout_constraintVertical_bias="0.011">
 
         <TextView
             android:id="@+id/person_name"
@@ -25,7 +25,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
             android:layout_marginStart="12dp"
-            android:layout_marginTop="42dp"
+            android:layout_marginTop="12dp"
             android:layout_marginEnd="20dp"
             android:layout_toStartOf="@+id/edit"
             android:layout_toEndOf="@+id/person_image"
@@ -44,7 +44,7 @@
             android:layout_alignParentStart="true"
             android:layout_alignParentTop="true"
             android:layout_marginStart="15dp"
-            android:layout_marginTop="42dp"
+            android:layout_marginTop="12dp"
             android:background="@drawable/imageviewboundshape"
             android:padding="3dip"
             tools:layout_editor_absoluteX="44dp"
@@ -57,7 +57,7 @@
             android:layout_height="40dp"
             android:layout_alignParentTop="true"
             android:layout_alignParentEnd="true"
-            android:layout_marginTop="34dp"
+            android:layout_marginTop="4dp"
             android:layout_marginEnd="8dp"
             android:text="修改信息"
             android:textSize="13sp"
@@ -101,8 +101,8 @@
             android:layout_toEndOf="@+id/notice"
             android:background="@drawable/imageviewboundshape"
             android:padding="3dip"
-            android:textAlignment="center"
-            android:text="关注" />
+            android:text="关注"
+            android:textAlignment="center" />
 
         <TextView
             android:id="@+id/fans"
@@ -114,14 +114,14 @@
             android:layout_marginBottom="20dp"
             android:background="@drawable/imageviewboundshape"
             android:padding="3dip"
-            android:textAlignment="center"
-            android:text="粉丝" />
+            android:text="粉丝"
+            android:textAlignment="center" />
 
     </RelativeLayout>
 
     <ScrollView
         android:layout_width="380dp"
-        android:layout_height="450dp"
+        android:layout_height="500dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.516"
