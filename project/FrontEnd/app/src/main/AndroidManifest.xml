@@ -16,6 +16,10 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.FrontEnd">
         <activity
+            android:name=".FollowersActivity"
+            android:exported="false"
+            android:label="关注列表" />
+        <activity
             android:name=".InfoeditActivity"
             android:exported="false"
             android:label="信息修改" />
