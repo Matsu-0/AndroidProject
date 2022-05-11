@@ -7,13 +7,11 @@
         <entry key="..\:/Users/Admin/Desktop/AndroidProject/project/FrontEnd/app/src/main/res/drawable/ic_dashboard_black_24dp.xml" value="0.1385" />
         <entry key="..\:/Users/Admin/Desktop/AndroidProject/project/FrontEnd/app/src/main/res/drawable/ic_home_black_24dp.xml" value="0.1385" />
         <entry key="..\:/Users/Admin/Desktop/AndroidProject/project/FrontEnd/app/src/main/res/drawable/imageviewboundshape.xml" value="0.1385" />
-        <entry key="..\:/Users/Admin/Desktop/AndroidProject/project/FrontEnd/app/src/main/res/layout/activity_followers.xml" value="0.1875" />
         <entry key="..\:/Users/Admin/Desktop/AndroidProject/project/FrontEnd/app/src/main/res/layout/activity_infoedit.xml" value="0.3452914798206278" />
         <entry key="..\:/Users/Admin/Desktop/AndroidProject/project/FrontEnd/app/src/main/res/layout/activity_log_in.xml" value="0.2109375" />
         <entry key="..\:/Users/Admin/Desktop/AndroidProject/project/FrontEnd/app/src/main/res/layout/activity_login.xml" value="0.2109375" />
         <entry key="..\:/Users/Admin/Desktop/AndroidProject/project/FrontEnd/app/src/main/res/layout/activity_main.xml" value="0.2109375" />
         <entry key="..\:/Users/Admin/Desktop/AndroidProject/project/FrontEnd/app/src/main/res/layout/activity_signup.xml" value="0.2109375" />
-        <entry key="..\:/Users/Admin/Desktop/AndroidProject/project/FrontEnd/app/src/main/res/layout/follower_item.xml" value="0.1875" />
         <entry key="..\:/Users/Admin/Desktop/AndroidProject/project/FrontEnd/app/src/main/res/layout/fragment_browse.xml" value="0.1875" />
         <entry key="..\:/Users/Admin/Desktop/AndroidProject/project/FrontEnd/app/src/main/res/layout/fragment_dashboard.xml" value="0.2109375" />
         <entry key="..\:/Users/Admin/Desktop/AndroidProject/project/FrontEnd/app/src/main/res/layout/fragment_home.xml" value="0.2109375" />
@@ -25,7 +23,10 @@
         <entry key="..\:/Users/Matsu/Desktop/DDL/homework/AndroidProject/project/FrontEnd/app/src/main/res/layout/activity_main.xml" value="0.29257246376811596" />
         <entry key="..\:/useful/DDL/homework/AndroidProject/project/FrontEnd/app/src/main/res/drawable/imageviewboundshape.xml" value="0.379" />
         <entry key="..\:/useful/DDL/homework/AndroidProject/project/FrontEnd/app/src/main/res/layout/activity_infoedit.xml" value="0.3383152173913043" />
-        <entry key="..\:/useful/DDL/homework/AndroidProject/project/FrontEnd/app/src/main/res/layout/fragment_person.xml" value="0.3292572463768116" />
+        <entry key="..\:/useful/DDL/homework/AndroidProject/project/FrontEnd/app/src/main/res/layout/activity_login.xml" value="0.1540020263424519" />
+        <entry key="..\:/useful/DDL/homework/AndroidProject/project/FrontEnd/app/src/main/res/layout/activity_main.xml" value="0.18414387031408308" />
+        <entry key="..\:/useful/DDL/homework/AndroidProject/project/FrontEnd/app/src/main/res/layout/fragment_person.xml" value="0.264" />
+        <entry key="..\:/useful/DDL/homework/AndroidProject/project/FrontEnd/app/src/main/res/menu/bottom_nav_menu.xml" value="0.20729166666666668" />
       </map>
     </option>
   </component>

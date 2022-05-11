@@ -6,7 +6,6 @@
     android:layout_height="match_parent"
     tools:context=".ui.person.PersonFragment">
 
-
     <RelativeLayout
         android:id="@+id/person_Info"
         android:layout_width="380dp"

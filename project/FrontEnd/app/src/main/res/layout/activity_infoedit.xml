@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".InfoeditActivity">
+
     <RelativeLayout
         android:id="@+id/person_Info_edit"
         android:layout_width="380dp"
@@ -34,7 +35,8 @@
             android:padding="10dp"
             android:inputType="textPersonName"
             android:background="@drawable/imageviewboundshape"
-            android:text="Name"/>
+            android:text="Name"
+            tools:ignore="NotSibling" />
 
         <ImageView
             android:id="@+id/pic"
@@ -44,9 +46,9 @@
             android:layout_alignParentTop="true"
             android:layout_marginStart="14dp"
             android:layout_marginTop="34dp"
-            tools:src="@tools:sample/avatars"
             android:background="@drawable/imageviewboundshape"
-            android:padding="3dip"/>
+            android:padding="3dip"
+            tools:src="@tools:sample/avatars" />
 
         <Button
             android:id="@+id/pic_button"
