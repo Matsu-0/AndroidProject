@@ -16,9 +16,12 @@ package com.example.frontend;
  */
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
@@ -32,17 +35,18 @@ import java.util.LinkedList;
 public class FollowerListAdapter extends
         RecyclerView.Adapter<FollowerListAdapter.WordViewHolder> {
 
-    private final LinkedList<String> mAvatarList;
     private final LinkedList<String> mNameList;
+    private final LinkedList<String> mEmailList;
+    private final LinkedList<Bitmap> mBitmapList;
     private final LayoutInflater mInflater;
     private int TYPE_ITEM = 0;//正常的Item
     private int TYPE_FOOT = 1;//尾部刷新
 
-    private boolean hasMore = true;
     class WordViewHolder extends RecyclerView.ViewHolder
             implements View.OnClickListener {
-        public final TextView wordItemView;
+        public final ImageView avatarItemView;
         public final TextView detailItemView;
+        public String email;
         final FollowerListAdapter mAdapter;
 
         /**
@@ -55,19 +59,22 @@ public class FollowerListAdapter extends
          */
         public WordViewHolder(View itemView, FollowerListAdapter adapter) {
             super(itemView);
-            wordItemView = itemView.findViewById(R.id.word);
             detailItemView = itemView.findViewById(R.id.detail);
+            avatarItemView = itemView.findViewById(R.id.avatar_follower);
             this.mAdapter = adapter;
             itemView.setOnClickListener(this);
         }
 
         @Override
         public void onClick(View view) {
+            Log.d("111",email);
             // Get the position of the item that was clicked.
-            int mPosition = getLayoutPosition();
+//            int mPosition = getLayoutPosition();
+//
+//            // Use that to access the affected item in mAvatarList.
+//            String element = mNameList.get(mPosition);
 
-            // Use that to access the affected item in mAvatarList.
-            String element = mAvatarList.get(mPosition);
+
             // Change the word in the mAvatarList.
 
             // mAvatarList.set(mPosition, "Clicked! " + element);
@@ -77,10 +84,11 @@ public class FollowerListAdapter extends
         }
     }
 
-    public FollowerListAdapter(Context context, LinkedList<String> AvatarList, LinkedList<String> NameList) {
+    public FollowerListAdapter(Context context, LinkedList<Bitmap> AvatarList, LinkedList<String> NameList, LinkedList<String> EmailList) {
         mInflater = LayoutInflater.from(context);
-        this.mAvatarList = AvatarList;
         this.mNameList = NameList;
+        this.mBitmapList = AvatarList;
+        this.mEmailList = EmailList;
     }
 
     /**
@@ -131,22 +139,14 @@ public class FollowerListAdapter extends
     public void onBindViewHolder(FollowerListAdapter.WordViewHolder holder,
                                  int position) {
         if (getItemViewType(position) == TYPE_ITEM) {
-            // Retrieve the data for that position.
-            String mCurrent = mAvatarList.get(position);
-            // Add the data to the view holder.
-            holder.wordItemView.setText(mCurrent);
+            holder.avatarItemView.setImageBitmap(mBitmapList.get(position));
 
             String mCurrent_detail = mNameList.get(position);
             // Add the data to the view holder.
             holder.detailItemView.setText(mCurrent_detail);
-        } else {
-            if (hasMore){
-                holder.wordItemView.setText("Loading More...");
-            }else {
-                holder.wordItemView.setText("No More Data.");
-            }
-        }
 
+            holder.email = mEmailList.get(position);
+        }
     }
 
     /**
@@ -156,10 +156,7 @@ public class FollowerListAdapter extends
      */
     @Override
     public int getItemCount() {
-        return mAvatarList.size();
+        return mNameList.size();
     }
 
-    public void hasMore(boolean hamore) {
-        this.hasMore = hamore;
-    }
 }
