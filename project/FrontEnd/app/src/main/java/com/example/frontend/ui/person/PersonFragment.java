@@ -109,19 +109,6 @@ public class PersonFragment extends Fragment {
 
         super.onCreate(savedInstanceState);
         // setContentView(R.layout.fragment_person);
-        edit_button = (Button)getActivity().findViewById(R.id.edit);
-
-//        edit_button.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Intent intent = new Intent(getActivity(),InfoeditActivity.class);//想调到哪个界面就把login改成界面对应的activity名
-//                startActivity(intent);
-//            }
-//        });
-
-        pic = (ImageView) getActivity().findViewById(R.id.person_image);
-        name = (TextView) getActivity().findViewById(R.id.person_name);
-        introduction = (TextView) getActivity().findViewById(R.id.person_Introduction);
 
         String requestUrl = "http://43.138.84.226:8080/user/show_user_data";
         PersonFragment.MyThreadInitData myThread = new PersonFragment.MyThreadInitData(requestUrl);// TO DO
@@ -135,6 +122,9 @@ public class PersonFragment extends Fragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         edit_button = (Button)getActivity().findViewById(R.id.edit);
+        pic = (ImageView) getActivity().findViewById(R.id.person_image);
+        name = (TextView) getActivity().findViewById(R.id.person_name);
+        introduction = (TextView) getActivity().findViewById(R.id.person_Introduction);
 
         edit_button.setOnClickListener(new View.OnClickListener() {
             @Override
