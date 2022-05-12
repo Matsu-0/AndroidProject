@@ -85,7 +85,7 @@ public class FollowersActivity extends AppCompatActivity {
 
     private void getData(){
         // 引入数据
-        String requestUrl = "http://43.138.84.226:8080/user/show_followers_list";
+        String requestUrl = "http://43.138.84.226:8080/interact/show_followers_list";
         FollowersActivity.MyThreadGetData myThread = new FollowersActivity.MyThreadGetData(requestUrl);// TO DO
         myThread.start();
 
