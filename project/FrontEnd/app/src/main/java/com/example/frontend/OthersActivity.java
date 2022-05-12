@@ -1,40 +1,34 @@
-package com.example.frontend.ui.person;
+package com.example.frontend;
 
-import static android.content.Context.MODE_PRIVATE;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.content.ContentResolver;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.provider.MediaStore;
 import android.util.Log;
-import android.view.LayoutInflater;
+import android.view.Gravity;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.PopupWindow;
 import android.widget.TextView;
-
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProvider;
-
-import com.example.frontend.InfoeditActivity;
-import com.example.frontend.R;
-import com.example.frontend.SignupActivity;
-import com.example.frontend.databinding.FragmentBrowseBinding;
-import com.example.frontend.databinding.FragmentPersonBinding;
 
 import org.json.JSONObject;
 
@@ -46,6 +40,7 @@ import java.io.InputStream;
 import java.util.Objects;
 
 import okhttp3.Call;
+import okhttp3.FormBody;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
@@ -53,19 +48,21 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-public class PersonFragment extends Fragment {
+public class OthersActivity extends AppCompatActivity {
+    private static final String LOG_TAG = OthersActivity.class.getSimpleName();
+    private String othersEmail;
 
-    private FragmentPersonBinding binding;
-    private static final String LOG_TAG = PersonFragment.class.getSimpleName();
-    private Button edit_button;
+    private Button follow_button, black_button;
     private Bitmap image;
     private ImageView pic;
     private TextView name, introduction;
+
     private static final int handlerStateWarning = 0;
     private static final int handlerStateUpdatePhoto = 1;
     private static final int handlerStateUpdateName = 2;
     private static final int handlerStateUpdateIntroduction = 3;
     private static final int handlerStateGetPhoto = 4;
+
     @SuppressLint("HandlerLeak")
     private Handler handler = new Handler(){
         @Override
@@ -73,14 +70,13 @@ public class PersonFragment extends Fragment {
             super.handleMessage(msg);
             if (msg.what == handlerStateWarning) {
                 String res = (String) msg.obj;
-                AlertDialog textTips = new AlertDialog.Builder(getActivity())
+                AlertDialog textTips = new AlertDialog.Builder(OthersActivity.this)
                         .setTitle("Tips:")
                         .setMessage(res)
                         .create();
                 textTips.show();
             }
             else if (msg.what == handlerStateUpdatePhoto) {
-
                 pic.setImageBitmap(image);
             }
             else if (msg.what == handlerStateUpdateName) {
@@ -94,51 +90,44 @@ public class PersonFragment extends Fragment {
             else if (msg.what == handlerStateGetPhoto) {
                 String res = (String) msg.obj;
                 String requestUrl = "http://43.138.84.226:8080/user/show_avator";
-                PersonFragment.MyThreadGetPhoto myThread = new PersonFragment.MyThreadGetPhoto(requestUrl, res);// TO DO
+                OthersActivity.MyThreadGetPhoto myThread = new OthersActivity.MyThreadGetPhoto(requestUrl, res);// TO DO
                 myThread.start();// TO DO
             }
         }
     };
 
-    public View onCreateView(@NonNull LayoutInflater inflater,
-                             ViewGroup container, Bundle savedInstanceState) {
-        PersonViewModel personViewModel =
-                new ViewModelProvider(this).get(PersonViewModel.class);
-        binding = FragmentPersonBinding.inflate(inflater, container, false);
-        View root = inflater.inflate(R.layout.fragment_person,container,false);
 
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // setContentView(R.layout.fragment_person);
-
+        setContentView(R.layout.activity_others);
+        //needs Intent.putExtra("email", email)
+        othersEmail = getIntent().getStringExtra("email");
+        follow_button = (Button)findViewById(R.id.follow_button);
+        black_button = (Button)findViewById(R.id.black_button);
+        pic = (ImageView) findViewById(R.id.person_image);
+        name = (TextView) findViewById(R.id.person_name);
+        introduction = (TextView) findViewById(R.id.person_introduction);
         String requestUrl = "http://43.138.84.226:8080/user/show_user_data";
-        PersonFragment.MyThreadInitData myThread = new PersonFragment.MyThreadInitData(requestUrl);// TO DO
+        OthersActivity.MyThreadInitData myThread = new OthersActivity.MyThreadInitData(requestUrl);// TO DO
         myThread.start();// TO DO
 
-        return root;
-    }
-
-
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        edit_button = (Button)getActivity().findViewById(R.id.edit);
-        pic = (ImageView) getActivity().findViewById(R.id.person_image);
-        name = (TextView) getActivity().findViewById(R.id.person_name);
-        introduction = (TextView) getActivity().findViewById(R.id.person_introduction);
-
-        edit_button.setOnClickListener(new View.OnClickListener() {
+        follow_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getActivity(),InfoeditActivity.class);//想调到哪个界面就把login改成界面对应的activity名
-                startActivity(intent);
+                // 处理关注/取关
+                // TO DO
             }
         });
-    }
 
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        binding = null;
+
+        black_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // 处理屏蔽/取消
+                // TO DO
+            }
+        });
     }
 
     class MyThreadInitData extends Thread{
@@ -151,7 +140,7 @@ public class PersonFragment extends Fragment {
             try {
                 OkHttpClient client = new OkHttpClient();
                 //3.构建MultipartBody
-                SharedPreferences sharedPreferences = getActivity().getSharedPreferences("login",MODE_PRIVATE);
+                SharedPreferences sharedPreferences = getSharedPreferences("login",MODE_PRIVATE);
                 String cookie = sharedPreferences.getString("session","");
                 Log.d(LOG_TAG, cookie);
                 Request request = new Request.Builder()
@@ -206,7 +195,7 @@ public class PersonFragment extends Fragment {
                 Log.d(LOG_TAG, "1");
                 OkHttpClient client = new OkHttpClient();
                 //3.构建MultipartBody
-                SharedPreferences sharedPreferences = getActivity().getSharedPreferences("set",MODE_PRIVATE);
+                SharedPreferences sharedPreferences = getSharedPreferences("login",MODE_PRIVATE);
                 String cookie = sharedPreferences.getString("session","");
                 Log.d(LOG_TAG, cookie);
 
@@ -245,4 +234,49 @@ public class PersonFragment extends Fragment {
             }
         }
     }
+
+    class MyThreadUpdateInfo extends Thread{
+        private String requestUrl, name, introduction;
+        MyThreadUpdateInfo(String request, String nameStr, String introductionStr){
+            requestUrl = request;
+            name = nameStr;
+            introduction = introductionStr;
+        }
+        @Override
+        public void run() {
+            try {
+                OkHttpClient client = new OkHttpClient();
+
+                SharedPreferences sharedPreferences = getSharedPreferences("login",MODE_PRIVATE);
+                String cookie = sharedPreferences.getString("session","");
+
+                RequestBody formBody = new FormBody.Builder()
+                        .add("nickname", name)
+                        .add("introduction", introduction)
+                        .build();
+
+                Request request = new Request.Builder()
+                        .url(requestUrl)
+                        .post(formBody)
+                        .addHeader("cookie",cookie)
+                        .build();
+
+                Call call = client.newCall(request);
+                Response response = call.execute();
+
+                if (response.isSuccessful()) {
+                    Message msg = handler.obtainMessage(handlerStateWarning);
+                    msg.obj = Objects.requireNonNull(response.body()).string();
+                    handler.sendMessage(msg);
+                } else {
+                    throw new IOException("Unexpected code " + response);
+                }
+            }
+            catch (Exception e)
+            {
+                e.printStackTrace();
+            }
+        }
+    }
+
 }
