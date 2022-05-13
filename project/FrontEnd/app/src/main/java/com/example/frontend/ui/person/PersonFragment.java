@@ -60,7 +60,7 @@ public class PersonFragment extends Fragment {
     private Button edit_button;
     private Bitmap image;
     private ImageView pic;
-    private TextView name, introduction, follower, blacker;
+    private TextView name, introduction, blacker, follower;
     private static final int handlerStateWarning = 0;
     private static final int handlerStateUpdatePhoto = 1;
     private static final int handlerStateUpdateName = 2;
@@ -139,6 +139,7 @@ public class PersonFragment extends Fragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+
         edit_button = (Button)getActivity().findViewById(R.id.edit);
         pic = (ImageView) getActivity().findViewById(R.id.person_image);
         name = (TextView) getActivity().findViewById(R.id.person_name);
@@ -155,6 +156,14 @@ public class PersonFragment extends Fragment {
         });
 
         follower.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity(),FollowersActivity.class);//想调到哪个界面就把login改成界面对应的activity名
+                startActivity(intent);
+            }
+        });
+
+        blacker.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getActivity(),InfoeditActivity.class);//想调到哪个界面就把login改成界面对应的activity名
