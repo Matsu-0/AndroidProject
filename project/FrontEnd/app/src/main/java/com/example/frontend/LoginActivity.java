@@ -41,6 +41,9 @@ public class LoginActivity extends AppCompatActivity {
                     .setMessage(res)
                     .create();
             textTips.show();
+            if (res.equals("登录成功")) {
+                finish();
+            }
         }
     };
     @Override
@@ -49,8 +52,6 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
         email = findViewById(R.id.email_login);
         password = findViewById(R.id.password_login);
-
-
 
     }
 

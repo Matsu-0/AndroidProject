@@ -49,7 +49,6 @@ import okhttp3.Response;
 
 public class InfoeditActivity extends AppCompatActivity {
     private static final String LOG_TAG = InfoeditActivity.class.getSimpleName();
-    private String avator_name;
     private Button button, confirm_edit_button, password_edit_button;
     private Bitmap image;
     private ImageView pic;

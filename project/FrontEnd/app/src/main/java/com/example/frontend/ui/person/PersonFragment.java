@@ -60,12 +60,14 @@ public class PersonFragment extends Fragment {
     private Button edit_button;
     private Bitmap image;
     private ImageView pic;
-    private TextView name, introduction;
+    private TextView name, introduction, follower, blacker;
     private static final int handlerStateWarning = 0;
     private static final int handlerStateUpdatePhoto = 1;
     private static final int handlerStateUpdateName = 2;
     private static final int handlerStateUpdateIntroduction = 3;
     private static final int handlerStateGetPhoto = 4;
+    private static final int handlerStateGetFollowerNum = 5;
+    private static final int handlerStateGetBlackerNum = 6;
     @SuppressLint("HandlerLeak")
     private Handler handler = new Handler(){
         @Override
@@ -97,6 +99,14 @@ public class PersonFragment extends Fragment {
                 PersonFragment.MyThreadGetPhoto myThread = new PersonFragment.MyThreadGetPhoto(requestUrl, res);// TO DO
                 myThread.start();// TO DO
             }
+            else if (msg.what == handlerStateGetFollowerNum) {
+                String res = "关注\n" + (String) msg.obj + "人";
+                follower.setText(res);
+            }
+            else if (msg.what == handlerStateGetBlackerNum) {
+                String res = "黑名单\n" + (String) msg.obj + "人";
+                blacker.setText(res);
+            }
         }
     };
 
@@ -110,9 +120,17 @@ public class PersonFragment extends Fragment {
         super.onCreate(savedInstanceState);
         // setContentView(R.layout.fragment_person);
 
-        String requestUrl = "http://43.138.84.226:8080/user/show_user_data";
-        PersonFragment.MyThreadInitData myThread = new PersonFragment.MyThreadInitData(requestUrl);// TO DO
-        myThread.start();// TO DO
+        String requestUrl1 = "http://43.138.84.226:8080/user/show_user_data";
+        PersonFragment.MyThreadInitData myThread1 = new PersonFragment.MyThreadInitData(requestUrl1);// TO DO
+        myThread1.start();// TO DO
+
+        String requestUrl2 = "http://43.138.84.226:8080/interact/show_followers_num";
+        PersonFragment.MyThreadGetFollowerNum myThread2 = new PersonFragment.MyThreadGetFollowerNum(requestUrl2);// TO DO
+        myThread2.start();// TO DO
+
+        String requestUrl3 = "http://43.138.84.226:8080/interact/show_ignore_num";
+        PersonFragment.MyThreadGetBlackerNum myThread3 = new PersonFragment.MyThreadGetBlackerNum(requestUrl3);// TO DO
+        myThread3.start();// TO DO
 
         return root;
     }
@@ -125,8 +143,18 @@ public class PersonFragment extends Fragment {
         pic = (ImageView) getActivity().findViewById(R.id.person_image);
         name = (TextView) getActivity().findViewById(R.id.person_name);
         introduction = (TextView) getActivity().findViewById(R.id.person_introduction);
+        follower = (TextView) getActivity().findViewById(R.id.follow);
+        blacker =(TextView) getActivity().findViewById(R.id.blacklist);
 
         edit_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity(),InfoeditActivity.class);//想调到哪个界面就把login改成界面对应的activity名
+                startActivity(intent);
+            }
+        });
+
+        follower.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getActivity(),InfoeditActivity.class);//想调到哪个界面就把login改成界面对应的activity名
@@ -159,7 +187,7 @@ public class PersonFragment extends Fragment {
                         .get()
                         .addHeader("cookie",cookie)
                         .build();
-                Log.d(LOG_TAG, cookie);
+
                 Call call = client.newCall(request);
                 Response response = call.execute();
                 Log.d(LOG_TAG, response.toString());
@@ -220,6 +248,7 @@ public class PersonFragment extends Fragment {
                 Response response = call.execute();
                 Log.d(LOG_TAG, response.toString());
                 if (response.isSuccessful()){
+
                     if (response.code() == 200){
                         InputStream inputStream = response.body().byteStream();
                         image = BitmapFactory.decodeStream(inputStream);
@@ -234,6 +263,97 @@ public class PersonFragment extends Fragment {
                         handler.sendMessage(msg);
                     }
 
+
+                } else {
+                    throw new IOException("Unexpected code " + response);
+                }
+            }
+            catch (Exception e)
+            {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    class MyThreadGetFollowerNum extends Thread{
+        private  String requestUrl;
+        MyThreadGetFollowerNum(String request){
+            requestUrl = request;
+        }
+        @Override
+        public void run() {
+            try {
+                OkHttpClient client = new OkHttpClient();
+                //3.构建MultipartBody
+                SharedPreferences sharedPreferences = getActivity().getSharedPreferences("login",MODE_PRIVATE);
+                String cookie = sharedPreferences.getString("session","");
+                Log.d(LOG_TAG, cookie);
+                Request request = new Request.Builder()
+                        .url(requestUrl)
+                        .get()
+                        .addHeader("cookie",cookie)
+                        .build();
+
+                Call call = client.newCall(request);
+                Response response = call.execute();
+                Log.d(LOG_TAG, response.toString());
+                if (response.isSuccessful()){
+                    if (response.code() == 200){
+                        Message msg = handler.obtainMessage(handlerStateGetFollowerNum);
+                        msg.obj = Objects.requireNonNull(response.body()).string();
+                        handler.sendMessage(msg);
+                    }
+                    else {
+                        Message msg = handler.obtainMessage(handlerStateWarning);
+                        msg.obj = Objects.requireNonNull(response.body()).string();
+                        handler.sendMessage(msg);
+                    }
+
+                } else {
+                    throw new IOException("Unexpected code " + response);
+                }
+            }
+            catch (Exception e)
+            {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    class MyThreadGetBlackerNum extends Thread{
+        private  String requestUrl;
+        MyThreadGetBlackerNum(String request){
+            requestUrl = request;
+        }
+        @Override
+        public void run() {
+            try {
+                OkHttpClient client = new OkHttpClient();
+                //3.构建MultipartBody
+                SharedPreferences sharedPreferences = getActivity().getSharedPreferences("login",MODE_PRIVATE);
+                String cookie = sharedPreferences.getString("session","");
+                Log.d(LOG_TAG, cookie);
+                Request request = new Request.Builder()
+                        .url(requestUrl)
+                        .get()
+                        .addHeader("cookie",cookie)
+                        .build();
+
+                Call call = client.newCall(request);
+                Response response = call.execute();
+                Log.d(LOG_TAG, response.toString());
+
+                if (response.isSuccessful()){
+                    if (response.code() == 200){
+                        Message msg = handler.obtainMessage(handlerStateGetBlackerNum);
+                        msg.obj = Objects.requireNonNull(response.body()).string();
+                        handler.sendMessage(msg);
+                    }
+                    else {
+                        Message msg = handler.obtainMessage(handlerStateWarning);
+                        msg.obj = Objects.requireNonNull(response.body()).string();
+                        handler.sendMessage(msg);
+                    }
 
                 } else {
                     throw new IOException("Unexpected code " + response);
