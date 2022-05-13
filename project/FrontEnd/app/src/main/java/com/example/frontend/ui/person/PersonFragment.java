@@ -30,6 +30,7 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.example.frontend.FollowersActivity;
 import com.example.frontend.InfoeditActivity;
 import com.example.frontend.R;
 import com.example.frontend.SignupActivity;
@@ -158,7 +159,7 @@ public class PersonFragment extends Fragment {
         follower.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getActivity(),FollowersActivity.class);//想调到哪个界面就把login改成界面对应的activity名
+                Intent intent = new Intent(getActivity(), FollowersActivity.class);//想调到哪个界面就把login改成界面对应的activity名
                 startActivity(intent);
             }
         });
