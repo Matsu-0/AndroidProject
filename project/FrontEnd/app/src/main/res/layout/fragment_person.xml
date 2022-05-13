@@ -9,7 +9,7 @@
     <RelativeLayout
         android:id="@+id/person_Info"
         android:layout_width="380dp"
-        android:layout_height="200dp"
+        android:layout_height="235dp"
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -17,6 +17,49 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.011">
+
+        <TextView
+            android:id="@+id/notice"
+            android:layout_width="90dp"
+            android:layout_height="50dp"
+            android:layout_below="@+id/person_introduction"
+            android:layout_alignParentStart="true"
+            android:layout_marginStart="25dp"
+            android:layout_marginTop="20dp"
+            android:background="@drawable/imageviewboundshape"
+            android:padding="3dip"
+            android:text="通知"
+            android:textAlignment="center" />
+
+        <TextView
+            android:id="@+id/follow"
+            android:layout_width="90dp"
+            android:layout_height="50dp"
+            android:layout_below="@+id/person_introduction"
+            android:layout_marginStart="30dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginEnd="30dp"
+            android:layout_toStartOf="@+id/blacklist"
+            android:layout_toEndOf="@+id/notice"
+            android:background="@drawable/imageviewboundshape"
+            android:clickable="true"
+            android:padding="3dip"
+            android:text="关注"
+            android:textAlignment="center" />
+
+        <TextView
+            android:id="@+id/blacklist"
+            android:layout_width="90dp"
+            android:layout_height="50dp"
+            android:layout_below="@+id/person_introduction"
+            android:layout_alignParentEnd="true"
+            android:layout_marginTop="20dp"
+            android:layout_marginEnd="25dp"
+            android:background="@drawable/imageviewboundshape"
+            android:clickable="true"
+            android:padding="3dip"
+            android:text="黑名单"
+            android:textAlignment="center" />
 
         <TextView
             android:id="@+id/person_name"
@@ -75,52 +118,11 @@
             android:padding="3dip"
             android:text="Introduction" />
 
-        <TextView
-            android:id="@+id/notice"
-            android:layout_width="90dp"
-            android:layout_height="50dp"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentBottom="true"
-            android:layout_marginStart="25dp"
-            android:layout_marginBottom="5dp"
-            android:background="@drawable/imageviewboundshape"
-            android:padding="3dip"
-            android:text="通知"
-            android:textAlignment="center" />
-
-        <TextView
-            android:id="@+id/follow"
-            android:layout_width="90dp"
-            android:layout_height="50dp"
-            android:layout_alignParentBottom="true"
-            android:layout_marginStart="30dp"
-            android:layout_marginEnd="30dp"
-            android:layout_marginBottom="5dp"
-            android:layout_toStartOf="@+id/blacklist"
-            android:layout_toEndOf="@+id/notice"
-            android:background="@drawable/imageviewboundshape"
-            android:padding="3dip"
-            android:text="关注"
-            android:textAlignment="center" />
-
-        <TextView
-            android:id="@+id/blacklist"
-            android:layout_width="90dp"
-            android:layout_height="50dp"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentBottom="true"
-            android:layout_marginEnd="25dp"
-            android:layout_marginBottom="5dp"
-            android:background="@drawable/imageviewboundshape"
-            android:padding="3dip"
-            android:text="黑名单"
-            android:textAlignment="center" />
-
     </RelativeLayout>
 
     <ScrollView
         android:layout_width="380dp"
-        android:layout_height="500dp"
+        android:layout_height="450dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.516"

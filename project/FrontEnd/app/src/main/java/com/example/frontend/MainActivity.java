@@ -83,13 +83,11 @@ public class MainActivity extends AppCompatActivity {
                 Response response = call.execute();
                 Log.d(LOG_TAG, response.toString());
                 if (response.isSuccessful()) {
-                    Log.d("!!!!!", "fuck");
                     if (response.code() == 202){
                         Intent intent = new Intent(MainActivity.this, LoginActivity.class);
                         startActivity(intent);
                     }
                 } else {
-                    Log.d("?????", "fuck");
                     throw new IOException("Unexpected code " + response);
                 }
             }
