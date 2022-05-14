@@ -95,36 +95,7 @@ public class BlackListActivity extends AppCompatActivity {
         mRecyclerView.setAdapter(mAdapter);
         // Give the recycler view a default layout manager.
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-//        mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-//            @Override
-//            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-//                super.onScrollStateChanged(recyclerView, newState);
-//                //滑动到底部
-//                if (newState == mRecyclerView.SCROLL_STATE_IDLE) {
-//                    //recyclerview滑动到底部,更新数据
-//                    //加载更多数据
-//                    new Handler().postDelayed(new Runnable() {
-//                        @Override
-//                        public void run() {
-//
-//                            if (mWordList.size() <= total_num_data) {
-//                                // 因为最后一位是存储状态位，如果二者数目相同，说明还有一项未引入，这里是小于等于
-//                                getMoreData();
-//                                mAdapter.notifyDataSetChanged();
-//
-//                                //告诉他是否需要更多数据
-//                                mAdapter.hasMore(mWordList.size() <= total_num_data);
-//
-//                            } else {
-//                                //没有数据了
-//                                mAdapter.hasMore(false);
-//                                mAdapter.notifyDataSetChanged();
-//                            }
-//                        }
-//                    }, 3000);
-//                }
-//            }
-//        });
+
     }
     class MyThreadGetData extends Thread{
         private  String requestUrl;

@@ -63,6 +63,9 @@ public class PublishPicActivity extends AppCompatActivity {
                         .setMessage(res)
                         .create();
                 textTips.show();
+                if (res == "发布成功"){
+                    finish();
+                }
             }
         }
     };
@@ -139,6 +142,8 @@ public class PublishPicActivity extends AppCompatActivity {
                     RequestBody fileBody = RequestBody.create(MEDIA_TYPE_PNG, f);
                     builder.addFormDataPart("pic_"+(i+1), f.getName(), fileBody);
                 }
+
+                // TO DO：修改参数并添加判断
                 RequestBody requestBody = builder
                         .addFormDataPart("title", "test")
                         .addFormDataPart("content", "test")
