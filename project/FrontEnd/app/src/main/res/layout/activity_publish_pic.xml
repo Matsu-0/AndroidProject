@@ -52,13 +52,24 @@
             android:layout_margin="20dp" />
 
         <Button
+            android:id="@+id/take_photo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_marginLeft="10dp"
+            android:layout_marginBottom="50dp"
+            android:layout_toStartOf="@+id/publish_pic"
+            android:text="拍照"
+            tools:ignore="NotSibling" />
+
+        <Button
             android:id="@+id/add_pic"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
-            android:layout_marginLeft="20dp"
+            android:layout_marginLeft="10dp"
             android:layout_marginBottom="50dp"
-            android:layout_toStartOf="@+id/publish_pic"
+            android:layout_toEndOf="@+id/take_photo"
             android:text="导入图片"
             tools:ignore="NotSibling" />
 
@@ -67,7 +78,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
-            android:layout_marginLeft="20dp"
+            android:layout_marginLeft="10dp"
             android:layout_marginBottom="50dp"
             android:layout_toEndOf="@+id/add_pic"
             android:text="打开位置"
@@ -78,7 +89,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
-            android:layout_marginLeft="20dp"
+            android:layout_marginLeft="10dp"
             android:layout_marginBottom="50dp"
             android:layout_toEndOf="@+id/add_position_pic"
             android:text="发布"
