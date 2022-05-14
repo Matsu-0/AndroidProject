@@ -32,8 +32,8 @@ import java.util.LinkedList;
  * Shows how to implement a simple Adapter for a RecyclerView.
  * Demonstrates how to add a click handler for each item in the ViewHolder.
  */
-public class FollowerListAdapter extends
-        RecyclerView.Adapter<FollowerListAdapter.WordViewHolder> {
+public class ListAdapter extends
+        RecyclerView.Adapter<ListAdapter.WordViewHolder> {
 
     private final LinkedList<String> mNameList;
     private final LinkedList<String> mEmailList;
@@ -47,7 +47,7 @@ public class FollowerListAdapter extends
         public final ImageView avatarItemView;
         public final TextView detailItemView;
         public String email;
-        final FollowerListAdapter mAdapter;
+        final ListAdapter mAdapter;
 
         /**
          * Creates a new custom view holder to hold the view to display in
@@ -57,7 +57,7 @@ public class FollowerListAdapter extends
          * @param adapter The adapter that manages the the data and views
          *                for the RecyclerView.
          */
-        public WordViewHolder(View itemView, FollowerListAdapter adapter) {
+        public WordViewHolder(View itemView, ListAdapter adapter) {
             super(itemView);
             detailItemView = itemView.findViewById(R.id.detail);
             avatarItemView = itemView.findViewById(R.id.avatar_follower);
@@ -84,7 +84,7 @@ public class FollowerListAdapter extends
         }
     }
 
-    public FollowerListAdapter(Context context, LinkedList<Bitmap> AvatarList, LinkedList<String> NameList, LinkedList<String> EmailList) {
+    public ListAdapter(Context context, LinkedList<Bitmap> AvatarList, LinkedList<String> NameList, LinkedList<String> EmailList) {
         mInflater = LayoutInflater.from(context);
         this.mNameList = NameList;
         this.mBitmapList = AvatarList;
@@ -111,8 +111,8 @@ public class FollowerListAdapter extends
      *                 that holds a View of the given view type.
      */
     @Override
-    public FollowerListAdapter.WordViewHolder onCreateViewHolder(ViewGroup parent,
-                                                             int viewType) {
+    public ListAdapter.WordViewHolder onCreateViewHolder(ViewGroup parent,
+                                                         int viewType) {
         // Inflate an item view.
         View mItemView = mInflater.inflate(
                 R.layout.follower_item, parent, false);
@@ -136,7 +136,7 @@ public class FollowerListAdapter extends
      * @param position The position of the item within the adapter's data set.
      */
     @Override
-    public void onBindViewHolder(FollowerListAdapter.WordViewHolder holder,
+    public void onBindViewHolder(ListAdapter.WordViewHolder holder,
                                  int position) {
         if (getItemViewType(position) == TYPE_ITEM) {
             holder.avatarItemView.setImageBitmap(mBitmapList.get(position));

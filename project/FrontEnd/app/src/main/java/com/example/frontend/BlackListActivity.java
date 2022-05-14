@@ -31,19 +31,18 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
-public class FollowersActivity extends AppCompatActivity {
+public class BlackListActivity extends AppCompatActivity {
 
     private final LinkedList<String> mNameList = new LinkedList<>();
     private final LinkedList<Bitmap> mBitmapList = new LinkedList<>();
     private final LinkedList<String> mEmailList = new LinkedList<>();
     private int total_num_data = 0;  // 个数上限
-    private int avatar_count = 0;
     private Bitmap image;
     private RecyclerView mRecyclerView;
     private ListAdapter mAdapter;
     private static final int handlerStateWarning = 0;
     private static final int handlerStateUpdateInfo = 1;
-    private static final String LOG_TAG = FollowersActivity.class.getSimpleName();
+    private static final String LOG_TAG = BlackListActivity.class.getSimpleName();
     private Handler handler = new Handler(){
         @SuppressLint("HandlerLeak")
         @Override
@@ -51,7 +50,7 @@ public class FollowersActivity extends AppCompatActivity {
             super.handleMessage(msg);
             if (msg.what == handlerStateWarning) {
                 String res = (String) msg.obj;
-                AlertDialog textTips = new AlertDialog.Builder(FollowersActivity.this)
+                AlertDialog textTips = new AlertDialog.Builder(BlackListActivity.this)
                         .setTitle("Tips:")
                         .setMessage(res)
                         .create();
@@ -74,8 +73,8 @@ public class FollowersActivity extends AppCompatActivity {
 
     private void getData(){
         // 引入数据
-        String requestUrl = "http://43.138.84.226:8080/interact/show_followers_list";
-        FollowersActivity.MyThreadGetData myThread = new FollowersActivity.MyThreadGetData(requestUrl);// TO DO
+        String requestUrl = "http://43.138.84.226:8080/interact/show_ignore_list";
+        BlackListActivity.MyThreadGetData myThread = new BlackListActivity.MyThreadGetData(requestUrl);// TO DO
         myThread.start();
 
     }
@@ -84,7 +83,7 @@ public class FollowersActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_followers);
+        setContentView(R.layout.activity_blacklist);
 
         getData();
 
@@ -155,12 +154,12 @@ public class FollowersActivity extends AppCompatActivity {
                         Log.d(LOG_TAG, result.toString());
 
                         total_num_data = result.getInt("sum");
-                        JSONArray jsonArray = result.getJSONArray("followers_list");
+                        JSONArray jsonArray = result.getJSONArray("ignore_list");
                         for (int i = 0; i < total_num_data; i++) {
                             String str = Objects.requireNonNull(jsonArray.get(i)).toString();
 
                             String requestUrl = "http://43.138.84.226:8080/user/show_avator";
-                            FollowersActivity.MyThreadGetPhoto myThread = new FollowersActivity.MyThreadGetPhoto(requestUrl, str);// TO DO
+                            BlackListActivity.MyThreadGetPhoto myThread = new BlackListActivity.MyThreadGetPhoto(requestUrl, str);// TO DO
                             myThread.start();// TO DO
                         }
 //                        Message msg = handler.obtainMessage(handlerStateGetInfo);

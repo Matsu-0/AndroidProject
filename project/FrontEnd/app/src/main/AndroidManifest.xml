@@ -24,6 +24,10 @@
             android:exported="false"
             android:label="关注列表" />
         <activity
+            android:name=".BlackListActivity"
+            android:exported="false"
+            android:label="屏蔽列表" />
+        <activity
             android:name=".InfoeditActivity"
             android:exported="false"
             android:label="信息修改" />
@@ -35,6 +39,10 @@
             android:name=".SignupActivity"
             android:exported="false"
             android:label="注册" />
+        <activity
+            android:name=".OthersActivity"
+            android:exported="false"
+            android:label="其他人主页" />
         <activity
             android:name=".MainActivity"
             android:exported="true"
