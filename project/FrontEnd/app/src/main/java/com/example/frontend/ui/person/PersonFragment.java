@@ -31,9 +31,10 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.frontend.InfoeditActivity;
+import com.example.frontend.FollowersActivity;
+import com.example.frontend.BlackListActivity;
 import com.example.frontend.R;
 import com.example.frontend.SignupActivity;
-import com.example.frontend.databinding.FragmentBrowseBinding;
 import com.example.frontend.databinding.FragmentPersonBinding;
 
 import org.json.JSONObject;
@@ -120,18 +121,6 @@ public class PersonFragment extends Fragment {
         super.onCreate(savedInstanceState);
         // setContentView(R.layout.fragment_person);
 
-        String requestUrl1 = "http://43.138.84.226:8080/user/show_user_data";
-        PersonFragment.MyThreadInitData myThread1 = new PersonFragment.MyThreadInitData(requestUrl1);// TO DO
-        myThread1.start();// TO DO
-
-        String requestUrl2 = "http://43.138.84.226:8080/interact/show_followers_num";
-        PersonFragment.MyThreadGetFollowerNum myThread2 = new PersonFragment.MyThreadGetFollowerNum(requestUrl2);// TO DO
-        myThread2.start();// TO DO
-
-        String requestUrl3 = "http://43.138.84.226:8080/interact/show_ignore_num";
-        PersonFragment.MyThreadGetBlackerNum myThread3 = new PersonFragment.MyThreadGetBlackerNum(requestUrl3);// TO DO
-        myThread3.start();// TO DO
-
         return root;
     }
 
@@ -147,6 +136,11 @@ public class PersonFragment extends Fragment {
         follower = (TextView) getActivity().findViewById(R.id.follow);
         blacker =(TextView) getActivity().findViewById(R.id.blacklist);
 
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
         edit_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -166,16 +160,28 @@ public class PersonFragment extends Fragment {
         blacker.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getActivity(),InfoeditActivity.class);//想调到哪个界面就把login改成界面对应的activity名
+                Intent intent = new Intent(getActivity(),BlackListActivity.class);//想调到哪个界面就把login改成界面对应的activity名
                 startActivity(intent);
             }
         });
+
+        String requestUrl1 = "http://43.138.84.226:8080/user/show_user_data";
+        PersonFragment.MyThreadInitData myThread1 = new PersonFragment.MyThreadInitData(requestUrl1);// TO DO
+        myThread1.start();// TO DO
+
+        String requestUrl2 = "http://43.138.84.226:8080/interact/show_followers_num";
+        PersonFragment.MyThreadGetFollowerNum myThread2 = new PersonFragment.MyThreadGetFollowerNum(requestUrl2);// TO DO
+        myThread2.start();// TO DO
+
+        String requestUrl3 = "http://43.138.84.226:8080/interact/show_ignore_num";
+        PersonFragment.MyThreadGetBlackerNum myThread3 = new PersonFragment.MyThreadGetBlackerNum(requestUrl3);// TO DO
+        myThread3.start();// TO DO
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        binding = null;
+        //binding = null;
     }
 
     class MyThreadInitData extends Thread{
