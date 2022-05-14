@@ -3,6 +3,7 @@ package com.example.frontend;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.FileProvider;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.annotation.SuppressLint;
@@ -14,9 +15,12 @@ import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.media.Image;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
 import android.widget.Adapter;
@@ -32,6 +36,9 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
@@ -46,10 +53,12 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 public class PublishPicActivity extends AppCompatActivity {
-    private Button button_loadPic, button_loadPos, button_launch;
+    private Button button_loadPic, button_loadPos, button_launch, button_takePhoto;
     private NineGridlayout nineGridlayout;
     static final int PHOTO_RETURN_CODE = 0;
-    private List<String> path;
+    static final int TAKE_PHOTO_RETURN_CODE = 1;
+    private List<String> path = new ArrayList<>();
+    private String currentPhotoPath;
     private static final int handlerStateWarning = 0;
     @SuppressLint("HandlerLeak")
     private Handler handler = new Handler(){
@@ -77,6 +86,7 @@ public class PublishPicActivity extends AppCompatActivity {
         button_loadPic = (Button) findViewById(R.id.add_pic);
         button_loadPos = (Button) findViewById(R.id.add_position_pic);
         button_launch = (Button) findViewById(R.id.publish_button_pic);
+        button_takePhoto = (Button) findViewById(R.id.take_photo);
         nineGridlayout = findViewById(R.id.iv_ngrid_layout);
 
         button_loadPic.setOnClickListener(new View.OnClickListener() {
@@ -84,13 +94,13 @@ public class PublishPicActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent intent = new Intent(PublishPicActivity.this, MultiImageSelectorActivity.class);
 // whether show camera
-                intent.putExtra(MultiImageSelectorActivity.EXTRA_SHOW_CAMERA, true);
+                intent.putExtra(MultiImageSelectorActivity.EXTRA_SHOW_CAMERA, false);
 // max select image amount
                 intent.putExtra(MultiImageSelectorActivity.EXTRA_SELECT_COUNT, 9);
 // select mode (MultiImageSelectorActivity.MODE_SINGLE OR MultiImageSelectorActivity.MODE_MULTI)
                 intent.putExtra(MultiImageSelectorActivity.EXTRA_SELECT_MODE, MultiImageSelectorActivity.MODE_MULTI);
 // default select images (support array list)
-                // intent.putStringArrayListExtra(MultiImageSelectorActivity.EXTRA_DEFAULT_SELECTED_LIST, defaultDataArray);
+                intent.putStringArrayListExtra(MultiImageSelectorActivity.EXTRA_DEFAULT_SELECTED_LIST, (ArrayList<String>) path);
                 startActivityForResult(intent, PHOTO_RETURN_CODE);
             }
         });
@@ -101,6 +111,45 @@ public class PublishPicActivity extends AppCompatActivity {
                 String requestUrl = "http://43.138.84.226:8080/publish/picture";
                 PublishPicActivity.MyThreadPhoto myThread = new PublishPicActivity.MyThreadPhoto(requestUrl);// TO DO
                 myThread.start();// TO DO
+            }
+        });
+
+        button_takePhoto.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                // Ensure that there's a camera activity to handle the intent
+                if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
+                    // Create the File where the photo should go
+                    File photoFile = null;
+                    try {
+                        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+                        String imageFileName = "JPEG_" + timeStamp + "_";
+                        File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+                        Log.d("111","444");
+                        photoFile = File.createTempFile(
+                                imageFileName,  /* prefix */
+                                ".jpg",         /* suffix */
+                                storageDir      /* directory */
+                        );
+                        Log.d("111","333");
+                        // Save a file: path for use with ACTION_VIEW intents
+                        currentPhotoPath = photoFile.getAbsolutePath();
+                        Log.d("111","222");
+                    } catch (IOException ex) {
+                        Log.d("111","111");
+                        // Error occurred while creating the File
+                    }
+                    // Continue only if the File was successfully created
+                    if (photoFile != null) {
+                        Uri photoURI = FileProvider.getUriForFile(PublishPicActivity.this,
+                                "com.example.android.frontend",
+                                photoFile);
+                        takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+                        startActivityForResult(takePictureIntent, TAKE_PHOTO_RETURN_CODE);
+                    }
+                }
+
             }
         });
     }
