@@ -14,8 +14,12 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.frontend.InfoeditActivity;
+import com.example.frontend.PublishPicActivity;
 import com.example.frontend.R;
 import com.example.frontend.databinding.FragmentPublishBinding;
+
+import me.nereo.multi_image_selector.MultiImageSelector;
+import me.nereo.multi_image_selector.MultiImageSelectorActivity;
 
 public class PublishFragment extends Fragment {
 
@@ -44,8 +48,9 @@ public class PublishFragment extends Fragment {
         button_pic.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getActivity(), InfoeditActivity.class);//想调到哪个界面就把login改成界面对应的activity名
+                Intent intent = new Intent(getActivity(), PublishPicActivity.class);//想调到哪个界面就把login改成界面对应的activity名
                 startActivity(intent);
+
             }
         });
     }

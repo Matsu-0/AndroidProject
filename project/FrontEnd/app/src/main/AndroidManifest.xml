@@ -16,6 +16,10 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.FrontEnd">
         <activity
+            android:name=".PublishPicActivity"
+            android:exported="false"
+            android:label="发布图文"/>
+        <activity
             android:name=".FollowersActivity"
             android:exported="false"
             android:label="关注列表" />
