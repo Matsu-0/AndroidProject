@@ -32,9 +32,8 @@
             android:id="@+id/publish_pic_detail"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="20dp"
-            android:layout_marginTop="100dp"
-            android:layout_marginEnd="20dp"
+            android:layout_margin="20dp"
+            android:layout_below="@+id/publish_pic_title"
             android:background="@drawable/imageviewboundshape"
             android:gravity="top|left"
             android:hint="输入内容"
@@ -49,8 +48,8 @@
             android:id="@+id/iv_ngrid_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="200dp"
-            android:layout_toStartOf="@+id/publish_pic_detail" />
+            android:layout_below="@+id/publish_pic_detail"
+            android:layout_margin="20dp" />
 
         <Button
             android:id="@+id/add_pic"
