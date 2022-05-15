@@ -56,10 +56,12 @@
 
             <VideoView
                 android:id="@+id/video_layout"
-                android:layout_width="300dp"
-                android:layout_height="200dp"
+                android:layout_width="match_parent"
+                android:layout_height="300dp"
                 android:layout_below="@+id/publish_video_detail"
-                android:layout_margin="20dp" />
+                android:layout_margin="20dp"
+                android:background="@drawable/imageviewboundshape"
+                android:padding="3dip"/>
 
             <RelativeLayout
                 android:id="@+id/button_layout_video"
