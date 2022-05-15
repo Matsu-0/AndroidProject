@@ -198,9 +198,9 @@ public class PublishPicActivity extends AppCompatActivity {
         }
         @Override
         public void run() {
-            if (path.size() >= 9) {
+            if (path.size() >= 10) {
                 Message msg = handler.obtainMessage(handlerStateWarning);
-                msg.obj = "至多允许九张图片";
+                msg.obj = "至多允许九张图片，目前有" + path.size() + "张";
                 handler.sendMessage(msg);
                 return;
             }
