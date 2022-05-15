@@ -6,11 +6,15 @@
     android:layout_height="match_parent"
     tools:context=".PublishPicActivity">
 
-    <RelativeLayout
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+    <LinearLayout
         android:id="@+id/publish_pic"
-        android:layout_width="360dp"
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
+        android:gravity="center_horizontal"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.49"
@@ -57,36 +61,44 @@
             android:layout_below="@+id/publish_pic_detail"
             android:layout_margin="20dp" />
 
-        <Button
-            android:id="@+id/take_photo"
+        <RelativeLayout
+            android:id="@+id/button_layout_pic"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_marginLeft="10dp"
-            android:layout_marginBottom="50dp"
-            android:layout_toStartOf="@+id/publish_pic"
-            android:text="拍照"
-            tools:ignore="NotSibling" />
+            android:layout_height="match_parent"
+            android:layout_below="@+id/iv_ngrid_layout">
+            <Button
+                android:id="@+id/take_photo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
 
-        <Button
-            android:id="@+id/add_pic"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_marginLeft="10dp"
-            android:layout_marginBottom="50dp"
-            android:layout_toEndOf="@+id/take_photo"
-            android:text="导入图片"
-            tools:ignore="NotSibling" />
+                android:layout_toStartOf="@+id/publish_pic"
+                android:text="拍摄图片"
+                tools:ignore="NotSibling" />
 
+            <Button
+                android:id="@+id/add_pic"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:layout_toEndOf="@+id/take_photo"
+                android:text="相册导入"
+                tools:ignore="NotSibling" />
+
+            <Button
+                android:id="@+id/clear_all_pic"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:layout_toEndOf="@+id/add_pic"
+                android:text="清空图片"
+                tools:ignore="NotSibling" />
+        </RelativeLayout>
         <Button
             android:id="@+id/add_position_pic"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_marginLeft="10dp"
-            android:layout_marginBottom="50dp"
-            android:layout_toEndOf="@+id/add_pic"
+            android:layout_marginBottom="10dp"
+            android:layout_toStartOf="@+id/publish_pic"
             android:text="打开位置"
             tools:ignore="NotSibling" />
 
@@ -94,13 +106,10 @@
             android:id="@+id/publish_button_pic"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_marginLeft="10dp"
-            android:layout_marginBottom="50dp"
-            android:layout_toEndOf="@+id/add_position_pic"
+            android:layout_marginBottom="10dp"
+
             android:text="发布"
             tools:ignore="NotSibling" />
-
-
-    </RelativeLayout>
+    </LinearLayout>
+    </ScrollView>
 </androidx.constraintlayout.widget.ConstraintLayout>
