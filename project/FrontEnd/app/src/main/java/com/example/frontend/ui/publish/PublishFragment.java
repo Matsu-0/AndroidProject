@@ -16,6 +16,7 @@ import androidx.lifecycle.ViewModelProvider;
 import com.example.frontend.InfoeditActivity;
 import com.example.frontend.PublishAudio;
 import com.example.frontend.PublishPicActivity;
+import com.example.frontend.PublishVideoActivity;
 import com.example.frontend.R;
 import com.example.frontend.databinding.FragmentPublishBinding;
 
@@ -59,6 +60,14 @@ public class PublishFragment extends Fragment {
             public void onClick(View v) {
                 Intent intent = new Intent(getActivity(), PublishAudio.class);//想调到哪个界面就把login改成界面对应的activity名
                 startActivity(intent);
+            }
+        });
+        button_video.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity(), PublishVideoActivity.class);//想调到哪个界面就把login改成界面对应的activity名
+                startActivity(intent);
+
             }
         });
     }

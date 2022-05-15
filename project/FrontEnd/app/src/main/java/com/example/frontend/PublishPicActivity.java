@@ -8,6 +8,14 @@ import androidx.core.content.FileProvider;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.SharedPreferences;
+
+import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
+import android.media.Image;
+
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -38,7 +46,7 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 public class PublishPicActivity extends AppCompatActivity {
-    private Button button_loadPic, button_loadPos, button_launch, button_takePhoto;
+    private Button button_loadPic, button_loadPos, button_launch, button_takePhoto, button_clearPhoto;
     private NineGridlayout nineGridlayout;
     static final int PHOTO_RETURN_CODE = 0;
     static final int TAKE_PHOTO_RETURN_CODE = 1;
@@ -72,6 +80,7 @@ public class PublishPicActivity extends AppCompatActivity {
         button_loadPos = (Button) findViewById(R.id.add_position_pic);
         button_launch = (Button) findViewById(R.id.publish_button_pic);
         button_takePhoto = (Button) findViewById(R.id.take_photo);
+        button_clearPhoto = (Button) findViewById(R.id.clear_all_pic);
         nineGridlayout = findViewById(R.id.iv_ngrid_layout);
 
         button_loadPic.setOnClickListener(new View.OnClickListener() {
@@ -99,28 +108,40 @@ public class PublishPicActivity extends AppCompatActivity {
             }
         });
 
+        button_clearPhoto.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                path.clear();
+                PicListAdapter adapter = new PicListAdapter(PublishPicActivity.this, path);
+                nineGridlayout.setAdapter(adapter);
+            }
+        });
+
         button_takePhoto.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (path.size() >= 9) {
+                    Message msg = handler.obtainMessage(handlerStateWarning);
+                    msg.obj = "至多允许九张图片";
+                    handler.sendMessage(msg);
+                    return;
+                }
                 Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                 // Ensure that there's a camera activity to handle the intent
-                if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
+
                     // Create the File where the photo should go
                     File photoFile = null;
                     try {
                         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
                         String imageFileName = "JPEG_" + timeStamp + "_";
                         File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-                        Log.d("111","444");
                         photoFile = File.createTempFile(
                                 imageFileName,  /* prefix */
                                 ".jpg",         /* suffix */
                                 storageDir      /* directory */
                         );
-                        Log.d("111","333");
                         // Save a file: path for use with ACTION_VIEW intents
                         currentPhotoPath = photoFile.getAbsolutePath();
-                        Log.d("111","222");
                     } catch (IOException ex) {
                         Log.d("111","111");
                         // Error occurred while creating the File
@@ -133,7 +154,6 @@ public class PublishPicActivity extends AppCompatActivity {
                         takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
                         startActivityForResult(takePictureIntent, TAKE_PHOTO_RETURN_CODE);
                     }
-                }
 
             }
         });
@@ -153,6 +173,14 @@ public class PublishPicActivity extends AppCompatActivity {
                 // do your logic ....
             }
         }
+        else if (requestCode == TAKE_PHOTO_RETURN_CODE){
+            if(resultCode == RESULT_OK){
+                // Get the result list of select image paths
+                path.add(currentPhotoPath);
+                PicListAdapter adapter = new PicListAdapter(PublishPicActivity.this, path);
+                nineGridlayout.setAdapter(adapter);
+            }
+        }
     }
 
     class MyThreadPhoto extends Thread{
@@ -162,6 +190,12 @@ public class PublishPicActivity extends AppCompatActivity {
         }
         @Override
         public void run() {
+            if (path.size() >= 10) {
+                Message msg = handler.obtainMessage(handlerStateWarning);
+                msg.obj = "至多允许九张图片，目前有" + path.size() + "张";
+                handler.sendMessage(msg);
+                return;
+            }
             try {
                 OkHttpClient client = new OkHttpClient();
 //                file = new File(filepath);

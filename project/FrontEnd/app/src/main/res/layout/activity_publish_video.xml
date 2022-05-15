@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".PublishVideoActivity">
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <LinearLayout
+            android:id="@+id/publish_video"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:gravity="center_horizontal"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.49"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.0">
+
+            <EditText
+                android:id="@+id/publish_video_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginEnd="20dp"
+                android:layout_marginBottom="20dp"
+                android:gravity="center"
+                android:hint="输入标题"
+                android:textSize="32sp"
+                android:textStyle="bold" />
+
+            <EditText
+                android:id="@+id/publish_video_detail"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/publish_video_title"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginEnd="20dp"
+                android:layout_marginBottom="20dp"
+                android:background="@drawable/imageviewboundshape"
+                android:gravity="top|left"
+                android:hint="输入内容"
+                android:inputType="textMultiLine"
+                android:lines="8"
+                android:minLines="8"
+                android:padding="5dp"
+                android:textSize="16dp"
+                android:textStyle="bold" />
+
+            <VideoView
+                android:id="@+id/video_layout"
+                android:layout_width="300dp"
+                android:layout_height="200dp"
+                android:layout_below="@+id/publish_video_detail"
+                android:layout_margin="20dp" />
+
+            <RelativeLayout
+                android:id="@+id/button_layout_video"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_below="@+id/video_layout">
+                <Button
+                    android:id="@+id/take_video"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="拍摄视频"
+                    tools:ignore="NotSibling" />
+
+                <Button
+                    android:id="@+id/add_video"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="20dp"
+                    android:layout_toEndOf="@+id/take_video"
+                    android:text="相册导入"
+                    tools:ignore="NotSibling" />
+
+                <Button
+                    android:id="@+id/clear_all_video"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="20dp"
+                    android:layout_toEndOf="@+id/add_video"
+                    android:text="清空视频"
+                    tools:ignore="NotSibling" />
+            </RelativeLayout>
+            <Button
+                android:id="@+id/add_position_video"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:layout_toStartOf="@+id/publish_video"
+                android:text="打开位置"
+                tools:ignore="NotSibling" />
+
+            <Button
+                android:id="@+id/publish_button_video"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+
+                android:text="发布"
+                tools:ignore="NotSibling" />
+        </LinearLayout>
+    </ScrollView>
+  </androidx.constraintlayout.widget.ConstraintLayout>
