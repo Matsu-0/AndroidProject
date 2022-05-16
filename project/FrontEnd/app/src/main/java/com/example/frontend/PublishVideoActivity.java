@@ -24,6 +24,8 @@ import android.provider.OpenableColumns;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.VideoView;
 
 
@@ -53,6 +55,10 @@ public class PublishVideoActivity extends AppCompatActivity {
     static final int TAKE_VIDEO_RETURN_CODE = 1;
     private Uri videoUri;
     private String dataFile;
+    private EditText edit_title, edit_detail;
+    private TextView location_text;
+    private String title, content, location = null;
+
     private static final int handlerStateWarning = 0;
     @SuppressLint("HandlerLeak")
     private Handler handler = new Handler(){
@@ -85,6 +91,9 @@ public class PublishVideoActivity extends AppCompatActivity {
         videoLayout = findViewById(R.id.video_layout);
         videoLayout.setVisibility(View.GONE);
 
+        edit_title = (EditText) findViewById(R.id.publish_video_title);
+        edit_detail = (EditText) findViewById(R.id.publish_video_detail);
+        location_text = (TextView) findViewById(R.id.location_text);
         button_launch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -203,12 +212,40 @@ public class PublishVideoActivity extends AppCompatActivity {
                 RequestBody fileBody = RequestBody.create(MEDIA_TYPE_VIDEO, file);
                 builder.addFormDataPart("video", file.getName(), fileBody);
 
+                title = edit_title.getText().toString();
+
+                if (title == null || title.length() == 0){
+                    Message msg = handler.obtainMessage(handlerStateWarning);
+                    msg.obj = "标题不能为空";
+                    handler.sendMessage(msg);
+                    throw new IOException("Title is null");
+                }
+
+                content = edit_detail.getText().toString();
+
+                if (content == null || content.length() == 0){
+                    Message msg = handler.obtainMessage(handlerStateWarning);
+                    msg.obj = "内容不能为空";
+                    handler.sendMessage(msg);
+                    throw new IOException("Content is null");
+                }
+
+                RequestBody requestBody;
+
+                if (location == null || location.length() == 0){
+                    requestBody = builder
+                            .addFormDataPart("title", title)
+                            .addFormDataPart("content", content)
+                            .build();
+                }
+                else {
+                    requestBody = builder
+                            .addFormDataPart("title", title)
+                            .addFormDataPart("content", content)
+                            .addFormDataPart("location", location)
+                            .build();
+                }
                 // TO DO：修改参数并添加判断
-                RequestBody requestBody = builder
-                        .addFormDataPart("title", "test")
-                        .addFormDataPart("content", "test")
-                        .addFormDataPart("location", "test")
-                        .build();
                 // create a file to write bitmap data
 
 

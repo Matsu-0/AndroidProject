@@ -50,26 +50,40 @@
             android:textSize="16dp"
             android:textStyle="bold" />
 
-        <TextView
-            android:id="@+id/location_text"
-            android:layout_width="300dp"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:textSize="24dp" />
+        <RelativeLayout
+            android:id="@+id/location_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+            <TextView
+                android:id="@+id/location_text"
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:gravity="left"
+                android:textSize="20dp"
+                android:text="位置："/>
 
-        <com.w4lle.library.NineGridlayout
-            android:id="@+id/iv_ngrid_layout"
-            android:layout_width="320dp"
-            android:layout_height="133dp"
-            android:layout_below="@+id/publish_audio_detail"
-            android:layout_margin="20dp" />
+            <Button
+                android:id="@+id/add_position_audio"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="220dp"
+                android:text="获取位置"
+                tools:ignore="NotSibling" />
+        </RelativeLayout>
+
+        <VideoView
+            android:id="@+id/audio_layout"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:background="@drawable/imageviewboundshape"
+            android:padding="3dip"/>
 
 
         <RelativeLayout
             android:id="@+id/button_layout_audio"
             android:layout_width="wrap_content"
-            android:layout_height="62dp"
-            android:layout_below="@+id/video_layout">
+            android:layout_height="62dp">
 
             <Button
                 android:id="@+id/record_sound"
@@ -96,14 +110,7 @@
                 android:text="清空音频"
                 tools:ignore="NotSibling" />
         </RelativeLayout>
-        <Button
-            android:id="@+id/add_position_audio"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="10dp"
-            android:layout_toStartOf="@+id/publish_video"
-            android:text="获取位置"
-            tools:ignore="NotSibling" />
+
 
         <Button
             android:id="@+id/publish_button_audio"
