@@ -37,6 +37,7 @@ public class PublishAudio extends AppCompatActivity {
     private NineGridlayout nineGridlayout;
     private static final int handlerStateWarning = 0;
     private final int REQUEST_CODE = 111;
+    static final int TAKE_VIDEO_RETURN_CODE = 1;
     private static final String TAG = "PublishAudio";
     private String dataFile;
     @SuppressLint("HandlerLeak")
@@ -84,6 +85,16 @@ public class PublishAudio extends AppCompatActivity {
                 startActivityForResult(intent, REQUEST_CODE);
             }
         });
+
+        button_loadAudio.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent();
+                intent.setType("audio/*"); //选择视频 (mp4 3gp 是android支持的视频格式)
+                intent.setAction(Intent.ACTION_GET_CONTENT);
+                startActivityForResult(intent, TAKE_VIDEO_RETURN_CODE);
+            }
+        });
     }
 
     @Override
@@ -94,10 +105,19 @@ public class PublishAudio extends AppCompatActivity {
             if (requestCode == REQUEST_CODE) {
                 //得到录音的音频文件及路径
                 Uri dataUri = data.getData();
+                Log.d("111",dataUri.toString());
+                dataFile = getRealPathFromURI(dataUri);
+                Log.d(TAG, "dataFile: " + dataFile);
+            }
+            else if(requestCode == TAKE_VIDEO_RETURN_CODE) {
+                //得到录音的音频文件及路径
+                Uri dataUri = data.getData();
+                Log.d("111",dataUri.toString());
                 dataFile = getRealPathFromURI(dataUri);
                 Log.d(TAG, "dataFile: " + dataFile);
             }
         }
+
     }
 
     public String getRealPathFromURI(Uri contentUri) {

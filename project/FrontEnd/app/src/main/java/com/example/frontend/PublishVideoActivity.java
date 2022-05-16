@@ -1,20 +1,26 @@
 package com.example.frontend;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.FileProvider;
 
 import android.annotation.SuppressLint;
+import android.content.ContentResolver;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.FileUtils;
 import android.os.Handler;
 import android.os.Message;
 import android.provider.MediaStore;
+import android.provider.OpenableColumns;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -22,6 +28,7 @@ import android.widget.VideoView;
 
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
@@ -45,6 +52,7 @@ public class PublishVideoActivity extends AppCompatActivity {
     static final int VIDEO_RETURN_CODE = 0;
     static final int TAKE_VIDEO_RETURN_CODE = 1;
     private Uri videoUri;
+    private String dataFile;
     private static final int handlerStateWarning = 0;
     @SuppressLint("HandlerLeak")
     private Handler handler = new Handler(){
@@ -126,16 +134,10 @@ public class PublishVideoActivity extends AppCompatActivity {
         });
     }
 
-    public String getRealPathFromURI(Uri contentUri) {
 
-        String[] proj = { MediaStore.Images.Media.DATA };
-        Cursor cursor = managedQuery(contentUri, proj, null, null, null);
-        int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
-        cursor.moveToFirst();
-        return cursor.getString(column_index);
 
-    }
 
+    @RequiresApi(api = Build.VERSION_CODES.Q)
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -162,6 +164,7 @@ public class PublishVideoActivity extends AppCompatActivity {
         MyThreadVideo(String request){
             requestUrl = request;
         }
+        @RequiresApi(api = Build.VERSION_CODES.Q)
         @Override
         public void run() {
             try {
@@ -173,10 +176,32 @@ public class PublishVideoActivity extends AppCompatActivity {
 
                 MultipartBody.Builder builder = new MultipartBody.Builder()
                         .setType(MultipartBody.FORM);
-                Log.d("videoUri",videoUri.toString());
-                File f = new File(new URI(videoUri.toString()));
-                RequestBody fileBody = RequestBody.create(MEDIA_TYPE_VIDEO, f);
-                builder.addFormDataPart("video", f.getName(), fileBody);
+                File file = null;
+                //android10以上转换
+                if (videoUri.getScheme().equals(ContentResolver.SCHEME_FILE)) {
+                    file = new File(videoUri.getPath());
+                } else if (videoUri.getScheme().equals(ContentResolver.SCHEME_CONTENT)) {
+                    //把文件复制到沙盒目录
+                    ContentResolver contentResolver = PublishVideoActivity.this.getContentResolver();
+                    Cursor cursor = contentResolver.query(videoUri, null, null, null, null);
+                    if (cursor.moveToFirst()) {
+                        @SuppressLint("Range") String displayName = cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME));
+                        try {
+                            InputStream is = contentResolver.openInputStream(videoUri);
+                            File cache = new File(PublishVideoActivity.this.getExternalCacheDir().getAbsolutePath(), Math.round((Math.random() + 1) * 1000) + displayName);
+                            FileOutputStream fos = new FileOutputStream(cache);
+                            FileUtils.copy(is, fos);
+                            file = cache;
+                            fos.close();
+                            is.close();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+
+                RequestBody fileBody = RequestBody.create(MEDIA_TYPE_VIDEO, file);
+                builder.addFormDataPart("video", file.getName(), fileBody);
 
                 // TO DO：修改参数并添加判断
                 RequestBody requestBody = builder
