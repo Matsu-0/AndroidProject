@@ -250,7 +250,7 @@ public class PersonFragment extends Fragment {
                 Log.d(LOG_TAG, "1");
                 OkHttpClient client = new OkHttpClient();
                 //3.构建MultipartBody
-                SharedPreferences sharedPreferences = getActivity().getSharedPreferences("set",MODE_PRIVATE);
+                SharedPreferences sharedPreferences = getActivity().getSharedPreferences("login",MODE_PRIVATE);
                 String cookie = sharedPreferences.getString("session","");
                 Log.d(LOG_TAG, cookie);
 

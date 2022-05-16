@@ -167,11 +167,12 @@ public class PublishPicActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 location = getProvince();
+
                 if (location != null && location.length() != 0){
                     location_text.setText("位置："+location);
                 }
                 else{
-                    location_text.setText("");
+                    location_text.setText("位置：");
                 }
             }
         });

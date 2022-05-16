@@ -54,18 +54,35 @@
             android:textSize="16dp"
             android:textStyle="bold" />
 
-        <TextView
-            android:id="@+id/location_text"
-            android:layout_width="300dp"
+        <RelativeLayout
+            android:id="@+id/location_view"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:gravity="center"
-            android:textSize="24dp" />
+            android:layout_below="@+id/publish_pic">
+            <TextView
+                android:id="@+id/location_text"
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:gravity="left"
+                android:textSize="20dp"
+                android:text="位置："/>
+
+            <Button
+                android:id="@+id/add_position_pic"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="220dp"
+                android:text="获取位置"
+                tools:ignore="NotSibling" />
+        </RelativeLayout>
+
 
         <com.w4lle.library.NineGridlayout
             android:id="@+id/iv_ngrid_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/publish_pic_detail"
+            android:layout_below="@+id/location_view"
             android:layout_margin="20dp" />
 
         <RelativeLayout
@@ -100,21 +117,13 @@
                 android:text="清空图片"
                 tools:ignore="NotSibling" />
         </RelativeLayout>
-        <Button
-            android:id="@+id/add_position_pic"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="10dp"
-            android:layout_toStartOf="@+id/publish_pic"
-            android:text="获取位置"
-            tools:ignore="NotSibling" />
+
 
         <Button
             android:id="@+id/publish_button_pic"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="10dp"
-
             android:text="发布"
             tools:ignore="NotSibling" />
     </LinearLayout>
