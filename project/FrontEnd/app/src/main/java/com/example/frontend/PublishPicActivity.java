@@ -40,6 +40,8 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
+
 import com.w4lle.library.NineGridlayout;
 
 import java.io.File;
@@ -62,6 +64,7 @@ import okhttp3.Response;
 public class PublishPicActivity extends AppCompatActivity {
     private Button button_loadPic, button_loadPos, button_launch, button_takePhoto, button_clearPhoto;
     private EditText edit_title, edit_detail;
+    private TextView location_text;
     private NineGridlayout nineGridlayout;
     private String title, content, location = null;
     private AlertDialog textTips;
@@ -69,13 +72,12 @@ public class PublishPicActivity extends AppCompatActivity {
     static final int PHOTO_RETURN_CODE = 0;
     static final int TAKE_PHOTO_RETURN_CODE = 1;
     private static final int PERMISSION_APPLY = 2;
-    private static final int OPEN_GPS_CODE = 1001;
-    private static final int LOCATION_CODE = 1000;
     private static final String TAG = "PublishPic";
 
     private List<String> path = new ArrayList<>();
     private String currentPhotoPath;
     private static final int handlerStateWarning = 0;
+    private static final int GPSError = 1;
     LocationManager locationManager;
 
     @SuppressLint("HandlerLeak")
@@ -90,11 +92,17 @@ public class PublishPicActivity extends AppCompatActivity {
                         .setMessage(res)
                         .create();
                 textTips.show();
-                Log.d("res", "!"+res);
                 if (res.equals("发布成功")){
-                    Log.d("状态","发布成功");
                     finish();
                 }
+            }
+            else if (msg.what == GPSError){
+                String res = (String) msg.obj;
+                textTips = new AlertDialog.Builder(PublishPicActivity.this)
+                        .setTitle("Tips:")
+                        .setMessage(res)
+                        .create();
+                textTips.show();
             }
         }
     };
@@ -117,19 +125,20 @@ public class PublishPicActivity extends AppCompatActivity {
         button_clearPhoto = (Button) findViewById(R.id.clear_all_pic);
         edit_title = (EditText) findViewById(R.id.publish_pic_title);
         edit_detail = (EditText) findViewById(R.id.publish_pic_detail);
+        location_text = (TextView) findViewById(R.id.location_text);
         nineGridlayout = findViewById(R.id.iv_ngrid_layout);
 
         button_loadPic.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(PublishPicActivity.this, MultiImageSelectorActivity.class);
-// whether show camera
+                // whether show camera
                 intent.putExtra(MultiImageSelectorActivity.EXTRA_SHOW_CAMERA, false);
-// max select image amount
+                // max select image amount
                 intent.putExtra(MultiImageSelectorActivity.EXTRA_SELECT_COUNT, 9);
-// select mode (MultiImageSelectorActivity.MODE_SINGLE OR MultiImageSelectorActivity.MODE_MULTI)
+                // select mode (MultiImageSelectorActivity.MODE_SINGLE OR MultiImageSelectorActivity.MODE_MULTI)
                 intent.putExtra(MultiImageSelectorActivity.EXTRA_SELECT_MODE, MultiImageSelectorActivity.MODE_MULTI);
-// default select images (support array list)
+                // default select images (support array list)
                 intent.putStringArrayListExtra(MultiImageSelectorActivity.EXTRA_DEFAULT_SELECTED_LIST, (ArrayList<String>) path);
                 startActivityForResult(intent, PHOTO_RETURN_CODE);
             }
@@ -158,7 +167,12 @@ public class PublishPicActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 location = getProvince();
-                Log.d("location", location);
+                if (location != null && location.length() != 0){
+                    location_text.setText("位置："+location);
+                }
+                else{
+                    location_text.setText("");
+                }
             }
         });
 
@@ -322,7 +336,6 @@ public class PublishPicActivity extends AppCompatActivity {
 
     @TargetApi(Build.VERSION_CODES.M)
     public String getProvince() {
-
         // 动态权限申请
         if (Build.VERSION.SDK_INT >= 23) {
             if(ContextCompat.checkSelfPermission(PublishPicActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION)
@@ -411,6 +424,9 @@ public class PublishPicActivity extends AppCompatActivity {
                 Log.i("GPS ", "location：" + p);
             } else {
                 Log.i("GPS ", "获取位置信息失败，请检查是否开启GPS,是否授权");
+                Message msg = handler.obtainMessage(GPSError);
+                msg.obj = "定位失败，请重试";
+                handler.sendMessage(msg);
             }
         }
         return p;

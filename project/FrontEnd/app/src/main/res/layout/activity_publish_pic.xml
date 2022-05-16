@@ -54,6 +54,13 @@
             android:textSize="16dp"
             android:textStyle="bold" />
 
+        <TextView
+            android:id="@+id/location_text"
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:textSize="24dp" />
+
         <com.w4lle.library.NineGridlayout
             android:id="@+id/iv_ngrid_layout"
             android:layout_width="match_parent"
@@ -99,7 +106,7 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="10dp"
             android:layout_toStartOf="@+id/publish_pic"
-            android:text="打开位置"
+            android:text="获取位置"
             tools:ignore="NotSibling" />
 
         <Button
