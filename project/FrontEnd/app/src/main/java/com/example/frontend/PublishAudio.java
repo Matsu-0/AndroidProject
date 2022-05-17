@@ -9,6 +9,7 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -36,16 +37,17 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 public class PublishAudio extends AppCompatActivity {
-    private Button button_loadAudio, button_loadPos, button_launch, button_recordAudio;
-    private VideoView audio_View;
+    private Button button_loadAudio, button_loadPos, button_launch, button_recordAudio, button_playAudio, button_clearAudio;
+    //private VideoView audio_View;
+    private MediaPlayer audio_View = new MediaPlayer();
     private static final int handlerStateWarning = 0;
     private final int REQUEST_CODE = 111;
     static final int LOAD_AUDIO_RETURN_CODE = 1;
     private static final String TAG = "PublishAudio";
     private EditText edit_title, edit_detail;
-    private TextView location_text;
+    private TextView location_text, audio_filename;
     private String title, content, location = null;
-
+    private boolean haveAudio = false;
     private String dataFile;
     @SuppressLint("HandlerLeak")
     private Handler handler = new Handler(){
@@ -74,11 +76,14 @@ public class PublishAudio extends AppCompatActivity {
         button_loadPos = (Button) findViewById(R.id.add_position_audio);
         button_launch = (Button) findViewById(R.id.publish_button_audio);
         button_recordAudio = (Button) findViewById(R.id.record_sound);
-        audio_View = findViewById(R.id.audio_layout);
+        button_clearAudio = (Button) findViewById(R.id.clear_all_audio);
+        button_playAudio = (Button) findViewById(R.id.audio_play);
+        //audio_View = findViewById(R.id.audio_layout);
 
         edit_title = (EditText) findViewById(R.id.publish_audio_title);
         edit_detail = (EditText) findViewById(R.id.publish_audio_detail);
         location_text = (TextView) findViewById(R.id.location_text);
+        audio_filename = (TextView) findViewById(R.id.audio_filename);
 
         button_launch.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -101,11 +106,47 @@ public class PublishAudio extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent();
-                intent.setType("audio/*"); //选择视频 (mp4 3gp 是android支持的视频格式)
+                intent.setType("audio/*");
                 intent.setAction(Intent.ACTION_GET_CONTENT);
                 startActivityForResult(intent, LOAD_AUDIO_RETURN_CODE);
             }
         });
+
+        button_clearAudio.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                audio_View.release();//停止播放视频,并且释放
+                changeButton(false);
+                dataFile = null;
+            }
+        });
+
+        button_playAudio.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (haveAudio){
+                    if (audio_View.isPlaying()){
+                        audio_View.pause();
+                        button_playAudio.setText("播放");
+                    }
+                    else {
+                        audio_View.start();
+                        button_playAudio.setText("暂停");
+                    }
+                }
+                else {
+                    Message msg = handler.obtainMessage(handlerStateWarning);
+                    msg.obj = "未添加音频";
+                    handler.sendMessage(msg);
+                }
+            }
+        });
+    }
+
+    @Override
+    protected void onDestroy(){
+        super.onDestroy();
+        audio_View.release();
     }
 
     @Override
@@ -117,16 +158,54 @@ public class PublishAudio extends AppCompatActivity {
                 //得到录音的音频文件及路径
                 Uri dataUri = data.getData();
                 dataFile = getRealPathFromURI(dataUri);
+                try{
+                    audio_View.release();
+                    audio_View = null;
+                    audio_View = new MediaPlayer();
+                    audio_View.setDataSource(dataFile);
+                    audio_View.prepare();
+                }
+                catch (Exception e)
+                {
+                    e.printStackTrace();
+                }
+                changeButton(true);
+                audio_filename.setText(dataFile);
                 Log.d(TAG, "dataFile: " + dataFile);
             }
             else if(requestCode == LOAD_AUDIO_RETURN_CODE) {
                 //得到录音的音频文件及路径
                 Uri dataUri = data.getData();
                 dataFile = getRealPathFromURI(dataUri);
+                try{
+                    audio_View.release();
+                    audio_View = null;
+                    audio_View = new MediaPlayer();
+                    audio_View.setDataSource(dataFile);
+                    audio_View.prepare();
+                }
+                catch (Exception e)
+                {
+                    e.printStackTrace();
+                }
+                changeButton(true);
+                audio_filename.setText(dataFile);
                 Log.d(TAG, "dataFile: " + dataFile);
             }
         }
 
+    }
+
+    private void changeButton(boolean nextState) {
+        if (nextState) {
+            haveAudio = true;
+            button_playAudio.setText("播放");
+        }
+        else {
+            haveAudio = false;
+            button_playAudio.setText("无法播放");
+            audio_filename.setText("未添加音频");
+        }
     }
 
     public String getRealPathFromURI(Uri contentUri) {
