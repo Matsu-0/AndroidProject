@@ -4,24 +4,20 @@ import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.FileProvider;
 
 import android.annotation.SuppressLint;
 import android.content.ContentResolver;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.FileUtils;
 import android.os.Handler;
 import android.os.Message;
 import android.provider.MediaStore;
 import android.provider.OpenableColumns;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -33,11 +29,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URI;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
 import java.util.Objects;
 
 import okhttp3.Call;
@@ -91,13 +82,14 @@ public class PublishVideoActivity extends AppCompatActivity {
         editor.putString("title", edit_title.getText().toString());
         editor.putString("content", edit_detail.getText().toString());
         editor.putString("location", location);
+        editor.putString("datafile", dataFile);
         editor.commit();
     }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_publish_video);
-
+        dataFile = "";
         button_loadVideo = (Button) findViewById(R.id.add_video);
         button_loadPos = (Button) findViewById(R.id.add_position_video);
         button_launch = (Button) findViewById(R.id.publish_button_video);
@@ -123,6 +115,13 @@ public class PublishVideoActivity extends AppCompatActivity {
             }
             else{
                 location_text.setText("位置：");
+            }
+            dataFile = mPreferences.getString("datafile","");
+            if (dataFile != null && dataFile.length() != 0){
+                videoUri = Uri.parse(dataFile);
+                videoLayout.setVideoURI(videoUri);
+                videoLayout.setVisibility(View.VISIBLE);
+                videoLayout.start();
             }
         }
         else {
@@ -159,6 +158,7 @@ public class PublishVideoActivity extends AppCompatActivity {
                 videoLayout.stopPlayback();//停止播放视频,并且释放
                 videoLayout.suspend();
                 videoLayout.setVisibility(View.GONE);
+                dataFile = "";
             }
         });
 
@@ -195,6 +195,8 @@ public class PublishVideoActivity extends AppCompatActivity {
         if(requestCode == TAKE_VIDEO_RETURN_CODE){
             if(resultCode == RESULT_OK){
                 videoUri = data.getData();
+                File file = getFile(videoUri);
+                dataFile = file.getAbsolutePath();
                 videoLayout.setVideoURI(videoUri);
                 videoLayout.setVisibility(View.VISIBLE);
                 videoLayout.start();
@@ -203,11 +205,41 @@ public class PublishVideoActivity extends AppCompatActivity {
         else if(requestCode == VIDEO_RETURN_CODE){
             if(resultCode == RESULT_OK){
                 videoUri = data.getData();
+                File file = getFile(videoUri);
+                dataFile = file.getAbsolutePath();
                 videoLayout.setVideoURI(videoUri);
                 videoLayout.setVisibility(View.VISIBLE);
                 videoLayout.start();
             }
         }
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.Q)
+    private File getFile(Uri uri){
+        //android10以上转换
+        File file = null;
+        if (uri.getScheme().equals(ContentResolver.SCHEME_FILE)) {
+            file = new File(uri.getPath());
+        } else if (uri.getScheme().equals(ContentResolver.SCHEME_CONTENT)) {
+            //把文件复制到沙盒目录
+            ContentResolver contentResolver = PublishVideoActivity.this.getContentResolver();
+            Cursor cursor = contentResolver.query(uri, null, null, null, null);
+            if (cursor.moveToFirst()) {
+                @SuppressLint("Range") String displayName = cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME));
+                try {
+                    InputStream is = contentResolver.openInputStream(uri);
+                    File cache = new File(PublishVideoActivity.this.getExternalCacheDir().getAbsolutePath(), Math.round((Math.random() + 1) * 1000) + displayName);
+                    FileOutputStream fos = new FileOutputStream(cache);
+                    FileUtils.copy(is, fos);
+                    file = cache;
+                    fos.close();
+                    is.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return file;
     }
 
     class MyThreadVideo extends Thread{
@@ -227,30 +259,8 @@ public class PublishVideoActivity extends AppCompatActivity {
 
                 MultipartBody.Builder builder = new MultipartBody.Builder()
                         .setType(MultipartBody.FORM);
-                File file = null;
-                //android10以上转换
-                if (videoUri.getScheme().equals(ContentResolver.SCHEME_FILE)) {
-                    file = new File(videoUri.getPath());
-                } else if (videoUri.getScheme().equals(ContentResolver.SCHEME_CONTENT)) {
-                    //把文件复制到沙盒目录
-                    ContentResolver contentResolver = PublishVideoActivity.this.getContentResolver();
-                    Cursor cursor = contentResolver.query(videoUri, null, null, null, null);
-                    if (cursor.moveToFirst()) {
-                        @SuppressLint("Range") String displayName = cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME));
-                        try {
-                            InputStream is = contentResolver.openInputStream(videoUri);
-                            File cache = new File(PublishVideoActivity.this.getExternalCacheDir().getAbsolutePath(), Math.round((Math.random() + 1) * 1000) + displayName);
-                            FileOutputStream fos = new FileOutputStream(cache);
-                            FileUtils.copy(is, fos);
-                            file = cache;
-                            fos.close();
-                            is.close();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }
-
+                File file = getFile(videoUri);
+                dataFile = file.getAbsolutePath();
                 RequestBody fileBody = RequestBody.create(MEDIA_TYPE_VIDEO, file);
                 builder.addFormDataPart("video", file.getName(), fileBody);
 

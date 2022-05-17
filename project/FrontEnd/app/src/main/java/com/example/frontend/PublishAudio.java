@@ -81,6 +81,7 @@ public class PublishAudio extends AppCompatActivity {
         editor.putString("title", edit_title.getText().toString());
         editor.putString("content", edit_detail.getText().toString());
         editor.putString("location", location);
+        editor.putString("datafile", dataFile);
         editor.commit();
     }
 
@@ -114,6 +115,22 @@ public class PublishAudio extends AppCompatActivity {
             else{
                 location_text.setText("位置：");
             }
+            dataFile = mPreferences.getString("datafile",null);
+            try{
+                audio_View.release();
+                audio_View = null;
+                audio_View = new MediaPlayer();
+                audio_View.setDataSource(dataFile);
+                audio_View.prepare();
+                changeButton(true);
+            }
+            catch (Exception e)
+            {
+                changeButton(false);
+                e.printStackTrace();
+            }
+
+
         }
         else {
             // 如果不是从草稿箱导入

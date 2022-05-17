@@ -119,6 +119,10 @@ public class PublishPicActivity extends AppCompatActivity {
         editor.putString("title", edit_title.getText().toString());
         editor.putString("content", edit_detail.getText().toString());
         editor.putString("location", location);
+        editor.putInt("pic_num", path.size());
+        for (int i = 0; i < path.size(); ++i){
+            editor.putString("pic_"+i, path.get(i));
+        }
         editor.commit();
     }
 
@@ -156,6 +160,14 @@ public class PublishPicActivity extends AppCompatActivity {
             }
             else{
                 location_text.setText("位置：");
+            }
+            int num = mPreferences.getInt("pic_num", 0);
+            if (num <= 9 && num > 0) {
+                for (int i = 0; i < num; ++i){
+                    path.add( mPreferences.getString("pic_"+i,""));
+                    PicListAdapter adapter = new PicListAdapter(PublishPicActivity.this, path);
+                    nineGridlayout.setAdapter(adapter);
+                }
             }
         }
         else {
