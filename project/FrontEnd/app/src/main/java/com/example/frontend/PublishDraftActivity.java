@@ -38,8 +38,8 @@ public class PublishDraftActivity extends AppCompatActivity {
         }
     };
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    protected void onStart() {
+        super.onStart();
         setContentView(R.layout.activity_publish_draft);
         SharedPreferences listPreferences = getSharedPreferences(sharedPrefFile, MODE_PRIVATE);
         int size = listPreferences.getInt("size", -1);
