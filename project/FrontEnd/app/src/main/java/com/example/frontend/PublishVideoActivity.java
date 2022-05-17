@@ -59,6 +59,9 @@ public class PublishVideoActivity extends AppCompatActivity {
     private TextView location_text;
     private String title, content, location = null;
 
+    private SharedPreferences mPreferences;
+    private String sharedPrefFile ="com.example.frontend.draft";
+
     private static final int handlerStateWarning = 0;
     @SuppressLint("HandlerLeak")
     private Handler handler = new Handler(){
@@ -78,6 +81,18 @@ public class PublishVideoActivity extends AppCompatActivity {
             }
         }
     };
+
+    @Override
+    public void onPause() {
+        super.onPause();  // 首先调用父类的方法
+
+        SharedPreferences.Editor editor = mPreferences.edit();
+        editor.putInt("type", 2);
+        editor.putString("title", edit_title.getText().toString());
+        editor.putString("content", edit_detail.getText().toString());
+        editor.putString("location", location);
+        editor.commit();
+    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -94,6 +109,33 @@ public class PublishVideoActivity extends AppCompatActivity {
         edit_title = (EditText) findViewById(R.id.publish_video_title);
         edit_detail = (EditText) findViewById(R.id.publish_video_detail);
         location_text = (TextView) findViewById(R.id.location_text);
+
+
+        Intent intent = getIntent();
+        int message = intent.getIntExtra("LOAD_DRAFT", -1);
+        if (message != -1){
+            mPreferences = getSharedPreferences(sharedPrefFile + "_" + message, MODE_PRIVATE);
+            edit_title.setText( mPreferences.getString("title","") );
+            edit_detail.setText( mPreferences.getString("content","") );
+            location = mPreferences.getString("location","");
+            if (location != null && location.length() != 0){
+                location_text.setText("位置："+location);
+            }
+            else{
+                location_text.setText("位置：");
+            }
+        }
+        else {
+            // 如果不是从草稿箱导入
+            SharedPreferences temp = getSharedPreferences(sharedPrefFile, MODE_PRIVATE);
+            int cur = temp.getInt("size", -1);
+            cur += 1;
+            mPreferences = getSharedPreferences(sharedPrefFile + "_" +  cur, MODE_PRIVATE);
+            SharedPreferences.Editor editor = temp.edit();
+            editor.putInt("size", cur);
+            editor.commit();
+        }
+
         button_launch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

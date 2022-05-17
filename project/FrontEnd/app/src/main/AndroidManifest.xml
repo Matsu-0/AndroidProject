@@ -1,16 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-
-    package="com.example.frontend" >
+    package="com.example.frontend">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
-
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE " />
-
     <uses-permission
         android:name="android.permission.CAMERA"
         android:required="true" />
@@ -26,16 +23,21 @@
         android:requestLegacyExternalStorage="true"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.FrontEnd" >
+        android:theme="@style/Theme.FrontEnd">
+        <activity
+            android:name=".PublishDraftActivity"
+            android:exported="false"
+            android:label="草稿箱"/>
         <activity
             android:name=".PublishVideoActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:label="发布视频"/>
 
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="com.example.android.frontend"
             android:exported="false"
-            android:grantUriPermissions="true" >
+            android:grantUriPermissions="true">
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/file_path" />
@@ -43,7 +45,8 @@
 
         <activity
             android:name=".PublishAudio"
-            android:exported="false" />
+            android:exported="false"
+            android:label="发布音频"/>
         <activity
             android:name=".PublishPicActivity"
             android:exported="false"
@@ -75,9 +78,10 @@
         <activity
             android:name=".MainActivity"
             android:exported="true"
-            android:label="@string/app_name" >
+            android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>

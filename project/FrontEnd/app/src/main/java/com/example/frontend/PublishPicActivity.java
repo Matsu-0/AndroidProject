@@ -80,6 +80,9 @@ public class PublishPicActivity extends AppCompatActivity {
     private static final int GPSError = 1;
     LocationManager locationManager;
 
+    private SharedPreferences mPreferences;
+    private String sharedPrefFile ="com.example.frontend.draft";
+
     @SuppressLint("HandlerLeak")
     private Handler handler = new Handler(){
         @Override
@@ -107,6 +110,18 @@ public class PublishPicActivity extends AppCompatActivity {
         }
     };
 
+    @Override
+    public void onPause() {
+        super.onPause();  // 首先调用父类的方法
+
+        SharedPreferences.Editor editor = mPreferences.edit();
+        editor.putInt("type", 1);
+        editor.putString("title", edit_title.getText().toString());
+        editor.putString("content", edit_detail.getText().toString());
+        editor.putString("location", location);
+        editor.commit();
+    }
+
     protected void onDestroy() {
         if (textTips != null) {
             textTips.dismiss();
@@ -118,6 +133,7 @@ public class PublishPicActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_publish_pic);
+
         button_loadPic = (Button) findViewById(R.id.add_pic);
         button_loadPos = (Button) findViewById(R.id.add_position_pic);
         button_launch = (Button) findViewById(R.id.publish_button_pic);
@@ -128,6 +144,30 @@ public class PublishPicActivity extends AppCompatActivity {
         location_text = (TextView) findViewById(R.id.location_text);
         nineGridlayout = findViewById(R.id.iv_ngrid_layout);
 
+        Intent intent = getIntent();
+        int message = intent.getIntExtra("LOAD_DRAFT", -1);
+        if (message != -1){
+            mPreferences = getSharedPreferences(sharedPrefFile + "_" + message, MODE_PRIVATE);
+            edit_title.setText( mPreferences.getString("title","") );
+            edit_detail.setText( mPreferences.getString("content","") );
+            location = mPreferences.getString("location","");
+            if (location != null && location.length() != 0){
+                location_text.setText("位置："+location);
+            }
+            else{
+                location_text.setText("位置：");
+            }
+        }
+        else {
+            // 如果不是从草稿箱导入
+            SharedPreferences temp = getSharedPreferences(sharedPrefFile, MODE_PRIVATE);
+            int cur = temp.getInt("size", -1);
+            cur += 1;
+            mPreferences = getSharedPreferences(sharedPrefFile + "_" +  cur, MODE_PRIVATE);
+            SharedPreferences.Editor editor = temp.edit();
+            editor.putInt("size", cur);
+            editor.commit();
+        }
         button_loadPic.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
