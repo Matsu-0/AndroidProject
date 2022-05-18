@@ -77,7 +77,9 @@ public class PublishPicActivity extends AppCompatActivity {
     private List<String> path = new ArrayList<>();
     private String currentPhotoPath;
     private static final int handlerStateWarning = 0;
-    private static final int GPSError = 1;
+    private static final int handlerGPSError = 1;
+    private static final int handlerOpenGPS = 2;
+    private static final int handlerChangeLocation = 3;
     LocationManager locationManager;
 
     private SharedPreferences mPreferences;
@@ -100,13 +102,21 @@ public class PublishPicActivity extends AppCompatActivity {
                     finish();
                 }
             }
-            else if (msg.what == GPSError){
+            else if (msg.what == handlerGPSError){
                 String res = (String) msg.obj;
                 textTips = new AlertDialog.Builder(PublishPicActivity.this)
                         .setTitle("Tips:")
                         .setMessage(res)
                         .create();
                 textTips.show();
+            }
+            else if (msg.what == handlerChangeLocation){
+                if (location != null && location.length() != 0){
+                    location_text.setText("位置："+location);
+                }
+                else{
+                    location_text.setText("位置：");
+                }
             }
         }
     };
@@ -224,13 +234,44 @@ public class PublishPicActivity extends AppCompatActivity {
             @RequiresApi(api = Build.VERSION_CODES.M)
             @Override
             public void onClick(View v) {
-                location = getProvince();
-
-                if (location != null && location.length() != 0){
-                    location_text.setText("位置："+location);
+                // 动态权限申请
+                if (Build.VERSION.SDK_INT >= 23) {
+                    if(ContextCompat.checkSelfPermission(PublishPicActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION)
+                            != PackageManager.PERMISSION_GRANTED) {
+                        // 申请读写内存卡内容的权限
+                        Log.d("是否授权","false1");
+                        ActivityCompat.requestPermissions(PublishPicActivity.this,
+                                new String[]{Manifest.permission.ACCESS_COARSE_LOCATION},
+                                PERMISSION_APPLY);
+                    }
                 }
-                else{
-                    location_text.setText("位置：");
+
+                // 动态权限申请
+                if (Build.VERSION.SDK_INT >= 23) {
+                    if(ContextCompat.checkSelfPermission(PublishPicActivity.this, Manifest.permission.ACCESS_FINE_LOCATION)
+                            != PackageManager.PERMISSION_GRANTED) {
+                        // 申请读写内存卡内容的权限
+                        Log.d("是否授权","false2");
+                        ActivityCompat.requestPermissions(PublishPicActivity.this,
+                                new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                                PERMISSION_APPLY);
+                    }
+                }
+                locationManager = (LocationManager) PublishPicActivity.this.getSystemService(Context.LOCATION_SERVICE);        // 默认Android GPS定位实例
+                if (PublishPicActivity.this.checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION)
+                        == PackageManager.PERMISSION_GRANTED) {
+                    //判断GPS是否开启，没有开启，则开启
+                    //Log.d("是否授权","true");
+                    if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+                        //Log.d("是否开启","false");
+                        //跳转到手机打开GPS页面
+                        Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                        PublishPicActivity.this.startActivity(intent);
+                    }
+                    else {
+                        PublishPicActivity.MyThreadGetLocation locationThread = new PublishPicActivity.MyThreadGetLocation();// TO DO
+                        locationThread.start();// TO DO
+                    }
                 }
             }
         });
@@ -391,75 +432,48 @@ public class PublishPicActivity extends AppCompatActivity {
             }
         }
     }
-
-
-    @TargetApi(Build.VERSION_CODES.M)
-    public String getProvince() {
-        // 动态权限申请
-        if (Build.VERSION.SDK_INT >= 23) {
-            if(ContextCompat.checkSelfPermission(PublishPicActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION)
-                    != PackageManager.PERMISSION_GRANTED) {
-                // 申请读写内存卡内容的权限
-                Log.d("是否授权","false1");
-                ActivityCompat.requestPermissions(PublishPicActivity.this,
-                        new String[]{Manifest.permission.ACCESS_COARSE_LOCATION},
-                        PERMISSION_APPLY);
-            }
+    class MyThreadGetLocation extends Thread {
+        @Override
+        public void run(){
+            location = getProvince();
+            Message msg = handler.obtainMessage(handlerChangeLocation);
+            handler.sendMessage(msg);
+            return;
         }
 
-        // 动态权限申请
-        if (Build.VERSION.SDK_INT >= 23) {
-            if(ContextCompat.checkSelfPermission(PublishPicActivity.this, Manifest.permission.ACCESS_FINE_LOCATION)
-                    != PackageManager.PERMISSION_GRANTED) {
-                // 申请读写内存卡内容的权限
-                Log.d("是否授权","false2");
-                ActivityCompat.requestPermissions(PublishPicActivity.this,
-                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                        PERMISSION_APPLY);
-            }
-        }
+        @TargetApi(Build.VERSION_CODES.M)
+        public String getProvince() {
 
-        Log.i("GPS ", "getProvince");
-        locationManager = (LocationManager) PublishPicActivity.this.getSystemService(Context.LOCATION_SERVICE);        // 默认Android GPS定位实例
+            Log.i("GPS ", "getProvince");
 
-        Location location = null;
-        String p = "";
-        // 是否已经授权
-        if (PublishPicActivity.this.checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION)
-                == PackageManager.PERMISSION_GRANTED) {
-            //判断GPS是否开启，没有开启，则开启
-            //Log.d("是否授权","true");
-            if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-                //Log.d("是否开启","false");
-                //跳转到手机打开GPS页面
-                Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-                PublishPicActivity.this.startActivity(intent);
-            } else {
+            Location location = null;
+            String p = "";
+            // 是否已经授权
+            if (PublishPicActivity.this.checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION)
+                    == PackageManager.PERMISSION_GRANTED) {
+                //判断GPS是否开启，没有开启，则开启
+                //Log.d("是否授权","true");
+
                 Criteria criteria = new Criteria();
                 criteria.setAccuracy(Criteria.ACCURACY_FINE);
                 String provider = locationManager.getBestProvider(criteria, true);
-
                 locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
                         2000, 8, new LocationListener() {
-
                             // Provider的状态在可用、暂时不可用和无服务三个状态直接切换时触发此函数
                             @Override
                             public void onStatusChanged(String provider, int status, Bundle extras) {
                                 Log.d(TAG, "onStatusChanged");
                             }
-
                             // Provider被enable时触发此函数，比如GPS被打开
                             @Override
                             public void onProviderEnabled(String provider) {
                                 Log.d(TAG, "onProviderEnabled");
-
                             }
 
                             // Provider被disable时触发此函数，比如GPS被关闭
                             @Override
                             public void onProviderDisabled(String provider) {
                                 Log.d(TAG, "onProviderDisabled");
-
                             }
 
                             //当坐标改变时触发此函数，如果Provider传进相同的坐标，它就不会被触发
@@ -471,44 +485,45 @@ public class PublishPicActivity extends AppCompatActivity {
                             }
                         });
                 location = locationManager.getLastKnownLocation(provider);
-            }
 
-            if (location != null) {
-                Log.i("GPS ", "获取位置信息成功");
-                Log.i("GPS ", "经度：" + location.getLatitude());
-                Log.i("GPS ", "纬度：" + location.getLongitude());
 
-                // 获取地址信息
-                p = getAddress(location.getLatitude(), location.getLongitude());
-                Log.i("GPS ", "location：" + p);
-            } else {
-                Log.i("GPS ", "获取位置信息失败，请检查是否开启GPS,是否授权");
-                Message msg = handler.obtainMessage(GPSError);
-                msg.obj = "定位失败，请重试";
-                handler.sendMessage(msg);
-            }
-        }
-        return p;
-    }
+                if (location != null) {
+                    Log.i("GPS ", "获取位置信息成功");
+                    Log.i("GPS ", "经度：" + location.getLatitude());
+                    Log.i("GPS ", "纬度：" + location.getLongitude());
 
-    /*
-     * 根据经度纬度 获取国家，省份
-     * */
-    public String getAddress(double latitude, double longitude) {
-        String cityName = "";
-        List<Address> addList = null;
-        Geocoder ge = new Geocoder(PublishPicActivity.this);
-        try {
-            addList = ge.getFromLocation(latitude, longitude, 1);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        if (addList != null && addList.size() > 0) {
-            for (int i = 0; i < addList.size(); i++) {
-                Address ad = addList.get(i);
-                cityName += ad.getCountryName() + " " + ad.getLocality();
+                    // 获取地址信息
+                    p = getAddress(location.getLatitude(), location.getLongitude());
+                    Log.i("GPS ", "location：" + p);
+                } else {
+                    Log.i("GPS ", "获取位置信息失败，请检查是否开启GPS,是否授权");
+                    Message msg = handler.obtainMessage(handlerGPSError);
+                    msg.obj = "定位失败，请重试";
+                    handler.sendMessage(msg);
+                }
             }
+            return p;
         }
-        return cityName;
+
+        /*
+         * 根据经度纬度 获取国家，省份
+         * */
+        public String getAddress(double latitude, double longitude) {
+            String cityName = "";
+            List<Address> addList = null;
+            Geocoder ge = new Geocoder(PublishPicActivity.this);
+            try {
+                addList = ge.getFromLocation(latitude, longitude, 1);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            if (addList != null && addList.size() > 0) {
+                for (int i = 0; i < addList.size(); i++) {
+                    Address ad = addList.get(i);
+                    cityName += ad.getCountryName() + " " + ad.getLocality();
+                }
+            }
+            return cityName;
+        }
     }
 }
