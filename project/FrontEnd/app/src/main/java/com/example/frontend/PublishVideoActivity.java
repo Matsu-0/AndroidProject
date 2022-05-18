@@ -265,8 +265,7 @@ public class PublishVideoActivity extends AppCompatActivity {
 
                 MultipartBody.Builder builder = new MultipartBody.Builder()
                         .setType(MultipartBody.FORM);
-                File file = getFile(videoUri);
-                dataFile = file.getAbsolutePath();
+                File file = new File(dataFile);
                 RequestBody fileBody = RequestBody.create(MEDIA_TYPE_VIDEO, file);
                 builder.addFormDataPart("video", file.getName(), fileBody);
 
