@@ -20,17 +20,14 @@ import static android.content.Context.MODE_PRIVATE;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Bitmap;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
 
-import java.lang.reflect.Array;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -83,7 +80,7 @@ public class DraftListAdapter extends
                 context.startActivity(intent);
             }
             else if (type== 3){
-                Intent intent = new Intent(context, PublishAudio.class);//想调到哪个界面就把login改成界面对应的activity名
+                Intent intent = new Intent(context, PublishAudioActivity.class);//想调到哪个界面就把login改成界面对应的activity名
                 intent.putExtra("LOAD_DRAFT", draft_num);
                 context.startActivity(intent);
             }

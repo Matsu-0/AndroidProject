@@ -20,9 +20,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.VideoView;
-
-import com.w4lle.library.NineGridlayout;
 
 import java.io.File;
 import java.io.IOException;
@@ -36,14 +33,14 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-public class PublishAudio extends AppCompatActivity {
+public class PublishAudioActivity extends AppCompatActivity {
     private Button button_loadAudio, button_loadPos, button_launch, button_recordAudio, button_playAudio, button_clearAudio;
     //private VideoView audio_View;
     private MediaPlayer audio_View = new MediaPlayer();
     private static final int handlerStateWarning = 0;
     private final int REQUEST_CODE = 111;
     static final int LOAD_AUDIO_RETURN_CODE = 1;
-    private static final String TAG = "PublishAudio";
+    private static final String TAG = "PublishAudioActivity";
     private EditText edit_title, edit_detail;
     private TextView location_text, audio_filename;
     private String title, content, location = null;
@@ -60,12 +57,15 @@ public class PublishAudio extends AppCompatActivity {
             super.handleMessage(msg);
             if (msg.what == handlerStateWarning) {
                 String res = (String) msg.obj;
-                AlertDialog textTips = new AlertDialog.Builder(PublishAudio.this)
+                AlertDialog textTips = new AlertDialog.Builder(PublishAudioActivity.this)
                         .setTitle("Tips:")
                         .setMessage(res)
                         .create();
                 textTips.show();
-                if (res == "发布成功"){
+                if (res.equals("发布成功")){
+                    SharedPreferences.Editor editor = mPreferences.edit();
+                    editor.putInt("type", 0);
+                    editor.commit();
                     finish();
                 }
             }
@@ -123,6 +123,7 @@ public class PublishAudio extends AppCompatActivity {
                 audio_View.setDataSource(dataFile);
                 audio_View.prepare();
                 changeButton(true);
+                audio_filename.setText(dataFile);
             }
             catch (Exception e)
             {
@@ -147,7 +148,7 @@ public class PublishAudio extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 String requestUrl = "http://43.138.84.226:8080/publish/audio";
-                PublishAudio.MyThreadAudio myThread = new PublishAudio.MyThreadAudio(requestUrl);// TO DO
+                PublishAudioActivity.MyThreadAudio myThread = new PublishAudioActivity.MyThreadAudio(requestUrl);// TO DO
                 myThread.start();// TO DO
             }
         });

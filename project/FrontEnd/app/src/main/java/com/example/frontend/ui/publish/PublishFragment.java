@@ -1,36 +1,26 @@
 package com.example.frontend.ui.publish;
 
-import static android.content.Context.MODE_PRIVATE;
-
 import android.annotation.SuppressLint;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.example.frontend.InfoeditActivity;
-import com.example.frontend.PublishAudio;
+import com.example.frontend.PublishAudioActivity;
 import com.example.frontend.PublishDraftActivity;
 import com.example.frontend.PublishPicActivity;
 import com.example.frontend.PublishVideoActivity;
 import com.example.frontend.R;
 import com.example.frontend.databinding.FragmentPublishBinding;
-
-import me.nereo.multi_image_selector.MultiImageSelector;
-import me.nereo.multi_image_selector.MultiImageSelectorActivity;
 
 public class PublishFragment extends Fragment {
     private String sharedPrefFile ="com.example.frontend.draft";
@@ -83,7 +73,7 @@ public class PublishFragment extends Fragment {
         button_audio.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getActivity(), PublishAudio.class);//想调到哪个界面就把login改成界面对应的activity名
+                Intent intent = new Intent(getActivity(), PublishAudioActivity.class);//想调到哪个界面就把login改成界面对应的activity名
                 startActivity(intent);
             }
         });

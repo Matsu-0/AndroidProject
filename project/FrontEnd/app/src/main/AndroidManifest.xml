@@ -44,7 +44,7 @@
         </provider>
 
         <activity
-            android:name=".PublishAudio"
+            android:name=".PublishAudioActivity"
             android:exported="false"
             android:label="发布音频"/>
         <activity
