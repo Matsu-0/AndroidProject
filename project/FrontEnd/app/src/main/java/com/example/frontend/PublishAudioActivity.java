@@ -49,6 +49,7 @@ public class PublishAudioActivity extends AppCompatActivity {
     private String sharedPrefFile ="com.example.frontend.draft";
 
     private boolean haveAudio = false;
+    private boolean tag_send_succeed = false;
     private String dataFile;
     @SuppressLint("HandlerLeak")
     private Handler handler = new Handler(){
@@ -63,9 +64,7 @@ public class PublishAudioActivity extends AppCompatActivity {
                         .create();
                 textTips.show();
                 if (res.equals("发布成功")){
-                    SharedPreferences.Editor editor = mPreferences.edit();
-                    editor.putInt("type", 0);
-                    editor.commit();
+                    tag_send_succeed = true;
                     finish();
                 }
             }
@@ -77,7 +76,12 @@ public class PublishAudioActivity extends AppCompatActivity {
         super.onPause();  // 首先调用父类的方法
 
         SharedPreferences.Editor editor = mPreferences.edit();
-        editor.putInt("type", 3);
+        if (tag_send_succeed){
+            editor.putInt("type", 0);
+        }
+        else{
+            editor.putInt("type", 3);
+        }
         editor.putString("title", edit_title.getText().toString());
         editor.putString("content", edit_detail.getText().toString());
         editor.putString("location", location);

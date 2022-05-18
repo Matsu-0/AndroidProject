@@ -52,7 +52,7 @@ public class PublishVideoActivity extends AppCompatActivity {
 
     private SharedPreferences mPreferences;
     private String sharedPrefFile ="com.example.frontend.draft";
-
+    private boolean tag_send_succeed = false;
     private static final int handlerStateWarning = 0;
     @SuppressLint("HandlerLeak")
     private Handler handler = new Handler(){
@@ -66,7 +66,8 @@ public class PublishVideoActivity extends AppCompatActivity {
                         .setMessage(res)
                         .create();
                 textTips.show();
-                if (res == "发布成功"){
+                if (res.equals("发布成功")){
+                    tag_send_succeed = true;
                     finish();
                 }
             }
@@ -78,7 +79,12 @@ public class PublishVideoActivity extends AppCompatActivity {
         super.onPause();  // 首先调用父类的方法
 
         SharedPreferences.Editor editor = mPreferences.edit();
-        editor.putInt("type", 2);
+        if (tag_send_succeed){
+            editor.putInt("type", 0);
+        }
+        else{
+            editor.putInt("type", 2);
+        }
         editor.putString("title", edit_title.getText().toString());
         editor.putString("content", edit_detail.getText().toString());
         editor.putString("location", location);
