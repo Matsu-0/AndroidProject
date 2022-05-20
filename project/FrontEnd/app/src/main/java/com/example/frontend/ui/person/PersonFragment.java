@@ -29,7 +29,11 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.frontend.DraftListAdapter;
+import com.example.frontend.DynamicListAdapter;
 import com.example.frontend.FollowersActivity;
 import com.example.frontend.InfoeditActivity;
 import com.example.frontend.FollowersActivity;
@@ -38,6 +42,8 @@ import com.example.frontend.R;
 import com.example.frontend.SignupActivity;
 import com.example.frontend.databinding.FragmentPersonBinding;
 
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
@@ -58,6 +64,9 @@ import okhttp3.Response;
 public class PersonFragment extends Fragment {
 
     private FragmentPersonBinding binding;
+    private RecyclerView mRecyclerView;
+    private DynamicListAdapter mAdapter;
+
     private static final String LOG_TAG = PersonFragment.class.getSimpleName();
     private Button edit_button;
     private Bitmap image;
@@ -70,6 +79,8 @@ public class PersonFragment extends Fragment {
     private static final int handlerStateGetPhoto = 4;
     private static final int handlerStateGetFollowerNum = 5;
     private static final int handlerStateGetBlackerNum = 6;
+    private static final int handlerStateGetDynamics = 7;
+    private JSONArray dynamic_list;
     @SuppressLint("HandlerLeak")
     private Handler handler = new Handler(){
         @Override
@@ -109,6 +120,27 @@ public class PersonFragment extends Fragment {
                 String res = "黑名单\n" + (String) msg.obj + "人";
                 blacker.setText(res);
             }
+            else if (msg.what == handlerStateGetDynamics) {
+                try {
+                    JSONObject result = new JSONObject(Objects.requireNonNull(msg.obj).toString()); // String 转 JSONObject
+                    dynamic_list = result.getJSONArray("dynamics_list");
+                    mAdapter = new DynamicListAdapter(getActivity(), dynamic_list);
+                    // Connect the adapter with the recycler view.
+                    mRecyclerView.setAdapter(mAdapter);
+                    // Give the recycler view a default layout manager.
+                    mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()){
+                                                       @Override
+                                                       public boolean canScrollVertically() {
+                                                           return false;
+                                                       }
+                                                   });
+
+                    mAdapter.notifyDataSetChanged();
+                    Log.d("111",dynamic_list.toString());
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
         }
     };
 
@@ -136,6 +168,11 @@ public class PersonFragment extends Fragment {
         introduction = (TextView) getActivity().findViewById(R.id.person_introduction);
         follower = (TextView) getActivity().findViewById(R.id.follow);
         blacker =(TextView) getActivity().findViewById(R.id.blacklist);
+
+        dynamic_list = new JSONArray();
+        mRecyclerView = getActivity().findViewById(R.id.dynamic_recycle_view_person);
+        // Create an adapter and supply the data to be displayed.
+
 
     }
 
@@ -177,6 +214,10 @@ public class PersonFragment extends Fragment {
         String requestUrl3 = "http://43.138.84.226:8080/interact/show_ignore_num";
         PersonFragment.MyThreadGetBlackerNum myThread3 = new PersonFragment.MyThreadGetBlackerNum(requestUrl3);// TO DO
         myThread3.start();// TO DO
+
+        String requestUrl4 = "http://43.138.84.226:8080/demonstrate/own_dynamics";
+        PersonFragment.MyThreadGetPersonDynamic myThread4 = new PersonFragment.MyThreadGetPersonDynamic(requestUrl4, 1);// TO DO
+        myThread4.start();// TO DO
     }
 
     @Override
@@ -362,6 +403,51 @@ public class PersonFragment extends Fragment {
                 if (response.isSuccessful()){
                     if (response.code() == 200){
                         Message msg = handler.obtainMessage(handlerStateGetBlackerNum);
+                        msg.obj = Objects.requireNonNull(response.body()).string();
+                        handler.sendMessage(msg);
+                    }
+                    else {
+                        Message msg = handler.obtainMessage(handlerStateWarning);
+                        msg.obj = Objects.requireNonNull(response.body()).string();
+                        handler.sendMessage(msg);
+                    }
+
+                } else {
+                    throw new IOException("Unexpected code " + response);
+                }
+            }
+            catch (Exception e)
+            {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    class MyThreadGetPersonDynamic extends Thread{
+        private  String requestUrl;
+        MyThreadGetPersonDynamic(String request, int page){
+            requestUrl = request + "/" + page;
+        }
+        @Override
+        public void run() {
+            try {
+                OkHttpClient client = new OkHttpClient();
+                //3.构建MultipartBody
+                SharedPreferences sharedPreferences = getActivity().getSharedPreferences("login",MODE_PRIVATE);
+                String cookie = sharedPreferences.getString("session","");
+                Log.d(LOG_TAG, cookie);
+                Request request = new Request.Builder()
+                        .url(requestUrl)
+                        .get()
+                        .addHeader("cookie",cookie)
+                        .build();
+
+                Call call = client.newCall(request);
+                Response response = call.execute();
+                Log.d(LOG_TAG, response.toString());
+                if (response.isSuccessful()){
+                    if (response.code() == 200){
+                        Message msg = handler.obtainMessage(handlerStateGetDynamics);
                         msg.obj = Objects.requireNonNull(response.body()).string();
                         handler.sendMessage(msg);
                     }
