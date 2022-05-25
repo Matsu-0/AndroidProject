@@ -72,13 +72,6 @@
                 tools:ignore="NotSibling" />
         </RelativeLayout>
 
-        <VideoView
-            android:id="@+id/audio_layout"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:background="@drawable/imageviewboundshape"
-            android:padding="3dip"/>
-
         <RelativeLayout
             android:id="@+id/audio_player"
             android:layout_width="wrap_content"

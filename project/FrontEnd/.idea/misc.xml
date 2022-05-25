@@ -32,11 +32,20 @@
         <entry key="..\:/Users/Matsu/Desktop/DDL/homework/AndroidProject/project/FrontEnd/app/src/main/res/layout/activity_main.xml" value="0.29257246376811596" />
         <entry key="..\:/useful/DDL/homework/AndroidProject/project/FrontEnd/app/src/main/res/drawable/imageviewboundshape.xml" value="0.379" />
         <entry key="..\:/useful/DDL/homework/AndroidProject/project/FrontEnd/app/src/main/res/layout/activity_blacklist.xml" value="0.27708333333333335" />
+        <entry key="..\:/useful/DDL/homework/AndroidProject/project/FrontEnd/app/src/main/res/layout/activity_followers.xml" value="0.2916666666666667" />
         <entry key="..\:/useful/DDL/homework/AndroidProject/project/FrontEnd/app/src/main/res/layout/activity_infoedit.xml" value="0.3383152173913043" />
         <entry key="..\:/useful/DDL/homework/AndroidProject/project/FrontEnd/app/src/main/res/layout/activity_login.xml" value="0.1540020263424519" />
         <entry key="..\:/useful/DDL/homework/AndroidProject/project/FrontEnd/app/src/main/res/layout/activity_main.xml" value="0.18414387031408308" />
+        <entry key="..\:/useful/DDL/homework/AndroidProject/project/FrontEnd/app/src/main/res/layout/activity_others.xml" value="0.21302083333333333" />
         <entry key="..\:/useful/DDL/homework/AndroidProject/project/FrontEnd/app/src/main/res/layout/activity_publish_audio.xml" value="0.22760416666666666" />
+        <entry key="..\:/useful/DDL/homework/AndroidProject/project/FrontEnd/app/src/main/res/layout/activity_publish_draft.xml" value="0.21302083333333333" />
         <entry key="..\:/useful/DDL/homework/AndroidProject/project/FrontEnd/app/src/main/res/layout/activity_publish_pic.xml" value="0.32518115942028986" />
+        <entry key="..\:/useful/DDL/homework/AndroidProject/project/FrontEnd/app/src/main/res/layout/activity_publish_video.xml" value="0.21302083333333333" />
+        <entry key="..\:/useful/DDL/homework/AndroidProject/project/FrontEnd/app/src/main/res/layout/activity_show_dynamic.xml" value="0.21302083333333333" />
+        <entry key="..\:/useful/DDL/homework/AndroidProject/project/FrontEnd/app/src/main/res/layout/comment_item.xml" value="0.2916666666666667" />
+        <entry key="..\:/useful/DDL/homework/AndroidProject/project/FrontEnd/app/src/main/res/layout/draft_item.xml" value="0.21302083333333333" />
+        <entry key="..\:/useful/DDL/homework/AndroidProject/project/FrontEnd/app/src/main/res/layout/dynamic_item_pic.xml" value="0.4" />
+        <entry key="..\:/useful/DDL/homework/AndroidProject/project/FrontEnd/app/src/main/res/layout/follower_item.xml" value="0.1" />
         <entry key="..\:/useful/DDL/homework/AndroidProject/project/FrontEnd/app/src/main/res/layout/fragment_person.xml" value="0.264" />
         <entry key="..\:/useful/DDL/homework/AndroidProject/project/FrontEnd/app/src/main/res/menu/bottom_nav_menu.xml" value="0.20729166666666668" />
         <entry key="app/src/main/res/layout/activity_blacklist.xml" value="0.20288753799392098" />
