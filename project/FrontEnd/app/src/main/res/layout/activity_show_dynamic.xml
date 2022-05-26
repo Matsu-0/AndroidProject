@@ -53,25 +53,52 @@
                 android:padding="5dp"
                 android:textSize="16dp"
                 android:textStyle="bold" />
-            <RelativeLayout
-                android:id="@+id/location_view"
+
+            <LinearLayout
+                android:id="@+id/time_and_like"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content">
 
                 <TextView
-                    android:id="@+id/location_text"
-                    android:layout_width="240dp"
+                    android:id="@+id/dynamic_time"
+                    android:layout_width="120dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="10dp"
                     android:layout_marginTop="10dp"
                     android:layout_marginEnd="10dp"
                     android:layout_marginBottom="10dp"
                     android:gravity="left"
-                    android:text="位置："
-                    android:visibility="gone"
+                    android:text="时间："
                     android:textSize="20dp" />
 
-            </RelativeLayout>
+                <TextView
+                    android:id="@+id/dynamic_like"
+                    android:layout_width="120dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:layout_marginBottom="10dp"
+                    android:gravity="left"
+                    android:text="点赞：人"
+                    android:textSize="20dp" />
+            </LinearLayout>
+
+
+
+            <TextView
+                android:id="@+id/location_text"
+                android:layout_width="240dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginBottom="10dp"
+                android:gravity="left"
+                android:text="位置："
+                android:visibility="gone"
+                android:textSize="20dp" />
+
 
             <com.w4lle.library.NineGridlayout
                 android:id="@+id/iv_ngrid_layout"
@@ -113,6 +140,17 @@
                 android:visibility="gone"
                 android:background="@drawable/imageviewboundshape"
                 android:padding="3dip"/>
+            <TextView
+                android:id="@+id/content_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginBottom="10dp"
+                android:gravity="left"
+                android:text=" 评论"
+                android:textSize="28dp" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recyclerview"
