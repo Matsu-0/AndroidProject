@@ -69,7 +69,7 @@
             android:layout_alignParentBottom="true"
             android:layout_marginStart="60dp"
             android:layout_marginBottom="15dp"
-            android:text="关注" />
+            android:text="关注"/>
 
         <Button
             android:id="@+id/black_button"

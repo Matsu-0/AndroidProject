@@ -16,6 +16,7 @@ package com.example.frontend;
  */
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -41,6 +42,7 @@ public class ListAdapter extends
     private final LayoutInflater mInflater;
     private int TYPE_ITEM = 0;//正常的Item
     private int TYPE_FOOT = 1;//尾部刷新
+    private Context context;
 
     class WordViewHolder extends RecyclerView.ViewHolder
             implements View.OnClickListener {
@@ -67,7 +69,9 @@ public class ListAdapter extends
 
         @Override
         public void onClick(View view) {
-            Log.d("111",email);
+            Intent intent = new Intent(context, OthersActivity.class);
+            intent.putExtra("KEY_EMAIL", email);
+            context.startActivity(intent);
             // Get the position of the item that was clicked.
 //            int mPosition = getLayoutPosition();
 //
@@ -89,6 +93,7 @@ public class ListAdapter extends
         this.mNameList = NameList;
         this.mBitmapList = AvatarList;
         this.mEmailList = EmailList;
+        this.context = context;
     }
 
     /**

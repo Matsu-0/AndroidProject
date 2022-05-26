@@ -5,6 +5,8 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
@@ -30,6 +32,8 @@ import android.widget.ImageView;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
@@ -50,6 +54,10 @@ import okhttp3.Response;
 
 public class OthersActivity extends AppCompatActivity {
     private static final String LOG_TAG = OthersActivity.class.getSimpleName();
+    private RecyclerView mRecyclerView;
+    private DynamicListAdapter mAdapter;
+    private JSONArray dynamic_list;
+
     private String othersEmail;
 
     private Button follow_button, black_button;
@@ -57,11 +65,15 @@ public class OthersActivity extends AppCompatActivity {
     private ImageView pic;
     private TextView name, introduction;
 
+    private Boolean isFollow, isBlackList;
     private static final int handlerStateWarning = 0;
     private static final int handlerStateUpdatePhoto = 1;
     private static final int handlerStateUpdateName = 2;
     private static final int handlerStateUpdateIntroduction = 3;
     private static final int handlerStateGetPhoto = 4;
+    private static final int handlerStateUpdateFollowButton = 5;
+    private static final int handlerStateUpdateBlackButton = 6;
+    private static final int handlerStateGetDynamics = 7;
 
     @SuppressLint("HandlerLeak")
     private Handler handler = new Handler(){
@@ -87,11 +99,54 @@ public class OthersActivity extends AppCompatActivity {
                 String res = (String) msg.obj;
                 introduction.setText(res);
             }
+            else if (msg.what == handlerStateUpdateFollowButton) {
+                int res = (int) msg.obj;
+                if (res == 0) {
+                    follow_button.setText("关注");
+                    isFollow = false;
+                }
+                else{
+                    follow_button.setText("取消关注");
+                    isFollow = true;
+                }
+            }
+            else if (msg.what == handlerStateUpdateBlackButton) {
+                int res = (int) msg.obj;
+                if (res == 0) {
+                    black_button.setText("屏蔽");
+                    isBlackList = false;
+                }
+                else{
+                    black_button.setText("取消屏蔽");
+                    isBlackList = true;
+                }
+            }
             else if (msg.what == handlerStateGetPhoto) {
                 String res = (String) msg.obj;
                 String requestUrl = "http://43.138.84.226:8080/user/show_avator";
                 OthersActivity.MyThreadGetPhoto myThread = new OthersActivity.MyThreadGetPhoto(requestUrl, res);// TO DO
                 myThread.start();// TO DO
+            }
+            else if (msg.what == handlerStateGetDynamics) {
+                try {
+                    JSONObject result = new JSONObject(Objects.requireNonNull(msg.obj).toString()); // String 转 JSONObject
+                    dynamic_list = result.getJSONArray("dynamics_list");
+                    mAdapter = new DynamicListAdapter(OthersActivity.this, dynamic_list);
+                    // Connect the adapter with the recycler view.
+                    mRecyclerView.setAdapter(mAdapter);
+                    // Give the recycler view a default layout manager.
+                    mRecyclerView.setLayoutManager(new LinearLayoutManager(OthersActivity.this){
+                        @Override
+                        public boolean canScrollVertically() {
+                            return false;
+                        }
+                    });
+
+                    mAdapter.notifyDataSetChanged();
+                    Log.d("111",dynamic_list.toString());
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
             }
         }
     };
@@ -102,20 +157,25 @@ public class OthersActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_others);
         //needs Intent.putExtra("email", email)
-        othersEmail = getIntent().getStringExtra("email");
+        othersEmail = getIntent().getStringExtra("KEY_EMAIL");
         follow_button = (Button)findViewById(R.id.follow_button);
         black_button = (Button)findViewById(R.id.black_button);
         pic = (ImageView) findViewById(R.id.person_image);
         name = (TextView) findViewById(R.id.person_name);
         introduction = (TextView) findViewById(R.id.person_introduction);
-        String requestUrl = "http://43.138.84.226:8080/user/show_user_data";
+        String requestUrl = "http://43.138.84.226:8080/demonstrate/show_other_user_data/" + othersEmail;
         OthersActivity.MyThreadInitData myThread = new OthersActivity.MyThreadInitData(requestUrl);// TO DO
         myThread.start();// TO DO
+        isFollow = false;
+        isBlackList = false;
 
         follow_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 // 处理关注/取关
+                Log.d("AAA", isFollow.toString());
+                OthersActivity.MyThreadFollow myThread = new OthersActivity.MyThreadFollow(isFollow, othersEmail);// TO DO
+                myThread.start();// TO DO
                 // TO DO
             }
         });
@@ -129,6 +189,7 @@ public class OthersActivity extends AppCompatActivity {
             }
         });
     }
+
 
     class MyThreadInitData extends Thread{
         private  String requestUrl;
@@ -167,6 +228,14 @@ public class OthersActivity extends AppCompatActivity {
                         Message msg3 = handler.obtainMessage(handlerStateGetPhoto);
                         msg3.obj = Objects.requireNonNull(result.getString("avator"));
                         handler.sendMessage(msg3);
+
+                        Message msg4 = handler.obtainMessage(handlerStateUpdateFollowButton);
+                        msg4.obj = Objects.requireNonNull(result.getInt("is_follow"));
+                        handler.sendMessage(msg4);
+
+                        Message msg5 = handler.obtainMessage(handlerStateUpdateBlackButton);
+                        msg5.obj = Objects.requireNonNull(result.getInt("is_ignore"));
+                        handler.sendMessage(msg5);
                     }
                     else {
                         Message msg = handler.obtainMessage(handlerStateWarning);
@@ -235,39 +304,55 @@ public class OthersActivity extends AppCompatActivity {
         }
     }
 
-    class MyThreadUpdateInfo extends Thread{
-        private String requestUrl, name, introduction;
-        MyThreadUpdateInfo(String request, String nameStr, String introductionStr){
-            requestUrl = request;
-            name = nameStr;
-            introduction = introductionStr;
+    class MyThreadFollow extends Thread{
+        private  String requestUrl, email;
+        private int FollowStatus;
+        MyThreadFollow(Boolean isFollow, String email){
+            this.email = email;
+            if (isFollow){
+                requestUrl = "http://43.138.84.226:8080/interact/not_follow_someone";
+
+                FollowStatus = 1;
+            }
+            else{
+                requestUrl = "http://43.138.84.226:8080/interact/follow_someone";
+                FollowStatus = 0;
+            }
         }
         @Override
         public void run() {
             try {
                 OkHttpClient client = new OkHttpClient();
-
+                //3.构建MultipartBody
                 SharedPreferences sharedPreferences = getSharedPreferences("login",MODE_PRIVATE);
                 String cookie = sharedPreferences.getString("session","");
-
+                Log.d(LOG_TAG, cookie);
                 RequestBody formBody = new FormBody.Builder()
-                        .add("nickname", name)
-                        .add("introduction", introduction)
+                        .add("email", email)
                         .build();
-
                 Request request = new Request.Builder()
                         .url(requestUrl)
                         .post(formBody)
                         .addHeader("cookie",cookie)
                         .build();
-
+                Log.d(LOG_TAG, cookie);
                 Call call = client.newCall(request);
                 Response response = call.execute();
-
+                Log.d(LOG_TAG, response.toString());
                 if (response.isSuccessful()) {
-                    Message msg = handler.obtainMessage(handlerStateWarning);
-                    msg.obj = Objects.requireNonNull(response.body()).string();
-                    handler.sendMessage(msg);
+
+                    if (response.code() == 200){
+                        Message msg1 = handler.obtainMessage(handlerStateUpdateFollowButton);
+                        msg1.obj = Objects.requireNonNull(1-FollowStatus);
+                        handler.sendMessage(msg1);
+
+
+                    }
+                    else {
+                        Message msg = handler.obtainMessage(handlerStateWarning);
+                        msg.obj = Objects.requireNonNull(response.body()).string();
+                        handler.sendMessage(msg);
+                    }
                 } else {
                     throw new IOException("Unexpected code " + response);
                 }
