@@ -6,96 +6,110 @@
     android:layout_height="match_parent"
     tools:context=".OthersActivity">
 
-    <RelativeLayout
-        android:id="@+id/person_Info"
-        android:layout_width="380dp"
-        android:layout_height="200dp"
-        android:orientation="vertical"
+    <ScrollView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.516"
+        app:layout_constraintHorizontal_bias="0.483"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.048">
-
-        <TextView
-            android:id="@+id/person_name"
-            android:layout_width="97dp"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:layout_marginStart="12dp"
-            android:layout_marginTop="12dp"
-            android:layout_marginEnd="20dp"
-            android:layout_toEndOf="@+id/person_image"
-            android:background="@drawable/imageviewboundshape"
-            android:padding="3dip"
-            android:text="Name"
-            android:textAlignment="center"
-            android:textSize="16sp"
-            tools:layout_editor_absoluteX="199dp"
-            tools:layout_editor_absoluteY="101dp" />
-
-        <ImageView
-            android:id="@+id/person_image"
-            android:layout_width="120dp"
-            android:layout_height="120dp"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentTop="true"
-            android:layout_marginStart="15dp"
-            android:layout_marginTop="10dp"
-            android:background="@drawable/imageviewboundshape"
-            android:padding="3dip"
-            tools:layout_editor_absoluteX="44dp"
-            tools:layout_editor_absoluteY="83dp"
-            tools:src="@tools:sample/avatars" />
-
-        <TextView
-            android:id="@+id/person_introduction"
-            android:layout_width="208dp"
-            android:layout_height="79dp"
-            android:layout_below="@+id/person_name"
-            android:layout_marginStart="13dp"
-            android:layout_marginTop="10dp"
-            android:layout_toEndOf="@+id/person_image"
-            android:background="@drawable/imageviewboundshape"
-            android:padding="3dip"
-            android:text="Introduction" />
-
-        <Button
-            android:id="@+id/follow_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentBottom="true"
-            android:layout_marginStart="60dp"
-            android:layout_marginBottom="15dp"
-            android:text="关注"/>
-
-        <Button
-            android:id="@+id/black_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentBottom="true"
-            android:layout_marginEnd="60dp"
-            android:layout_marginBottom="15dp"
-            android:text="屏蔽" />
-
-    </RelativeLayout>
-
-    <ScrollView
-        android:layout_width="380dp"
-        android:layout_height="480dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.516"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/person_Info"
-        app:layout_constraintVertical_bias="0.542">
-
+        app:layout_constraintVertical_bias="0.011">
         <LinearLayout
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="vertical" />
+            android:orientation="vertical"
+            >
+            <RelativeLayout
+                android:id="@+id/person_Info"
+                android:layout_width="380dp"
+                android:layout_height="200dp"
+                android:orientation="vertical"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.516"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.048">
+
+                <TextView
+                    android:id="@+id/person_name"
+                    android:layout_width="97dp"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentTop="true"
+                    android:layout_marginStart="12dp"
+                    android:layout_marginTop="12dp"
+                    android:layout_marginEnd="20dp"
+                    android:layout_toEndOf="@+id/person_image"
+                    android:background="@drawable/imageviewboundshape"
+                    android:padding="3dip"
+                    android:text="Name"
+                    android:textAlignment="center"
+                    android:textSize="16sp"
+                    tools:layout_editor_absoluteX="199dp"
+                    tools:layout_editor_absoluteY="101dp" />
+
+                <ImageView
+                    android:id="@+id/person_image"
+                    android:layout_width="120dp"
+                    android:layout_height="120dp"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentTop="true"
+                    android:layout_marginStart="15dp"
+                    android:layout_marginTop="10dp"
+                    android:background="@drawable/imageviewboundshape"
+                    android:padding="3dip"
+                    tools:layout_editor_absoluteX="44dp"
+                    tools:layout_editor_absoluteY="83dp"
+                    tools:src="@tools:sample/avatars" />
+
+                <TextView
+                    android:id="@+id/person_introduction"
+                    android:layout_width="208dp"
+                    android:layout_height="79dp"
+                    android:layout_below="@+id/person_name"
+                    android:layout_marginStart="13dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_toEndOf="@+id/person_image"
+                    android:background="@drawable/imageviewboundshape"
+                    android:padding="3dip"
+                    android:text="Introduction" />
+
+                <Button
+                    android:id="@+id/follow_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentBottom="true"
+                    android:layout_marginStart="60dp"
+                    android:layout_marginBottom="15dp"
+                    android:text="关注"/>
+
+                <Button
+                    android:id="@+id/black_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentBottom="true"
+                    android:layout_marginEnd="60dp"
+                    android:layout_marginBottom="15dp"
+                    android:text="屏蔽" />
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/dynamic_recycle_view_others"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="100dp">
+                </androidx.recyclerview.widget.RecyclerView>
+
+            </RelativeLayout>
+
+        </LinearLayout>
     </ScrollView>
 </androidx.constraintlayout.widget.ConstraintLayout>

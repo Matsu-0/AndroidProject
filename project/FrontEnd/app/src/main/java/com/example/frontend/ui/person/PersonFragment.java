@@ -124,7 +124,7 @@ public class PersonFragment extends Fragment {
                 try {
                     JSONObject result = new JSONObject(Objects.requireNonNull(msg.obj).toString()); // String 转 JSONObject
                     dynamic_list = result.getJSONArray("dynamics_list");
-                    mAdapter = new DynamicListAdapter(getActivity(), dynamic_list);
+                    mAdapter = new DynamicListAdapter(getActivity(), dynamic_list, 1);
                     // Connect the adapter with the recycler view.
                     mRecyclerView.setAdapter(mAdapter);
                     // Give the recycler view a default layout manager.

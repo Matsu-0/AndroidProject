@@ -50,14 +50,18 @@ public class DynamicListAdapter extends
     private final LayoutInflater mInflater;
     private final JSONArray dynamic_list;
     private Context context;
+    private int deleteType;
     private int TYPE_ITEM = 0;
     private int TYPE_PIC = 1;
     private int TYPE_VIDEO = 2;
     private int TYPE_AUDIO = 3;
+    private int DELETE_TYPE_BAN = 0;
+    private int DELETE_TYPE_USE = 1;
+    private int DELETE_TYPE_JUDGE = 2;
 
     class WordViewHolder extends RecyclerView.ViewHolder
             implements View.OnClickListener {
-        public final TextView dynamicTitleView, dynamicDetailView, dynamicLocationView, dynamicTimeView;
+        public final TextView dynamicTitleView, dynamicDetailView, dynamicLocationView, dynamicTimeView, dynamicTypeView;
         public final Button deleteButtonView;
         public final NineGridlayout picView;
         public JSONObject obj;
@@ -72,13 +76,18 @@ public class DynamicListAdapter extends
          * @param adapter The adapter that manages the the data and views
          *                for the RecyclerView.
          */
-        public WordViewHolder(View itemView, DynamicListAdapter adapter) {
+        public WordViewHolder(View itemView, DynamicListAdapter adapter, Boolean ifMyDynamic) {
             super(itemView);
             dynamicTitleView = itemView.findViewById(R.id.dynamic_title);
             dynamicDetailView = itemView.findViewById(R.id.dynamic_detail);
             dynamicLocationView = itemView.findViewById(R.id.dynamic_position);
             dynamicTimeView = itemView.findViewById(R.id.dynamic_time);
             deleteButtonView = itemView.findViewById(R.id.dynamic_delete);
+            dynamicTypeView = itemView.findViewById(R.id.dynamic_type);
+            if (!ifMyDynamic){
+                deleteButtonView.setVisibility(View.GONE);
+            }
+
             picView  = itemView.findViewById(R.id.grid_layout_pic);
             this.mAdapter = adapter;
             itemView.setOnClickListener(this);
@@ -86,6 +95,9 @@ public class DynamicListAdapter extends
 
         @Override
         public void onClick(View view) {
+            Intent intent = new Intent(context, ShowDynamicActivity.class);//想调到哪个界面就把login改成界面对应的activity名
+            intent.putExtra("dynamic_id", dynamic_num);
+            context.startActivity(intent);
 //            if (type== 1){
 //                Intent intent = new Intent(context, PublishPicActivity.class);//想调到哪个界面就把login改成界面对应的activity名
 //                intent.putExtra("LOAD_DRAFT", draft_num);
@@ -118,10 +130,11 @@ public class DynamicListAdapter extends
         }
     }
 
-    public DynamicListAdapter(Context context,JSONArray num) {
+    public DynamicListAdapter(Context context,JSONArray num, int type) {
         mInflater = LayoutInflater.from(context);
         this.dynamic_list = num;
         this.context = context;
+        this.deleteType = type;
     }
 
     /**
@@ -148,6 +161,16 @@ public class DynamicListAdapter extends
                                                                 int viewType) {
         // Inflate an item view.
         View mItemView;
+        Boolean isDeleteShow = true;
+        if (deleteType == DELETE_TYPE_BAN){
+            isDeleteShow = false;
+        }
+        else if (deleteType == DELETE_TYPE_USE){
+            isDeleteShow = true;
+        }
+        else if (deleteType == DELETE_TYPE_JUDGE){
+            isDeleteShow = true;
+        }
         if (viewType == TYPE_PIC) {
             mItemView = mInflater.inflate(
                     R.layout.dynamic_item_pic, parent, false);
@@ -164,7 +187,8 @@ public class DynamicListAdapter extends
             mItemView = mInflater.inflate(
                     R.layout.dynamic_item_pic, parent, false);
         }
-        return new WordViewHolder(mItemView, this);
+
+        return new WordViewHolder(mItemView, this, isDeleteShow);
     }
 
     //返回不同布局
@@ -207,6 +231,14 @@ public class DynamicListAdapter extends
             holder.dynamicDetailView.setText(holder.obj.getString("content"));
             holder.dynamicLocationView.setText(holder.obj.getString("location"));
             holder.dynamicTimeView.setText(holder.obj.getString("release_time"));
+            holder.type = getItemViewType(position);
+            if (holder.type == TYPE_VIDEO){
+                holder.dynamicTypeView.setText("视频");
+            } else if (holder.type == TYPE_AUDIO){
+                holder.dynamicTypeView.setText("音频");
+            } else if (holder.type == TYPE_PIC){
+                holder.dynamicTypeView.setText("图片");
+            }
             holder.dynamic_num = holder.obj.getInt("dynamic_id");
             holder.deleteButtonView.setOnClickListener(new View.OnClickListener() {
                 @Override
