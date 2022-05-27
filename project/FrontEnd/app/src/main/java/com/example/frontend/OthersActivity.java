@@ -68,7 +68,8 @@ public class OthersActivity extends AppCompatActivity {
     private ImageView pic;
     private TextView name, introduction;
 
-    private Boolean isFollow, isBlackList;
+    private Boolean isFollow, isBlackList, isFinish;
+    private int page = 1;
     private static final int handlerStateWarning = 0;
     private static final int handlerStateUpdatePhoto = 1;
     private static final int handlerStateUpdateName = 2;
@@ -77,6 +78,7 @@ public class OthersActivity extends AppCompatActivity {
     private static final int handlerStateUpdateFollowButton = 5;
     private static final int handlerStateUpdateBlackButton = 6;
     private static final int handlerStateGetDynamics = 7;
+    private static final int handlerStateDynamicsFinish = 8;
 
     @SuppressLint("HandlerLeak")
     private Handler handler = new Handler(){
@@ -138,23 +140,22 @@ public class OthersActivity extends AppCompatActivity {
             else if (msg.what == handlerStateGetDynamics) {
                 try {
                     JSONObject result = new JSONObject(Objects.requireNonNull(msg.obj).toString()); // String 转 JSONObject
-                    dynamic_list = result.getJSONArray("dynamics_list");
-                    mAdapter = new DynamicListAdapter(OthersActivity.this, dynamic_list, 0);
-                    // Connect the adapter with the recycler view.
-                    mRecyclerView.setAdapter(mAdapter);
-                    // Give the recycler view a default layout manager.
-                    mRecyclerView.setLayoutManager(new LinearLayoutManager(OthersActivity.this){
-                        @Override
-                        public boolean canScrollVertically() {
-                            return false;
-                        }
-                    });
+                    JSONArray temp = result.getJSONArray("dynamics_list");
+                    for (int i = 0; i < result.getInt("dynamics_num"); ++i ){ //
+                        dynamic_list.put(temp.getJSONObject(i));
+                    }
+
 
                     mAdapter.notifyDataSetChanged();
                     Log.d("111",dynamic_list.toString());
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
+            }
+            else if (msg.what == handlerStateDynamicsFinish) {
+                isFinish = true;
+                mAdapter.hasmore = false;
+                mAdapter.notifyDataSetChanged();
             }
         }
     };
@@ -176,7 +177,7 @@ public class OthersActivity extends AppCompatActivity {
 
         isFollow = false;
         isBlackList = false;
-
+        isFinish = false;
         follow_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -206,13 +207,49 @@ public class OthersActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
+        mAdapter = new DynamicListAdapter(OthersActivity.this, dynamic_list, 0);
+        // Connect the adapter with the recycler view.
+        mRecyclerView.setAdapter(mAdapter);
+        // Give the recycler view a default layout manager.
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+//        mRecyclerView.setLayoutManager(new LinearLayoutManager(OthersActivity.this){
+//            @Override
+//            public boolean canScrollVertically() {
+//                return false;
+//            }
+//        });
+        mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+                //滑动到底部
+                if (newState == mRecyclerView.SCROLL_STATE_IDLE) {
+                    //recyclerview滑动到底部,更新数据
+                    //加载更多数据
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            Log.d("111", page + "");
+                            getMoreData();
+                        }
+                    }, 3000);
+                }
+            }
+        });
         String requestUrl = "http://43.138.84.226:8080/demonstrate/show_other_user_data/" + othersEmail;
         OthersActivity.MyThreadInitData myThread = new OthersActivity.MyThreadInitData(requestUrl);// TO DO
         myThread.start();// TO DO
 
+        getMoreData();
+    }
+
+    private void getMoreData(){
+        if (isFinish)
+            return;
         String requestUrl2 = "http://43.138.84.226:8080/demonstrate/other_dynamics";
-        OthersActivity.MyThreadGetPersonDynamic myThread2 = new OthersActivity.MyThreadGetPersonDynamic(requestUrl2, 1, othersEmail);// TO DO
+        OthersActivity.MyThreadGetPersonDynamic myThread2 = new OthersActivity.MyThreadGetPersonDynamic(requestUrl2, page, othersEmail);// TO DO
         myThread2.start();// TO DO
+        page++;
     }
 
     class MyThreadInitData extends Thread{
@@ -479,6 +516,11 @@ public class OthersActivity extends AppCompatActivity {
                     if (response.code() == 200){
                         Message msg = handler.obtainMessage(handlerStateGetDynamics);
                         msg.obj = Objects.requireNonNull(response.body()).string();
+
+                        handler.sendMessage(msg);
+                    }
+                    else if (response.code() == 202){
+                        Message msg = handler.obtainMessage(handlerStateDynamicsFinish);
                         handler.sendMessage(msg);
                     }
                     else {

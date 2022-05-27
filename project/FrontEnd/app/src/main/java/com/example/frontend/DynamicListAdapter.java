@@ -25,6 +25,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
@@ -52,19 +53,23 @@ public class DynamicListAdapter extends
     private Context context;
     private int deleteType;
     private int TYPE_ITEM = 0;
+    private int TYPE_FOOT = 4;
     private int TYPE_PIC = 1;
     private int TYPE_VIDEO = 2;
     private int TYPE_AUDIO = 3;
     private int DELETE_TYPE_BAN = 0;
     private int DELETE_TYPE_USE = 1;
     private int DELETE_TYPE_JUDGE = 2;
+    public Boolean hasmore;
 
     class WordViewHolder extends RecyclerView.ViewHolder
             implements View.OnClickListener {
-        public final TextView dynamicTitleView, dynamicDetailView, dynamicLocationView, dynamicTimeView, dynamicTypeView;
+        public final TextView dynamicTitleView, dynamicDetailView, dynamicLocationView, dynamicTimeView, dynamicTypeView, dynamicFootView;
+        public final LinearLayout dynamicNormalView;
         public final Button deleteButtonView;
         public final NineGridlayout picView;
         public JSONObject obj;
+
         public int type, dynamic_num;
         final DynamicListAdapter mAdapter;
 
@@ -84,6 +89,9 @@ public class DynamicListAdapter extends
             dynamicTimeView = itemView.findViewById(R.id.dynamic_time);
             deleteButtonView = itemView.findViewById(R.id.dynamic_delete);
             dynamicTypeView = itemView.findViewById(R.id.dynamic_type);
+            dynamicFootView = itemView.findViewById(R.id.dynamic_loading);
+            dynamicNormalView = itemView.findViewById(R.id.dynamic_normal);
+
             if (!ifMyDynamic){
                 deleteButtonView.setVisibility(View.GONE);
             }
@@ -95,6 +103,8 @@ public class DynamicListAdapter extends
 
         @Override
         public void onClick(View view) {
+            if (type == TYPE_FOOT)
+                return;
             Intent intent = new Intent(context, ShowDynamicActivity.class);//想调到哪个界面就把login改成界面对应的activity名
             intent.putExtra("dynamic_id", dynamic_num);
             context.startActivity(intent);
@@ -132,6 +142,7 @@ public class DynamicListAdapter extends
 
     public DynamicListAdapter(Context context,JSONArray num, int type) {
         mInflater = LayoutInflater.from(context);
+        this.hasmore = true;
         this.dynamic_list = num;
         this.context = context;
         this.deleteType = type;
@@ -194,6 +205,9 @@ public class DynamicListAdapter extends
     //返回不同布局
     @Override
     public int getItemViewType(int position) {
+        if (position == getItemCount() - 1) {
+            return TYPE_FOOT;
+        }
         try {
             if (dynamic_list.getJSONObject(position).getInt("type") == 1){
                 return TYPE_PIC;
@@ -224,6 +238,16 @@ public class DynamicListAdapter extends
     @Override
     public void onBindViewHolder(DynamicListAdapter.WordViewHolder holder,
                                  int position) {
+        holder.type = getItemViewType(position);
+        if ( holder.type == TYPE_FOOT){
+            if (!hasmore){
+                holder.dynamicFootView.setText("已经到底啦，不要再翻了");
+            }
+            holder.dynamicFootView.setVisibility(View.VISIBLE);
+            holder.dynamicNormalView.setVisibility(View.GONE);
+
+            return;
+        }
         JSONObject obj = null;
         try {
             holder.obj = dynamic_list.getJSONObject(position);
@@ -231,7 +255,7 @@ public class DynamicListAdapter extends
             holder.dynamicDetailView.setText(holder.obj.getString("content"));
             holder.dynamicLocationView.setText(holder.obj.getString("location"));
             holder.dynamicTimeView.setText(holder.obj.getString("release_time"));
-            holder.type = getItemViewType(position);
+
             if (holder.type == TYPE_VIDEO){
                 holder.dynamicTypeView.setText("视频");
             } else if (holder.type == TYPE_AUDIO){
@@ -267,7 +291,7 @@ public class DynamicListAdapter extends
      */
     @Override
     public int getItemCount() {
-        return dynamic_list.length();
+        return dynamic_list.length() + 1;
     }
 
 }

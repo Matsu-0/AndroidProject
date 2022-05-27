@@ -41,6 +41,7 @@ import com.example.frontend.FollowersActivity;
 import com.example.frontend.InfoeditActivity;
 import com.example.frontend.FollowersActivity;
 import com.example.frontend.BlackListActivity;
+import com.example.frontend.OthersActivity;
 import com.example.frontend.R;
 import com.example.frontend.SignupActivity;
 import com.example.frontend.databinding.FragmentPersonBinding;
@@ -76,6 +77,8 @@ public class PersonFragment extends Fragment {
     private Bitmap image;
     private ImageView pic;
     private TextView name, introduction, blacker, follower;
+    private Boolean isFinish;
+    private int page = 1;
     private static final int handlerStateWarning = 0;
     private static final int handlerStateUpdatePhoto = 1;
     private static final int handlerStateUpdateName = 2;
@@ -84,6 +87,8 @@ public class PersonFragment extends Fragment {
     private static final int handlerStateGetFollowerNum = 5;
     private static final int handlerStateGetBlackerNum = 6;
     private static final int handlerStateGetDynamics = 7;
+    private static final int handlerStateDynamicsFinish = 8;
+
     private JSONArray dynamic_list;
     @SuppressLint("HandlerLeak")
     private Handler handler = new Handler(){
@@ -132,23 +137,22 @@ public class PersonFragment extends Fragment {
             else if (msg.what == handlerStateGetDynamics) {
                 try {
                     JSONObject result = new JSONObject(Objects.requireNonNull(msg.obj).toString()); // String 转 JSONObject
-                    dynamic_list = result.getJSONArray("dynamics_list");
-                    mAdapter = new DynamicListAdapter(getActivity(), dynamic_list, 1);
-                    // Connect the adapter with the recycler view.
-                    mRecyclerView.setAdapter(mAdapter);
-                    // Give the recycler view a default layout manager.
-                    mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()){
-                                                       @Override
-                                                       public boolean canScrollVertically() {
-                                                           return false;
-                                                       }
-                                                   });
+                    JSONArray temp = result.getJSONArray("dynamics_list");
+                    for (int i = 0; i < result.getInt("dynamics_num"); ++i ){ //
+                        dynamic_list.put(temp.getJSONObject(i));
+                    }
+
 
                     mAdapter.notifyDataSetChanged();
                     Log.d("111",dynamic_list.toString());
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
+            }
+            else if (msg.what == handlerStateDynamicsFinish) {
+                isFinish = true;
+                mAdapter.hasmore = false;
+                mAdapter.notifyDataSetChanged();
             }
         }
     };
@@ -179,6 +183,7 @@ public class PersonFragment extends Fragment {
         blacker =(TextView) getActivity().findViewById(R.id.blacklist);
 
         dynamic_list = new JSONArray();
+        isFinish = false;
         mRecyclerView = getActivity().findViewById(R.id.dynamic_recycle_view_person);
         // Create an adapter and supply the data to be displayed.
 
@@ -223,9 +228,47 @@ public class PersonFragment extends Fragment {
         PersonFragment.MyThreadGetBlackerNum myThread3 = new PersonFragment.MyThreadGetBlackerNum(requestUrl3);// TO DO
         myThread3.start();// TO DO
 
+
+        mAdapter = new DynamicListAdapter(getActivity(), dynamic_list, 1);
+        // Connect the adapter with the recycler view.
+        mRecyclerView.setAdapter(mAdapter);
+        // Give the recycler view a default layout manager.
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+//        mRecyclerView.setLayoutManager(new LinearLayoutManager(OthersActivity.this){
+//            @Override
+//            public boolean canScrollVertically() {
+//                return false;
+//            }
+//        });
+        mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+                //滑动到底部
+                if (newState == mRecyclerView.SCROLL_STATE_IDLE) {
+                    //recyclerview滑动到底部,更新数据
+                    //加载更多数据
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            Log.d("111", page + "");
+                            getMoreData();
+                        }
+                    }, 3000);
+                }
+            }
+        });
+        getMoreData();
+    }
+
+    private void getMoreData(){
+        if (isFinish)
+            return;
         String requestUrl4 = "http://43.138.84.226:8080/demonstrate/own_dynamics";
-        PersonFragment.MyThreadGetPersonDynamic myThread4 = new PersonFragment.MyThreadGetPersonDynamic(requestUrl4, 1);// TO DO
+        PersonFragment.MyThreadGetPersonDynamic myThread4 = new PersonFragment.MyThreadGetPersonDynamic(requestUrl4, page);// TO DO
         myThread4.start();// TO DO
+
+        page++;
     }
 
     @Override
@@ -457,6 +500,11 @@ public class PersonFragment extends Fragment {
                     if (response.code() == 200){
                         Message msg = handler.obtainMessage(handlerStateGetDynamics);
                         msg.obj = Objects.requireNonNull(response.body()).string();
+
+                        handler.sendMessage(msg);
+                    }
+                    else if (response.code() == 202){
+                        Message msg = handler.obtainMessage(handlerStateDynamicsFinish);
                         handler.sendMessage(msg);
                     }
                     else {
