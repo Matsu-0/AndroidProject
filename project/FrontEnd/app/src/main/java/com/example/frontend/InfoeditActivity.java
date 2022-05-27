@@ -29,6 +29,8 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.PopupWindow;
 
+import com.squareup.picasso.Picasso;
+
 import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
@@ -91,6 +93,11 @@ public class InfoeditActivity extends AppCompatActivity {
                 String requestUrl = "http://43.138.84.226:8080/user/show_avator";
                 InfoeditActivity.MyThreadGetPhoto myThread = new InfoeditActivity.MyThreadGetPhoto(requestUrl, res);// TO DO
                 myThread.start();// TO DO
+
+//                String filename = "http://43.138.84.226:8080/user/show_avator/" + res;
+//                // activity中将 getContext() 换成 context
+//                Picasso.with(InfoeditActivity.this).load(filename).into(pic);
+
             }
         }
     };
