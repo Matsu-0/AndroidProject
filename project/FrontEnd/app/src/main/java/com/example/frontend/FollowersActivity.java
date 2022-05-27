@@ -86,7 +86,6 @@ public class FollowersActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_followers);
 
-        getData();
 
         // Create recycler view.
         mRecyclerView = findViewById(R.id.recyclerview);
@@ -127,6 +126,17 @@ public class FollowersActivity extends AppCompatActivity {
 //            }
 //        });
     }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        mNameList.clear();
+        mBitmapList.clear();
+        mEmailList.clear();
+        getData();
+
+    }
+
     class MyThreadGetData extends Thread{
         private  String requestUrl;
         MyThreadGetData(String request){

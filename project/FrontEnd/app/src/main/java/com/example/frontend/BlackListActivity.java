@@ -85,8 +85,6 @@ public class BlackListActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_blacklist);
 
-        getData();
-
         // Create recycler view.
         mRecyclerView = findViewById(R.id.recyclerview);
         // Create an adapter and supply the data to be displayed.
@@ -95,6 +93,16 @@ public class BlackListActivity extends AppCompatActivity {
         mRecyclerView.setAdapter(mAdapter);
         // Give the recycler view a default layout manager.
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        mNameList.clear();
+        mBitmapList.clear();
+        mEmailList.clear();
+        getData();
 
     }
     class MyThreadGetData extends Thread{

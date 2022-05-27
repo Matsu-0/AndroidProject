@@ -32,6 +32,8 @@ import android.widget.ImageView;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 
+import com.example.frontend.ui.person.PersonFragment;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -131,7 +133,7 @@ public class OthersActivity extends AppCompatActivity {
                 try {
                     JSONObject result = new JSONObject(Objects.requireNonNull(msg.obj).toString()); // String 转 JSONObject
                     dynamic_list = result.getJSONArray("dynamics_list");
-                    mAdapter = new DynamicListAdapter(OthersActivity.this, dynamic_list);
+                    mAdapter = new DynamicListAdapter(OthersActivity.this, dynamic_list, 0);
                     // Connect the adapter with the recycler view.
                     mRecyclerView.setAdapter(mAdapter);
                     // Give the recycler view a default layout manager.
@@ -163,9 +165,9 @@ public class OthersActivity extends AppCompatActivity {
         pic = (ImageView) findViewById(R.id.person_image);
         name = (TextView) findViewById(R.id.person_name);
         introduction = (TextView) findViewById(R.id.person_introduction);
-        String requestUrl = "http://43.138.84.226:8080/demonstrate/show_other_user_data/" + othersEmail;
-        OthersActivity.MyThreadInitData myThread = new OthersActivity.MyThreadInitData(requestUrl);// TO DO
-        myThread.start();// TO DO
+        dynamic_list = new JSONArray();
+        mRecyclerView = findViewById(R.id.dynamic_recycle_view_others);
+
         isFollow = false;
         isBlackList = false;
 
@@ -186,10 +188,26 @@ public class OthersActivity extends AppCompatActivity {
             public void onClick(View v) {
                 // 处理屏蔽/取消
                 // TO DO
+                Log.d("AAA", isFollow.toString());
+                OthersActivity.MyThreadBlack myThread = new OthersActivity.MyThreadBlack(isBlackList, othersEmail);// TO DO
+                myThread.start();// TO DO
             }
         });
+
+
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        String requestUrl = "http://43.138.84.226:8080/demonstrate/show_other_user_data/" + othersEmail;
+        OthersActivity.MyThreadInitData myThread = new OthersActivity.MyThreadInitData(requestUrl);// TO DO
+        myThread.start();// TO DO
+
+        String requestUrl2 = "http://43.138.84.226:8080/demonstrate/other_dynamics";
+        OthersActivity.MyThreadGetPersonDynamic myThread2 = new OthersActivity.MyThreadGetPersonDynamic(requestUrl2, 1, othersEmail);// TO DO
+        myThread2.start();// TO DO
+    }
 
     class MyThreadInitData extends Thread{
         private  String requestUrl;
@@ -311,7 +329,6 @@ public class OthersActivity extends AppCompatActivity {
             this.email = email;
             if (isFollow){
                 requestUrl = "http://43.138.84.226:8080/interact/not_follow_someone";
-
                 FollowStatus = 1;
             }
             else{
@@ -364,4 +381,114 @@ public class OthersActivity extends AppCompatActivity {
         }
     }
 
+    class MyThreadBlack extends Thread{
+        private  String requestUrl, email;
+        private int BlackStatus;
+        MyThreadBlack(Boolean isFollow, String email){
+            this.email = email;
+            if (isFollow){
+                requestUrl = "http://43.138.84.226:8080/interact/not_ignore_someone";
+                BlackStatus = 1;
+            }
+            else{
+                requestUrl = "http://43.138.84.226:8080/interact/ignore_someone";
+                BlackStatus = 0;
+            }
+        }
+        @Override
+        public void run() {
+            try {
+                OkHttpClient client = new OkHttpClient();
+                //3.构建MultipartBody
+                SharedPreferences sharedPreferences = getSharedPreferences("login",MODE_PRIVATE);
+                String cookie = sharedPreferences.getString("session","");
+                Log.d(LOG_TAG, cookie);
+                RequestBody formBody = new FormBody.Builder()
+                        .add("email", email)
+                        .build();
+                Request request = new Request.Builder()
+                        .url(requestUrl)
+                        .post(formBody)
+                        .addHeader("cookie",cookie)
+                        .build();
+                Log.d(LOG_TAG, cookie);
+                Call call = client.newCall(request);
+                Response response = call.execute();
+                Log.d(LOG_TAG, response.toString());
+                if (response.isSuccessful()) {
+
+                    if (response.code() == 200){
+                        Message msg1 = handler.obtainMessage(handlerStateUpdateBlackButton);
+                        msg1.obj = Objects.requireNonNull(1-BlackStatus);
+                        handler.sendMessage(msg1);
+
+
+                    }
+                    else {
+                        Message msg = handler.obtainMessage(handlerStateWarning);
+                        msg.obj = Objects.requireNonNull(response.body()).string();
+                        handler.sendMessage(msg);
+                    }
+                } else {
+                    throw new IOException("Unexpected code " + response);
+                }
+            }
+            catch (Exception e)
+            {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    class MyThreadGetPersonDynamic extends Thread{
+        private  String requestUrl, requestEmail;
+        private int curPage;
+        MyThreadGetPersonDynamic(String request, int page, String email){
+            curPage = page;
+            requestEmail = email;
+            requestUrl = request;
+        }
+        @Override
+        public void run() {
+            try {
+                OkHttpClient client = new OkHttpClient();
+                //3.构建MultipartBody
+                SharedPreferences sharedPreferences = OthersActivity.this.getSharedPreferences("login",MODE_PRIVATE);
+                String cookie = sharedPreferences.getString("session","");
+                Log.d(LOG_TAG, cookie);
+                RequestBody formBody = new FormBody.Builder()
+                        .add("email", requestEmail)
+                        .add("page", ""+ curPage)
+                        .build();
+                Request request = new Request.Builder()
+                        .url(requestUrl)
+                        .post(formBody)
+                        .addHeader("cookie",cookie)
+                        .build();
+
+                Call call = client.newCall(request);
+                Response response = call.execute();
+                Log.d(LOG_TAG, response.toString());
+                if (response.isSuccessful()){
+                    if (response.code() == 200){
+                        Message msg = handler.obtainMessage(handlerStateGetDynamics);
+                        msg.obj = Objects.requireNonNull(response.body()).string();
+                        handler.sendMessage(msg);
+                    }
+                    else {
+                        Message msg = handler.obtainMessage(handlerStateWarning);
+                        msg.obj = Objects.requireNonNull(response.body()).string();
+                        handler.sendMessage(msg);
+                    }
+
+                } else {
+                    throw new IOException("Unexpected code " + response);
+                }
+            }
+            catch (Exception e)
+            {
+                e.printStackTrace();
+            }
+        }
+    }
 }
