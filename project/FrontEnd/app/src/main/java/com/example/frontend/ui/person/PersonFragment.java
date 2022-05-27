@@ -1,6 +1,7 @@
 package com.example.frontend.ui.person;
 
 import static android.content.Context.MODE_PRIVATE;
+import android.content.Context;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
@@ -9,6 +10,7 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -41,6 +43,7 @@ import com.example.frontend.BlackListActivity;
 import com.example.frontend.R;
 import com.example.frontend.SignupActivity;
 import com.example.frontend.databinding.FragmentPersonBinding;
+import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -108,9 +111,10 @@ public class PersonFragment extends Fragment {
             }
             else if (msg.what == handlerStateGetPhoto) {
                 String res = (String) msg.obj;
-                String requestUrl = "http://43.138.84.226:8080/user/show_avator";
-                PersonFragment.MyThreadGetPhoto myThread = new PersonFragment.MyThreadGetPhoto(requestUrl, res);// TO DO
-                myThread.start();// TO DO
+                String filename = "http://43.138.84.226:8080/user/show_avator/" + res;
+                // activity中将 getContext() 换成 context
+                Picasso.with(getContext()).load(filename).into(pic);
+
             }
             else if (msg.what == handlerStateGetFollowerNum) {
                 String res = "关注\n" + (String) msg.obj + "人";
@@ -172,7 +176,6 @@ public class PersonFragment extends Fragment {
         dynamic_list = new JSONArray();
         mRecyclerView = getActivity().findViewById(R.id.dynamic_recycle_view_person);
         // Create an adapter and supply the data to be displayed.
-
 
     }
 
@@ -280,57 +283,57 @@ public class PersonFragment extends Fragment {
         }
     }
 
-    class MyThreadGetPhoto extends Thread{
-        private  String requestUrl;
-        MyThreadGetPhoto(String request, String avator){
-            requestUrl = request + "/" + avator;
-        }
-        @Override
-        public void run() {
-            try {
-                Log.d(LOG_TAG, "1");
-                OkHttpClient client = new OkHttpClient();
-                //3.构建MultipartBody
-                SharedPreferences sharedPreferences = getActivity().getSharedPreferences("login",MODE_PRIVATE);
-                String cookie = sharedPreferences.getString("session","");
-                Log.d(LOG_TAG, cookie);
-
-                Request request = new Request.Builder()
-                        .url(requestUrl)
-                        .get()
-                        .addHeader("cookie",cookie)
-                        .build();
-
-                Call call = client.newCall(request);
-                Response response = call.execute();
-                Log.d(LOG_TAG, response.toString());
-                if (response.isSuccessful()){
-
-                    if (response.code() == 200){
-                        InputStream inputStream = response.body().byteStream();
-                        image = BitmapFactory.decodeStream(inputStream);
-                        Message msg = handler.obtainMessage(handlerStateUpdatePhoto);
-                        // msg.obj = Objects.requireNonNull(inputStream);
-                        handler.sendMessage(msg);
-
-                    }
-                    else {
-                        Message msg = handler.obtainMessage(handlerStateWarning);
-                        msg.obj = Objects.requireNonNull(response.body()).string();
-                        handler.sendMessage(msg);
-                    }
-
-
-                } else {
-                    throw new IOException("Unexpected code " + response);
-                }
-            }
-            catch (Exception e)
-            {
-                e.printStackTrace();
-            }
-        }
-    }
+//    class MyThreadGetPhoto extends Thread{
+//        private  String requestUrl;
+//        MyThreadGetPhoto(String request, String avator){
+//            requestUrl = request + "/" + avator;
+//        }
+//        @Override
+//        public void run() {
+//            try {
+//                Log.d(LOG_TAG, "1");
+//                OkHttpClient client = new OkHttpClient();
+//                //3.构建MultipartBody
+//                SharedPreferences sharedPreferences = getActivity().getSharedPreferences("login",MODE_PRIVATE);
+//                String cookie = sharedPreferences.getString("session","");
+//                Log.d(LOG_TAG, cookie);
+//
+//                Request request = new Request.Builder()
+//                        .url(requestUrl)
+//                        .get()
+//                        .addHeader("cookie",cookie)
+//                        .build();
+//
+//                Call call = client.newCall(request);
+//                Response response = call.execute();
+//                Log.d(LOG_TAG, response.toString());
+//                if (response.isSuccessful()){
+//
+//                    if (response.code() == 200){
+//                        InputStream inputStream = response.body().byteStream();
+//                        image = BitmapFactory.decodeStream(inputStream);
+//                        Message msg = handler.obtainMessage(handlerStateUpdatePhoto);
+//                        // msg.obj = Objects.requireNonNull(inputStream);
+//                        handler.sendMessage(msg);
+//
+//                    }
+//                    else {
+//                        Message msg = handler.obtainMessage(handlerStateWarning);
+//                        msg.obj = Objects.requireNonNull(response.body()).string();
+//                        handler.sendMessage(msg);
+//                    }
+//
+//
+//                } else {
+//                    throw new IOException("Unexpected code " + response);
+//                }
+//            }
+//            catch (Exception e)
+//            {
+//                e.printStackTrace();
+//            }
+//        }
+//    }
 
     class MyThreadGetFollowerNum extends Thread{
         private  String requestUrl;
