@@ -6,17 +6,102 @@
     android:layout_height="match_parent"
     tools:context=".ui.browse.BrowseFragment">
 
-    <TextView
-        android:id="@+id/text_browse"
-        android:layout_width="match_parent"
+    <ScrollView
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:textAlignment="center"
-        android:textSize="20sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.483"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.011">
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            >
+            <RadioGroup
+                android:id="@+id/choose_sequence"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_margin="5dp">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:text="排列方式"
+                    android:gravity="center_vertical"
+                    android:layout_margin="5dp"
+                    android:textSize="20dp"/>
+                <RadioButton
+                    android:id="@+id/choose_time_sequence"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_margin="5dp"
+                    android:checked="true"
+                    android:text="时间顺序"
+                    android:textSize="20dp"/>
+                <RadioButton
+                    android:id="@+id/choose_like_sequence"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_margin="5dp"
+                    android:checked="false"
+                    android:text="点赞顺序"
+                    android:textSize="20dp"/>
+            </RadioGroup>
+
+            <RadioGroup
+                android:id="@+id/choose_range"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_margin="5dp">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:text="浏览范围"
+                    android:gravity="center_vertical"
+                    android:layout_margin="5dp"
+                    android:textSize="20dp"/>
+                <RadioButton
+                    android:id="@+id/choose_all_range"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_margin="5dp"
+                    android:checked="true"
+                    android:text="所有的人"
+                    android:textSize="20dp"/>
+                <RadioButton
+                    android:id="@+id/choose_followers_range"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_margin="5dp"
+                    android:text="关注的人"
+                    android:checked="false"
+                    android:textSize="20dp"/>
+            </RadioGroup>
+
+            <RelativeLayout
+                android:layout_width="380dp"
+                android:layout_height="235dp"
+                >
+
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/dynamic_recycle_view_all"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="100dp">
+                </androidx.recyclerview.widget.RecyclerView>
+
+            </RelativeLayout>
+        </LinearLayout>
+    </ScrollView>
 </androidx.constraintlayout.widget.ConstraintLayout>

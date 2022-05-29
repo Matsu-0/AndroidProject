@@ -17,7 +17,9 @@
         <entry key="..\:/Users/Admin/Desktop/AndroidProject/project/FrontEnd/app/src/main/res/layout/activity_publish_draft.xml" value="0.1875" />
         <entry key="..\:/Users/Admin/Desktop/AndroidProject/project/FrontEnd/app/src/main/res/layout/activity_publish_pic.xml" value="0.33" />
         <entry key="..\:/Users/Admin/Desktop/AndroidProject/project/FrontEnd/app/src/main/res/layout/activity_publish_video.xml" value="0.20625" />
+        <entry key="..\:/Users/Admin/Desktop/AndroidProject/project/FrontEnd/app/src/main/res/layout/activity_show_dynamic.xml" value="0.36614583333333334" />
         <entry key="..\:/Users/Admin/Desktop/AndroidProject/project/FrontEnd/app/src/main/res/layout/activity_signup.xml" value="0.2109375" />
+        <entry key="..\:/Users/Admin/Desktop/AndroidProject/project/FrontEnd/app/src/main/res/layout/comment_item.xml" value="0.36614583333333334" />
         <entry key="..\:/Users/Admin/Desktop/AndroidProject/project/FrontEnd/app/src/main/res/layout/draft_item.xml" value="0.20742753623188406" />
         <entry key="..\:/Users/Admin/Desktop/AndroidProject/project/FrontEnd/app/src/main/res/layout/dynamic_item_pic.xml" value="0.33" />
         <entry key="..\:/Users/Admin/Desktop/AndroidProject/project/FrontEnd/app/src/main/res/layout/follower_item.xml" value="0.10258358662613981" />
@@ -25,7 +27,7 @@
         <entry key="..\:/Users/Admin/Desktop/AndroidProject/project/FrontEnd/app/src/main/res/layout/fragment_dashboard.xml" value="0.2109375" />
         <entry key="..\:/Users/Admin/Desktop/AndroidProject/project/FrontEnd/app/src/main/res/layout/fragment_home.xml" value="0.2109375" />
         <entry key="..\:/Users/Admin/Desktop/AndroidProject/project/FrontEnd/app/src/main/res/layout/fragment_notifications.xml" value="0.2109375" />
-        <entry key="..\:/Users/Admin/Desktop/AndroidProject/project/FrontEnd/app/src/main/res/layout/fragment_person.xml" value="0.33" />
+        <entry key="..\:/Users/Admin/Desktop/AndroidProject/project/FrontEnd/app/src/main/res/layout/fragment_person.xml" value="0.25" />
         <entry key="..\:/Users/Admin/Desktop/AndroidProject/project/FrontEnd/app/src/main/res/layout/fragment_publish.xml" value="0.1875" />
         <entry key="..\:/Users/Admin/Desktop/AndroidProject/project/FrontEnd/app/src/main/res/menu/bottom_nav_menu.xml" value="0.2109375" />
         <entry key="..\:/Users/Admin/Desktop/AndroidProject/project/FrontEnd/app/src/main/res/xml/file_path.xml" value="0.1917989417989418" />
