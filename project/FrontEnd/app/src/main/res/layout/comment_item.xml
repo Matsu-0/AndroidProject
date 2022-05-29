@@ -34,14 +34,27 @@
 
     </LinearLayout>
 
-    <TextView
-        android:id="@+id/comment_detail"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:lines="4"
-        android:textSize="18dp"
-        android:textStyle="bold"
-        android:layout_margin="5dp"
-        android:text="CommentDetail"/>
+        android:orientation="vertical"
+        android:gravity="right">
+
+        <TextView
+            android:id="@+id/comment_detail"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:lines="4"
+            android:textSize="18dp"
+            android:textStyle="bold"
+            android:layout_margin="5dp"
+            android:text="CommentDetail"/>
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            android:text="删除评论"/>
+    </LinearLayout>
 
 </LinearLayout>
