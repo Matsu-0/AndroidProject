@@ -1,5 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_height="wrap_content"
+    android:layout_width="match_parent">
+    <TextView
+        android:id="@+id/dynamic_loading"
+        android:visibility="gone"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="6dp"
+        android:gravity="center"
+        android:textSize="20dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:text="加载中"/>
 <LinearLayout
+    android:id="@+id/dynamic_normal"
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -83,3 +99,4 @@
             android:text="删除动态" />
     </RelativeLayout>
 </LinearLayout>
+</RelativeLayout>

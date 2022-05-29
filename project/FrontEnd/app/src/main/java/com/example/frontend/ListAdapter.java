@@ -27,6 +27,8 @@ import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.squareup.picasso.Picasso;
+
 import java.util.LinkedList;
 
 /**
@@ -38,7 +40,7 @@ public class ListAdapter extends
 
     private final LinkedList<String> mNameList;
     private final LinkedList<String> mEmailList;
-    private final LinkedList<Bitmap> mBitmapList;
+    private final LinkedList<String> mBitmapList;
     private final LayoutInflater mInflater;
     private int TYPE_ITEM = 0;//正常的Item
     private int TYPE_FOOT = 1;//尾部刷新
@@ -88,7 +90,7 @@ public class ListAdapter extends
         }
     }
 
-    public ListAdapter(Context context, LinkedList<Bitmap> AvatarList, LinkedList<String> NameList, LinkedList<String> EmailList) {
+    public ListAdapter(Context context, LinkedList<String> AvatarList, LinkedList<String> NameList, LinkedList<String> EmailList) {
         mInflater = LayoutInflater.from(context);
         this.mNameList = NameList;
         this.mBitmapList = AvatarList;
@@ -144,7 +146,8 @@ public class ListAdapter extends
     public void onBindViewHolder(ListAdapter.WordViewHolder holder,
                                  int position) {
         if (getItemViewType(position) == TYPE_ITEM) {
-            holder.avatarItemView.setImageBitmap(mBitmapList.get(position));
+            Picasso.with(context).load(mBitmapList.get(position)).into(holder.avatarItemView);
+//            holder.avatarItemView.setImageBitmap(mBitmapList.get(position));
 
             String mCurrent_detail = mNameList.get(position);
             // Add the data to the view holder.

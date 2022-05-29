@@ -34,7 +34,7 @@ import okhttp3.Response;
 public class FollowersActivity extends AppCompatActivity {
 
     private final LinkedList<String> mNameList = new LinkedList<>();
-    private final LinkedList<Bitmap> mBitmapList = new LinkedList<>();
+    private final LinkedList<String> mBitmapList = new LinkedList<>();
     private final LinkedList<String> mEmailList = new LinkedList<>();
     private int total_num_data = 0;  // 个数上限
     private int avatar_count = 0;
@@ -57,16 +57,6 @@ public class FollowersActivity extends AppCompatActivity {
                         .create();
                 textTips.show();
             } else if (msg.what == handlerStateUpdateInfo) {
-                mBitmapList.addLast(image);
-                JSONObject data = (JSONObject) msg.obj;
-
-                try {
-                    mNameList.addLast(data.getString("nickname"));
-                    mEmailList.addLast(data.getString("email"));
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-
                 mAdapter.notifyDataSetChanged();
             }
         }
@@ -166,15 +156,17 @@ public class FollowersActivity extends AppCompatActivity {
 
                         total_num_data = result.getInt("sum");
                         JSONArray jsonArray = result.getJSONArray("followers_list");
-                        for (int i = 0; i < total_num_data; i++) {
-                            String str = Objects.requireNonNull(jsonArray.get(i)).toString();
+                        String requestUrl = "http://43.138.84.226:8080/user/show_avator/";
 
-                            String requestUrl = "http://43.138.84.226:8080/user/show_avator";
-                            FollowersActivity.MyThreadGetPhoto myThread = new FollowersActivity.MyThreadGetPhoto(requestUrl, str);// TO DO
-                            myThread.start();// TO DO
+                        for (int i = 0; i < total_num_data; i++) {
+                            JSONObject t = (JSONObject) jsonArray.get(i);
+                            mNameList.addLast(t.getString("nickname"));
+                            mEmailList.addLast(t.getString("email"));
+                            mBitmapList.addLast(requestUrl + t.getString("avator"));
+
                         }
-//                        Message msg = handler.obtainMessage(handlerStateGetInfo);
-//                        handler.sendMessage(msg);
+                        Message msg = handler.obtainMessage(handlerStateUpdateInfo);
+                        handler.sendMessage(msg);
 
                     }
                     else {
