@@ -3,6 +3,7 @@ package com.example.frontend.ui.browse;
 import static android.content.Context.MODE_PRIVATE;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
@@ -15,6 +16,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -25,8 +27,10 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.frontend.DynamicListAdapter;
+import com.example.frontend.LikeListActivity;
 import com.example.frontend.OthersActivity;
 import com.example.frontend.R;
+import com.example.frontend.ShowDynamicActivity;
 import com.example.frontend.databinding.FragmentBrowseBinding;
 import com.example.frontend.ui.person.PersonFragment;
 
@@ -54,8 +58,9 @@ public class BrowseFragment extends Fragment {
 
     private static final String LOG_TAG = BrowseFragment.class.getSimpleName();
 
-    private RadioGroup radio_choose_sequence, radio_choose_range;
-
+    private RadioGroup radio_choose_sequence, radio_choose_range, radio_choose_type;
+    private RelativeLayout search_list;
+    private Button search_option, search, search_clear;
     private Boolean isTimeSeq, isAllRange, isFinish;
     private int page;
     private static final int handlerStateWarning = 0;
@@ -116,11 +121,32 @@ public class BrowseFragment extends Fragment {
 
         radio_choose_sequence = (RadioGroup) getActivity().findViewById(R.id.choose_sequence);
         radio_choose_range = (RadioGroup) getActivity().findViewById(R.id.choose_range);
+        radio_choose_type = (RadioGroup) getActivity().findViewById(R.id.search_dynamic_type);
+
+        search_list = (RelativeLayout) getActivity().findViewById(R.id.search_list);
+        search_option = (Button) getActivity().findViewById(R.id.search_option);
+        search = (Button) getActivity().findViewById(R.id.search_begin);
+        search_clear = (Button) getActivity().findViewById(R.id.search_clear);
+
         mRecyclerView = getActivity().findViewById(R.id.dynamic_recycle_view_all);
             // Create an adapter and supply the data to be displayed.
         isTimeSeq = true;
         isAllRange = true;
         reset();
+
+        search_option.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (search_option.getText().equals("搜索选项")){
+                    search_list.setVisibility(View.VISIBLE);
+                    search_option.setText("隐藏搜索选项");
+                }
+                else {
+                    search_list.setVisibility(View.GONE);
+                    search_option.setText("搜索选项");
+                }
+            }
+        });
         radio_choose_sequence.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {

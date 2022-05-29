@@ -25,6 +25,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
+                android:layout_gravity="center"
                 android:layout_margin="5dp">
                 <TextView
                     android:layout_width="wrap_content"
@@ -56,6 +57,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
+                android:layout_gravity="center"
                 android:layout_margin="5dp">
                 <TextView
                     android:layout_width="wrap_content"
@@ -81,13 +83,133 @@
                     android:checked="false"
                     android:textSize="20dp"/>
             </RadioGroup>
-
+            <Button
+                android:id="@+id/search_option"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="搜索选项"/>
             <RelativeLayout
-                android:layout_width="380dp"
+                android:id="@+id/search_list"
+                android:visibility="gone"
+                android:layout_width="match_parent"
                 android:layout_height="235dp"
                 >
+                <TextView
+                    android:layout_width="100dp"
+                    android:layout_height="wrap_content"
+                    android:text="动态标题"
+                    android:textStyle="bold"
+                    android:textSize="20dp"
+                    android:layout_marginLeft="20dp"
+                    android:layout_marginTop="20dp"
+
+                    />
+                <TextView
+                    android:layout_width="100dp"
+                    android:layout_height="wrap_content"
+                    android:text="用户昵称"
+                    android:textStyle="bold"
+                    android:textSize="20dp"
+                    android:layout_marginLeft="20dp"
+                    android:layout_marginTop="60dp"
+                    />
+                <TextView
+                    android:layout_width="100dp"
+                    android:layout_height="wrap_content"
+                    android:text="动态内容"
+                    android:textStyle="bold"
+                    android:textSize="20dp"
+                    android:layout_marginLeft="20dp"
+                    android:layout_marginTop="100dp"
+
+                    />
 
 
+                <EditText
+                    android:id="@+id/search_dynamic_title"
+                    android:layout_width="180dp"
+                    android:layout_height="40dp"
+                    android:layout_marginLeft="120dp"
+                    android:layout_marginTop="20dp"
+                    android:textSize="16dp"/>
+
+                <EditText
+                    android:id="@+id/search_dynamic_author"
+                    android:layout_width="180dp"
+                    android:layout_height="40dp"
+                    android:layout_marginLeft="120dp"
+                    android:layout_marginTop="60dp"
+                    android:textSize="16dp"/>
+
+                <EditText
+                    android:id="@+id/search_dynamic_content"
+                    android:layout_width="180dp"
+                    android:layout_height="40dp"
+                    android:layout_marginLeft="120dp"
+                    android:layout_marginTop="100dp"
+                    android:textSize="16dp"/>
+                <RadioGroup
+                    android:id="@+id/search_dynamic_type"
+                    android:layout_width="wrap_content"
+                    android:layout_height="25dp"
+                    android:layout_marginLeft="20dp"
+                    android:layout_marginTop="140dp"
+                    android:orientation="horizontal">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="类型"
+                        android:textStyle="bold"
+                        android:textSize="20dp"
+                        android:layout_marginRight="20dp"
+                        />
+                    <RadioButton
+                        android:id="@+id/choose_pic_type"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:text="图文"
+                        android:checked="false"/>
+                    <RadioButton
+                        android:id="@+id/choose_video_type"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:text="视频"
+                        android:checked="false"/>
+                    <RadioButton
+                        android:id="@+id/choose_audio_type"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:text="音频"
+                        android:checked="false"/>
+                    <RadioButton
+                        android:id="@+id/choose_all_type"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:text="全部"
+                        android:checked="true"/>
+                </RadioGroup>
+
+                <Button
+                    android:id="@+id/search_begin"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="50dp"
+                    android:layout_marginTop="180dp"
+                    android:text="搜索"
+                    android:textSize="20dp"
+                    android:textStyle="bold" />
+                <Button
+                    android:id="@+id/search_clear"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="清空"
+                    android:textStyle="bold"
+                    android:textSize="20dp"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginRight="50dp"
+                    android:layout_marginTop="180dp"
+                    />
             </RelativeLayout>
 
             <RelativeLayout
