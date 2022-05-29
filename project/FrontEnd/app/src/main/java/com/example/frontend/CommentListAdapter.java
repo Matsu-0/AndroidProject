@@ -27,6 +27,8 @@ import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.squareup.picasso.Picasso;
+
 import java.util.LinkedList;
 
 /**
@@ -39,7 +41,7 @@ public class CommentListAdapter extends
     private final LinkedList<String> mNameList;
     private final LinkedList<String> mEmailList;
     private final LinkedList<String> mCommentList;
-    private final LinkedList<Bitmap> mBitmapList;
+    private final LinkedList<String> mBitmapList;
     private final LayoutInflater mInflater;
     private int TYPE_ITEM = 0;//正常的Item
     private int TYPE_FOOT = 1;//尾部刷新
@@ -91,7 +93,7 @@ public class CommentListAdapter extends
         }
     }
 
-    public CommentListAdapter(Context context, LinkedList<Bitmap> AvatarList, LinkedList<String> NameList, LinkedList<String> EmailList, LinkedList<String> CommentList) {
+    public CommentListAdapter(Context context, LinkedList<String> AvatarList, LinkedList<String> NameList, LinkedList<String> EmailList, LinkedList<String> CommentList) {
         mInflater = LayoutInflater.from(context);
         this.mNameList = NameList;
         this.mBitmapList = AvatarList;
@@ -148,8 +150,9 @@ public class CommentListAdapter extends
     public void onBindViewHolder(CommentListAdapter.WordViewHolder holder,
                                  int position) {
         if (getItemViewType(position) == TYPE_ITEM) {
-            holder.avatarItemView.setImageBitmap(mBitmapList.get(position));
-
+            // holder.avatarItemView.setImageBitmap(mBitmapList.get(position));
+            Picasso.with(context).load(mBitmapList.get(position)).into(holder.avatarItemView);
+            
             // Add the data to the view holder.
             holder.nameItemView.setText(mNameList.get(position));
             holder.detailItemView.setText(mCommentList.get(position));

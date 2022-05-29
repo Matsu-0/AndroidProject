@@ -7,7 +7,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.annotation.SuppressLint;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -35,16 +34,15 @@ import okhttp3.Response;
 public class LikeListActivity extends AppCompatActivity {
 
     private final LinkedList<String> mNameList = new LinkedList<>();
-    private final LinkedList<Bitmap> mBitmapList = new LinkedList<>();
+    private final LinkedList<String> mBitmapList = new LinkedList<>();
     private final LinkedList<String> mEmailList = new LinkedList<>();
     private int total_num_data = 0;  // 个数上限
-    private int DynamicID;
     private Bitmap image;
     private RecyclerView mRecyclerView;
     private ListAdapter mAdapter;
     private static final int handlerStateWarning = 0;
     private static final int handlerStateUpdateInfo = 1;
-    private static final String LOG_TAG = BlackListActivity.class.getSimpleName();
+    private static final String LOG_TAG = LikeListActivity.class.getSimpleName();
     private Handler handler = new Handler(){
         @SuppressLint("HandlerLeak")
         @Override
@@ -58,16 +56,6 @@ public class LikeListActivity extends AppCompatActivity {
                         .create();
                 textTips.show();
             } else if (msg.what == handlerStateUpdateInfo) {
-                mBitmapList.addLast(image);
-                JSONObject data = (JSONObject) msg.obj;
-
-                try {
-                    mNameList.addLast(data.getString("nickname"));
-                    mEmailList.addLast(data.getString("email"));
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-
                 mAdapter.notifyDataSetChanged();
             }
         }
@@ -75,7 +63,7 @@ public class LikeListActivity extends AppCompatActivity {
 
     private void getData(){
         // 引入数据
-        String requestUrl = "http://43.138.84.226:8080/demonstrate/show_dynamic_likelist/";
+        String requestUrl = "http://43.138.84.226:8080/interact/show_ignore_list";
         LikeListActivity.MyThreadGetData myThread = new LikeListActivity.MyThreadGetData(requestUrl);// TO DO
         myThread.start();
 
@@ -86,9 +74,6 @@ public class LikeListActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_blacklist);
-
-        Intent intent = getIntent();
-        DynamicID = intent.getIntExtra("dynamic_id", 0);
 
         // Create recycler view.
         mRecyclerView = findViewById(R.id.recyclerview);
@@ -138,16 +123,18 @@ public class LikeListActivity extends AppCompatActivity {
                         Log.d(LOG_TAG, result.toString());
 
                         total_num_data = result.getInt("sum");
-                        JSONArray jsonArray = result.getJSONArray("likelist");
-                        for (int i = 0; i < total_num_data; i++) {
-                            String str = Objects.requireNonNull(jsonArray.get(i)).toString();
+                        JSONArray jsonArray = result.getJSONArray("ignore_list");
+                        String requestUrl = "http://43.138.84.226:8080/user/show_avator/";
 
-                            String requestUrl = "http://43.138.84.226:8080/user/show_avator";
-                            LikeListActivity.MyThreadGetPhoto myThread = new LikeListActivity.MyThreadGetPhoto(requestUrl, str);// TO DO
-                            myThread.start();// TO DO
+                        for (int i = 0; i < total_num_data; i++) {
+                            JSONObject t = (JSONObject) jsonArray.get(i);
+                            mNameList.addLast(t.getString("nickname"));
+                            mEmailList.addLast(t.getString("email"));
+                            mBitmapList.addLast(requestUrl + t.getString("avator"));
+
                         }
-//                        Message msg = handler.obtainMessage(handlerStateGetInfo);
-//                        handler.sendMessage(msg);
+                        Message msg = handler.obtainMessage(handlerStateUpdateInfo);
+                        handler.sendMessage(msg);
 
                     }
                     else {

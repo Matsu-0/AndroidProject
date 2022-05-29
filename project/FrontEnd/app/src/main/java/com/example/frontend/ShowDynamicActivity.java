@@ -73,7 +73,7 @@ public class ShowDynamicActivity extends AppCompatActivity {
     private RecyclerView mRecyclerView;
     private CommentListAdapter mAdapter;
     private final LinkedList<String> mNameList = new LinkedList<>();
-    private final LinkedList<Bitmap> mBitmapList = new LinkedList<>();
+    private final LinkedList<String> mBitmapList = new LinkedList<>();
     private final LinkedList<String> mEmailList = new LinkedList<>();
     private final LinkedList<String> mCommentList = new LinkedList<>();
 
@@ -201,17 +201,15 @@ public class ShowDynamicActivity extends AppCompatActivity {
                 }
             }
             else if (msg.what == handlerGetCommentInfo) {
-                mBitmapList.addLast(image);
-                JSONObject data = (JSONObject) msg.obj;
-
-                try{
-                    mNameList.addLast(data.getString("nickname"));
-                    mEmailList.addLast(data.getString("email"));
-                    mCommentList.addLast(data.getString("content"));
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-
+//                JSONObject data = (JSONObject) msg.obj;
+//
+//                try{
+//                    mNameList.addLast(data.getString("nickname"));
+//                    mEmailList.addLast(data.getString("email"));
+//                    mCommentList.addLast(data.getString("content"));
+//                } catch (JSONException e) {
+//                    e.printStackTrace();
+//                }
                 mAdapter.notifyDataSetChanged();
             }
         }
@@ -353,13 +351,18 @@ public class ShowDynamicActivity extends AppCompatActivity {
                             throw new IOException("Unexpected dynamic type");
                         }
 
+                        String requestUrl = "http://43.138.84.226:8080/user/show_avator/";
                         comment_num = result.getInt("comment_sum");
                         JSONArray array = result.getJSONArray("comment");
                         for (int i = 0; i < comment_num; i++) {
-                            String str = Objects.requireNonNull(array.get(i).toString());
-                            String requestUrl = "http://43.138.84.226:8080/user/show_avator";
-                            ShowDynamicActivity.MyThreadGetPhoto myThreadGetPhoto = new ShowDynamicActivity.MyThreadGetPhoto(requestUrl, str);
-                            myThreadGetPhoto.start();
+//                            String str = Objects.requireNonNull(array.get(i).toString());
+//                            ShowDynamicActivity.MyThreadGetPhoto myThreadGetPhoto = new ShowDynamicActivity.MyThreadGetPhoto(requestUrl, str);
+//                            myThreadGetPhoto.start();
+                            JSONObject t = (JSONObject) array.getJSONObject(i);
+                            mNameList.addLast(t.getString("nickname"));
+                            mEmailList.addLast(t.getString("email"));
+                            mBitmapList.addLast(requestUrl + t.getString("avator"));
+                            mCommentList.addLast(t.getString("content"));
                         }
                     }
                     else {
@@ -616,6 +619,7 @@ public class ShowDynamicActivity extends AppCompatActivity {
                         image = BitmapFactory.decodeStream(inputStream);
                         Message msg = handler.obtainMessage(handlerGetCommentInfo);
                         JSONObject data = new JSONObject();
+
                         data.put("nickname", t.getString("nickname"));
                         data.put("email", t.getString("email"));
                         data.put("comment", t.getString("content"));
