@@ -164,10 +164,10 @@ public class DraftListAdapter extends
                 holder.draftTypeView.setText("图文");
             }
             else if (mPreference.getInt("type",0) == 2){
-                holder.draftTypeView.setText("视频");
+                holder.draftTypeView.setText("音频");
             }
             else if (mPreference.getInt("type",0) == 3){
-                holder.draftTypeView.setText("音频");
+                holder.draftTypeView.setText("视频");
             }
             else{
                 holder.draftTypeView.setText("未知");
