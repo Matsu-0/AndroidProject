@@ -17,17 +17,15 @@
         <entry key="..\:/Users/Admin/Desktop/AndroidProject/project/FrontEnd/app/src/main/res/layout/activity_publish_draft.xml" value="0.1875" />
         <entry key="..\:/Users/Admin/Desktop/AndroidProject/project/FrontEnd/app/src/main/res/layout/activity_publish_pic.xml" value="0.33" />
         <entry key="..\:/Users/Admin/Desktop/AndroidProject/project/FrontEnd/app/src/main/res/layout/activity_publish_video.xml" value="0.20625" />
-        <entry key="..\:/Users/Admin/Desktop/AndroidProject/project/FrontEnd/app/src/main/res/layout/activity_show_dynamic.xml" value="0.36614583333333334" />
         <entry key="..\:/Users/Admin/Desktop/AndroidProject/project/FrontEnd/app/src/main/res/layout/activity_signup.xml" value="0.2109375" />
-        <entry key="..\:/Users/Admin/Desktop/AndroidProject/project/FrontEnd/app/src/main/res/layout/comment_item.xml" value="0.36614583333333334" />
         <entry key="..\:/Users/Admin/Desktop/AndroidProject/project/FrontEnd/app/src/main/res/layout/draft_item.xml" value="0.20742753623188406" />
         <entry key="..\:/Users/Admin/Desktop/AndroidProject/project/FrontEnd/app/src/main/res/layout/dynamic_item_pic.xml" value="0.33" />
         <entry key="..\:/Users/Admin/Desktop/AndroidProject/project/FrontEnd/app/src/main/res/layout/follower_item.xml" value="0.10258358662613981" />
-        <entry key="..\:/Users/Admin/Desktop/AndroidProject/project/FrontEnd/app/src/main/res/layout/fragment_browse.xml" value="0.25" />
+        <entry key="..\:/Users/Admin/Desktop/AndroidProject/project/FrontEnd/app/src/main/res/layout/fragment_browse.xml" value="0.1875" />
         <entry key="..\:/Users/Admin/Desktop/AndroidProject/project/FrontEnd/app/src/main/res/layout/fragment_dashboard.xml" value="0.2109375" />
         <entry key="..\:/Users/Admin/Desktop/AndroidProject/project/FrontEnd/app/src/main/res/layout/fragment_home.xml" value="0.2109375" />
         <entry key="..\:/Users/Admin/Desktop/AndroidProject/project/FrontEnd/app/src/main/res/layout/fragment_notifications.xml" value="0.2109375" />
-        <entry key="..\:/Users/Admin/Desktop/AndroidProject/project/FrontEnd/app/src/main/res/layout/fragment_person.xml" value="0.25" />
+        <entry key="..\:/Users/Admin/Desktop/AndroidProject/project/FrontEnd/app/src/main/res/layout/fragment_person.xml" value="0.33" />
         <entry key="..\:/Users/Admin/Desktop/AndroidProject/project/FrontEnd/app/src/main/res/layout/fragment_publish.xml" value="0.1875" />
         <entry key="..\:/Users/Admin/Desktop/AndroidProject/project/FrontEnd/app/src/main/res/menu/bottom_nav_menu.xml" value="0.2109375" />
         <entry key="..\:/Users/Admin/Desktop/AndroidProject/project/FrontEnd/app/src/main/res/xml/file_path.xml" value="0.1917989417989418" />
@@ -37,6 +35,7 @@
         <entry key="..\:/useful/DDL/homework/AndroidProject/project/FrontEnd/app/src/main/res/layout/activity_blacklist.xml" value="0.27708333333333335" />
         <entry key="..\:/useful/DDL/homework/AndroidProject/project/FrontEnd/app/src/main/res/layout/activity_followers.xml" value="0.2916666666666667" />
         <entry key="..\:/useful/DDL/homework/AndroidProject/project/FrontEnd/app/src/main/res/layout/activity_infoedit.xml" value="0.3383152173913043" />
+        <entry key="..\:/useful/DDL/homework/AndroidProject/project/FrontEnd/app/src/main/res/layout/activity_likelist.xml" value="0.1625" />
         <entry key="..\:/useful/DDL/homework/AndroidProject/project/FrontEnd/app/src/main/res/layout/activity_login.xml" value="0.1540020263424519" />
         <entry key="..\:/useful/DDL/homework/AndroidProject/project/FrontEnd/app/src/main/res/layout/activity_main.xml" value="0.18414387031408308" />
         <entry key="..\:/useful/DDL/homework/AndroidProject/project/FrontEnd/app/src/main/res/layout/activity_others.xml" value="0.21302083333333333" />
@@ -44,7 +43,7 @@
         <entry key="..\:/useful/DDL/homework/AndroidProject/project/FrontEnd/app/src/main/res/layout/activity_publish_draft.xml" value="0.21302083333333333" />
         <entry key="..\:/useful/DDL/homework/AndroidProject/project/FrontEnd/app/src/main/res/layout/activity_publish_pic.xml" value="0.32518115942028986" />
         <entry key="..\:/useful/DDL/homework/AndroidProject/project/FrontEnd/app/src/main/res/layout/activity_publish_video.xml" value="0.21302083333333333" />
-        <entry key="..\:/useful/DDL/homework/AndroidProject/project/FrontEnd/app/src/main/res/layout/activity_show_dynamic.xml" value="0.21302083333333333" />
+        <entry key="..\:/useful/DDL/homework/AndroidProject/project/FrontEnd/app/src/main/res/layout/activity_show_dynamic.xml" value="0.176" />
         <entry key="..\:/useful/DDL/homework/AndroidProject/project/FrontEnd/app/src/main/res/layout/comment_item.xml" value="0.2916666666666667" />
         <entry key="..\:/useful/DDL/homework/AndroidProject/project/FrontEnd/app/src/main/res/layout/draft_item.xml" value="0.21302083333333333" />
         <entry key="..\:/useful/DDL/homework/AndroidProject/project/FrontEnd/app/src/main/res/layout/dynamic_item_pic.xml" value="0.4" />

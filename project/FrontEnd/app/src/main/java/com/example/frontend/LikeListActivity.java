@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -37,9 +38,9 @@ public class LikeListActivity extends AppCompatActivity {
     private final LinkedList<String> mBitmapList = new LinkedList<>();
     private final LinkedList<String> mEmailList = new LinkedList<>();
     private int total_num_data = 0;  // 个数上限
-    private Bitmap image;
     private RecyclerView mRecyclerView;
     private ListAdapter mAdapter;
+    private int DynamicID = 0;
     private static final int handlerStateWarning = 0;
     private static final int handlerStateUpdateInfo = 1;
     private static final String LOG_TAG = LikeListActivity.class.getSimpleName();
@@ -63,7 +64,7 @@ public class LikeListActivity extends AppCompatActivity {
 
     private void getData(){
         // 引入数据
-        String requestUrl = "http://43.138.84.226:8080/interact/show_ignore_list";
+        String requestUrl = "http://43.138.84.226:8080/demonstrate/show_dynamic_likelist/" + DynamicID;
         LikeListActivity.MyThreadGetData myThread = new LikeListActivity.MyThreadGetData(requestUrl);// TO DO
         myThread.start();
 
@@ -73,7 +74,10 @@ public class LikeListActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_blacklist);
+        setContentView(R.layout.activity_likelist);
+
+        Intent intent = getIntent();
+        DynamicID = intent.getIntExtra("dynamic_id", 0);
 
         // Create recycler view.
         mRecyclerView = findViewById(R.id.recyclerview);
@@ -83,6 +87,7 @@ public class LikeListActivity extends AppCompatActivity {
         mRecyclerView.setAdapter(mAdapter);
         // Give the recycler view a default layout manager.
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+
 
     }
 
@@ -123,7 +128,7 @@ public class LikeListActivity extends AppCompatActivity {
                         Log.d(LOG_TAG, result.toString());
 
                         total_num_data = result.getInt("sum");
-                        JSONArray jsonArray = result.getJSONArray("ignore_list");
+                        JSONArray jsonArray = result.getJSONArray("likelist");
                         String requestUrl = "http://43.138.84.226:8080/user/show_avator/";
 
                         for (int i = 0; i < total_num_data; i++) {
@@ -187,7 +192,6 @@ public class LikeListActivity extends AppCompatActivity {
                 if (response.isSuccessful()){
                     if (response.code() == 200){
                         InputStream inputStream = response.body().byteStream();
-                        image = BitmapFactory.decodeStream(inputStream);
                         Message msg = handler.obtainMessage(handlerStateUpdateInfo);
                         JSONObject data = new JSONObject();
                         data.put("nickname", t.getString("nickname"));

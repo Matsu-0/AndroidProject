@@ -62,8 +62,7 @@ public class ShowDynamicActivity extends AppCompatActivity {
     private RelativeLayout audioLayout;
     private NineGridlayout nineGridlayout;
     private VideoView videoLayout;
-    private int DynamicID;
-    private int comment_num;
+    private int DynamicID, comment_num, like_num = 0;
     private boolean isLike = false;
     private JSONArray pic_list;
     private List<String> path = new ArrayList<>();
@@ -121,8 +120,8 @@ public class ShowDynamicActivity extends AppCompatActivity {
 
             }
             else if (msg.what == handlerLikeListNum) {
-                int res = (int) msg.obj;
-                likeListNum.setText("点赞：" + res + "人");
+                like_num = (int) msg.obj;
+                likeListNum.setText("点赞：" + like_num + "人");
             }
             else if (msg.what == handlerPicDynamic) {
                 try {
@@ -190,14 +189,18 @@ public class ShowDynamicActivity extends AppCompatActivity {
                 String res = (String) msg.obj;
                 if (res.equals("点赞成功")) {
                     isLike = true;
+                    like_num += 1;
                     likeButton.setText("取消赞");
+                    likeListNum.setText("点赞：" + like_num + "人");
                 }
             }
             else if (msg.what == handlerCancelLike) {
                 String res = (String) msg.obj;
-                if (res.equals("取消点赞")) {
+                if (res.equals("已取消点赞")) {
                     isLike = false;
+                    like_num -= 1;
                     likeButton.setText("点赞");
+                    likeListNum.setText("点赞：" + like_num + "人");
                 }
             }
             else if (msg.what == handlerGetCommentInfo) {
@@ -242,7 +245,7 @@ public class ShowDynamicActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         DynamicID = intent.getIntExtra("dynamic_id", 0);
-        String requestUrl1 = "http://43.138.84.226:8080/demonstrate/show_dynamic" + DynamicID;
+        String requestUrl1 = "http://43.138.84.226:8080/demonstrate/show_dynamic/" + DynamicID;
 
         ShowDynamicActivity.MyThreadInitData myThread1 = new ShowDynamicActivity.MyThreadInitData(requestUrl1);
         myThread1.start();
@@ -256,6 +259,7 @@ public class ShowDynamicActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(ShowDynamicActivity.this, LikeListActivity.class);//想调到哪个界面就把login改成界面对应的activity名
+                intent.putExtra("dynamic_id", DynamicID);
                 startActivity(intent);
             }
         });
