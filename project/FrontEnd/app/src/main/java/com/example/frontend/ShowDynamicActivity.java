@@ -107,8 +107,9 @@ public class ShowDynamicActivity extends AppCompatActivity {
                     title.setText(res.getString("title"));
                     detail.setText(res.getString("content"));
                     String l = res.getString("location");
-                    if (l != null && l.length() != 0) {
-                        location.setText("l");
+                    Log.d("位置", l);
+                    if (!l.equals("None")) {
+                        location.setText("位置：" + l);
                         location.setVisibility(View.VISIBLE);
                     }
                     timeText.setText(res.getString("release_time"));
@@ -146,20 +147,10 @@ public class ShowDynamicActivity extends AppCompatActivity {
                 String res = (String) msg.obj;
                 try {
                     audio_View.setDataSource("http://43.138.84.226:8080/demonstrate/show_audio/" + res);
+                    audio_View.prepare();
                     audioLayout.setVisibility(View.VISIBLE);
-                    audioPlayer.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            if (audio_View.isPlaying()){
-                                audio_View.pause();
-                                audioPlayer.setText("播放");
-                            }
-                            else {
-                                audio_View.start();
-                                audioPlayer.setText("暂停");
-                            }
-                        }
-                    });
+                    audioFilename.setText(res);
+                    audioPlayer.setText("播放");
                 } catch (IOException e){
                     e.printStackTrace();
                 }
@@ -167,12 +158,17 @@ public class ShowDynamicActivity extends AppCompatActivity {
             }
             else if (msg.what == handlerVideoDynamic) {
                 String res = (String) msg.obj;
-                String videoUri = "http://43.138.84.226:8080/demonstrate/show_audio/" + res;
-                audioFilename.setText(res);
+                Log.d("video filename", res);
+                String videoUri = "http://43.138.84.226:8080/demonstrate/show_video/" + res;
+                //String videoUri  = "https://poss-videocloud.cns.com.cn/oss/2021/05/08/chinanews/MEIZI_YUNSHI/onair/25AFA3CA2F394DB38420CC0A44483E82.mp4";
+                Log.d("video url", videoUri);
+
                 Uri uri = Uri.parse(videoUri);
                 videoLayout.setVideoURI(uri);
                 videoLayout.setVisibility(View.VISIBLE);
                 videoLayout.start();
+                videoLayout.requestFocus();
+
             }
             else if (msg.what == handlerGetLike) {
                 String res = (String) msg.obj;
@@ -289,6 +285,19 @@ public class ShowDynamicActivity extends AppCompatActivity {
                 }
 //                Intent intent = new Intent(getActivity(), FollowersActivity.class);//想调到哪个界面就把login改成界面对应的activity名
 //                startActivity(intent);
+            }
+        });
+        audioPlayer.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (audio_View.isPlaying()){
+                    audio_View.pause();
+                    audioPlayer.setText("播放");
+                }
+                else {
+                    audio_View.start();
+                    audioPlayer.setText("暂停");
+                }
             }
         });
     }

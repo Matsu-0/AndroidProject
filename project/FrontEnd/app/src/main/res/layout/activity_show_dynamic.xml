@@ -6,15 +6,19 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".ShowDynamicActivity">
+
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginBottom="50dp">
+
         <LinearLayout
             android:id="@+id/show_dynamic"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical"
             android:gravity="center_horizontal"
+            android:orientation="vertical"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.49"
@@ -88,10 +92,9 @@
                     android:id="@+id/button_like"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="点赞"/>
+                    android:text="点赞" />
 
             </LinearLayout>
-
 
 
             <TextView
@@ -104,8 +107,8 @@
                 android:layout_marginBottom="10dp"
                 android:gravity="left"
                 android:text="位置："
-                android:visibility="gone"
-                android:textSize="20dp" />
+                android:textSize="20dp"
+                android:visibility="gone" />
 
 
             <com.w4lle.library.NineGridlayout
@@ -113,22 +116,23 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/location_view"
-                android:visibility="gone"
-                android:layout_margin="20dp" />
+                android:layout_margin="20dp"
+                android:visibility="gone" />
 
             <RelativeLayout
                 android:id="@+id/audio_layout"
                 android:layout_width="wrap_content"
-                android:visibility="gone"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:visibility="gone">
+
                 <TextView
                     android:id="@+id/audio_filename"
                     android:layout_width="200dp"
                     android:layout_height="wrap_content"
                     android:layout_margin="10dp"
                     android:gravity="left"
-                    android:textSize="20dp"
-                    android:text="未导入音频"/>
+                    android:text="未导入音频"
+                    android:textSize="20dp" />
 
                 <Button
                     android:id="@+id/audio_play"
@@ -143,11 +147,12 @@
                 android:id="@+id/video_layout"
                 android:layout_width="match_parent"
                 android:layout_height="300dp"
-                android:layout_below="@+id/publish_video_detail"
+                android:layout_below="@+id/audio_layout"
                 android:layout_margin="20dp"
-                android:visibility="gone"
                 android:background="@drawable/imageviewboundshape"
-                android:padding="3dip"/>
+                android:padding="3dip"
+                android:visibility="gone" />
+
             <TextView
                 android:id="@+id/content_title"
                 android:layout_width="match_parent"
@@ -163,8 +168,7 @@
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/commentRecyclerView"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
-            </androidx.recyclerview.widget.RecyclerView>
+                android:layout_height="match_parent"/>
         </LinearLayout>
     </ScrollView>
 
