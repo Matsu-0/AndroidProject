@@ -13,6 +13,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -62,7 +63,9 @@ public class BrowseFragment extends Fragment {
     private RelativeLayout search_list;
     private Button search_option, search, search_clear;
     private Boolean isTimeSeq, isAllRange, isFinish;
-    private int page;
+    private EditText title, nickname, content;
+    private JSONObject search_detail;
+    private int page, type;
     private static final int handlerStateWarning = 0;
     private static final int handlerStateGetDynamics = 1;
     private static final int handlerStateDynamicsFinish = 2;
@@ -128,10 +131,16 @@ public class BrowseFragment extends Fragment {
         search = (Button) getActivity().findViewById(R.id.search_begin);
         search_clear = (Button) getActivity().findViewById(R.id.search_clear);
 
+        title = (EditText) getActivity().findViewById(R.id.search_dynamic_title);
+        content = (EditText) getActivity().findViewById(R.id.search_dynamic_content);
+        nickname = (EditText) getActivity().findViewById(R.id.search_dynamic_author);
+
         mRecyclerView = getActivity().findViewById(R.id.dynamic_recycle_view_all);
             // Create an adapter and supply the data to be displayed.
         isTimeSeq = true;
         isAllRange = true;
+        search_detail = new JSONObject();
+        type = 0;
         reset();
 
         search_option.setOnClickListener(new View.OnClickListener() {
@@ -147,6 +156,35 @@ public class BrowseFragment extends Fragment {
                 }
             }
         });
+
+        search.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                search_detail = new JSONObject();
+
+                try {
+                    search_detail.put("title", title.getText().toString());
+                    search_detail.put("content", content.getText().toString());
+                    search_detail.put("nickname", nickname.getText().toString());
+                    search_detail.put("type", type);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                reset();
+                getMoreData();
+
+            }
+        });
+
+        search_clear.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                search_detail = new JSONObject();
+                reset();
+                getMoreData();
+            }
+        });
+
         radio_choose_sequence.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
@@ -186,6 +224,29 @@ public class BrowseFragment extends Fragment {
                 getMoreData();
             }
         });
+
+        radio_choose_type.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                //滑动到底部
+                switch (checkedId) {
+                    case R.id.choose_all_type:
+                        type = 0;
+                        break;
+                    case R.id.choose_pic_type:
+                        type = 1;
+                        break;
+                    case R.id.choose_video_type:
+                        type = 3;
+                        break;
+                    case R.id.choose_audio_type:
+                        type = 2;
+                        break;
+                    default:
+                        break;
+                }
+            }
+        });
     }
 
     @Override
@@ -207,16 +268,18 @@ public class BrowseFragment extends Fragment {
             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
                 //滑动到底部
+
                 if (newState == mRecyclerView.SCROLL_STATE_IDLE) {
+
                     //recyclerview滑动到底部,更新数据
                     //加载更多数据
                     new Handler().postDelayed(new Runnable() {
                         @Override
                         public void run() {
-                            Log.d("111", page + "");
+
                             getMoreData();
                         }
-                    }, 3000);
+                    }, 1000);
                 }
             }
         });
@@ -228,7 +291,7 @@ public class BrowseFragment extends Fragment {
         if (isFinish)
             return;
         String requestUrl = "http://43.138.84.226:8080/demonstrate/all_dynamics";
-        BrowseFragment.MyThreadGetAllDynamic myThread = new BrowseFragment.MyThreadGetAllDynamic(requestUrl, page, isTimeSeq, isAllRange);// TO DO
+        BrowseFragment.MyThreadGetAllDynamic myThread = new BrowseFragment.MyThreadGetAllDynamic(requestUrl, page, isTimeSeq, isAllRange, search_detail);// TO DO
         myThread.start();// TO DO
 
         page++;
@@ -238,7 +301,9 @@ public class BrowseFragment extends Fragment {
         page = 1;
         dynamic_list = new JSONArray();
         isFinish = false;
-
+        mAdapter = new DynamicListAdapter(getActivity(), dynamic_list, 0);
+        // Connect the adapter with the recycler view.
+        mRecyclerView.setAdapter(mAdapter);
     }
 
     @Override
@@ -249,13 +314,26 @@ public class BrowseFragment extends Fragment {
 
     class MyThreadGetAllDynamic extends Thread{
         private  String requestUrl;
-        private int page;
+        private int page, type;
         private Boolean isTimeSeq, isAllRange;
-        MyThreadGetAllDynamic(String request, int page, Boolean seq, Boolean range){
+        private String title, content, nickname;
+        MyThreadGetAllDynamic(String request, int page, Boolean seq, Boolean range, JSONObject searchOp) {
             requestUrl = request;
             this.page = page;
             isTimeSeq = seq;
             isAllRange = range;
+            try {
+                title = searchOp.getString("title");
+            } catch (JSONException e) { }
+            try {
+                content = searchOp.getString("content");
+            } catch (JSONException e) { }
+            try {
+                nickname = searchOp.getString("nickname");
+            } catch (JSONException e) { }
+            try {
+                type = searchOp.getInt("type");
+            } catch (JSONException e) { }
         }
         @Override
         public void run() {
@@ -280,6 +358,18 @@ public class BrowseFragment extends Fragment {
                 }
                 else {
                     builder.add("range", "2");
+                }
+                if (title != null && title.length() != 0) {
+                    builder.add("title", title);
+                }
+                if (content != null && content.length() != 0) {
+                    builder.add("content", content);
+                }
+                if (nickname != null && nickname.length() != 0) {
+                    builder.add("author", nickname);
+                }
+                if (type != 0) {
+                    builder.add("type", type+"");
                 }
                 RequestBody formBody = builder.build();
                 Request request = new Request.Builder()

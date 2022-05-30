@@ -55,8 +55,8 @@ public class DynamicListAdapter extends
     private int TYPE_ITEM = 0;
     private int TYPE_FOOT = 4;
     private int TYPE_PIC = 1;
-    private int TYPE_VIDEO = 2;
-    private int TYPE_AUDIO = 3;
+    private int TYPE_VIDEO = 3;
+    private int TYPE_AUDIO = 2;
     private int DELETE_TYPE_BAN = 0;
     private int DELETE_TYPE_USE = 1;
     private int DELETE_TYPE_JUDGE = 2;
@@ -212,10 +212,10 @@ public class DynamicListAdapter extends
             if (dynamic_list.getJSONObject(position).getInt("type") == 1){
                 return TYPE_PIC;
             }
-            if (dynamic_list.getJSONObject(position).getInt("type") == 2){
+            if (dynamic_list.getJSONObject(position).getInt("type") == 3){
                 return TYPE_VIDEO;
             }
-            if (dynamic_list.getJSONObject(position).getInt("type") == 3){
+            if (dynamic_list.getJSONObject(position).getInt("type") == 2){
                 return TYPE_AUDIO;
             }
         } catch (JSONException e) {
