@@ -261,14 +261,15 @@ public class DynamicListAdapter extends
             } else if (holder.type == TYPE_AUDIO){
                 holder.dynamicTypeView.setText("音频");
             } else if (holder.type == TYPE_PIC){
-                JSONArray picList = holder.obj.getJSONArray("pic_list");
-                holder.path.clear();
-                for (int i = 0; i < picList.length(); ++i){
-                    holder.path.add("http://43.138.84.226:8080/demonstrate/show_picture/" + picList.getString(i));
-                }
-                PicListAdapter adapter = new PicListAdapter(context, holder.path);
-                holder.picView.setAdapter(adapter);
-                holder.picView.setVisibility(View.VISIBLE);
+                // 注释部分用于在动态展示页面显示图片，但由于过卡，所以暂时注释掉
+//                JSONArray picList = holder.obj.getJSONArray("pic_list");
+//                holder.path.clear();
+//                for (int i = 0; i < picList.length(); ++i){
+//                    holder.path.add("http://43.138.84.226:8080/demonstrate/show_picture/" + picList.getString(i));
+//                }
+//                PicListAdapter adapter = new PicListAdapter(context, holder.path);
+//                holder.picView.setAdapter(adapter);
+//                holder.picView.setVisibility(View.VISIBLE);
                 holder.dynamicTypeView.setText("图片");
             }
             holder.dynamic_num = holder.obj.getInt("dynamic_id");
