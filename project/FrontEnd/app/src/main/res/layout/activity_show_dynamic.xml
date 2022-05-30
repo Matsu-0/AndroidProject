@@ -149,8 +149,6 @@
                 android:layout_height="300dp"
                 android:layout_below="@+id/audio_layout"
                 android:layout_margin="20dp"
-                android:background="@drawable/imageviewboundshape"
-                android:padding="3dip"
                 android:visibility="gone" />
 
             <TextView

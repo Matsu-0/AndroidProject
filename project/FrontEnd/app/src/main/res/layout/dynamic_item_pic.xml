@@ -27,6 +27,40 @@
     android:layout_marginTop="5dp"
     android:background="@drawable/imageviewboundshape">
 
+    <RelativeLayout
+        android:id="@+id/author_info"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_margin="5dp">
+        <ImageView
+            android:id="@+id/author_avatar"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:background="@drawable/imageviewboundshape"
+            android:padding="3dip"
+            />
+        <TextView
+            android:id="@+id/author_name"
+            android:layout_width="wrap_content"
+            android:layout_marginLeft="60dp"
+            android:layout_height="50dp"
+            android:gravity="center_vertical"
+            android:text="昵称"
+            android:textSize="24dp"
+            />
+
+        <Button
+            android:id="@+id/author_follow"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="5dp"
+            android:gravity="right|center_vertical"
+            android:text="关注"
+            android:textSize="16dp" />
+    </RelativeLayout>
+
     <TextView
         android:id="@+id/dynamic_title"
         android:layout_width="match_parent"
@@ -34,6 +68,7 @@
         android:layout_margin="10dp"
         android:text="标题"
         android:textSize="24dp"
+        android:gravity="center"
         />
     <TextView
         android:id="@+id/dynamic_detail"

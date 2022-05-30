@@ -88,8 +88,8 @@ public class BrowseFragment extends Fragment {
                     JSONArray temp = result.getJSONArray("dynamics_list");
                     for (int i = 0; i < result.getInt("dynamics_num"); ++i ){ //
                         dynamic_list.put(temp.getJSONObject(i));
+                        Log.d("111",temp.getJSONObject(i).toString());
                     }
-
 
                     mAdapter.notifyDataSetChanged();
                     Log.d("111",dynamic_list.toString());
@@ -252,7 +252,7 @@ public class BrowseFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-        mAdapter = new DynamicListAdapter(getActivity(), dynamic_list, 0);
+        mAdapter = new DynamicListAdapter(getActivity(), dynamic_list, 2);
         // Connect the adapter with the recycler view.
         mRecyclerView.setAdapter(mAdapter);
         // Give the recycler view a default layout manager.
@@ -301,7 +301,7 @@ public class BrowseFragment extends Fragment {
         page = 1;
         dynamic_list = new JSONArray();
         isFinish = false;
-        mAdapter = new DynamicListAdapter(getActivity(), dynamic_list, 0);
+        mAdapter = new DynamicListAdapter(getActivity(), dynamic_list, 2);
         // Connect the adapter with the recycler view.
         mRecyclerView.setAdapter(mAdapter);
     }

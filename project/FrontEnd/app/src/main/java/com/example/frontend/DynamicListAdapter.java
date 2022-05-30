@@ -25,11 +25,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.squareup.picasso.Picasso;
 import com.w4lle.library.NineGridlayout;
 
 import org.json.JSONArray;
@@ -51,28 +54,31 @@ public class DynamicListAdapter extends
     private final LayoutInflater mInflater;
     private final JSONArray dynamic_list;
     private Context context;
-    private int deleteType;
+    private int showtype;       // 表示显示模式，1表示本人主页，0表示他人主页，2表示动态主页
     private int TYPE_ITEM = 0;
     private int TYPE_FOOT = 4;
     private int TYPE_PIC = 1;
     private int TYPE_VIDEO = 3;
     private int TYPE_AUDIO = 2;
-    private int DELETE_TYPE_BAN = 0;
-    private int DELETE_TYPE_USE = 1;
-    private int DELETE_TYPE_JUDGE = 2;
+    private int SHOW_TYPE_OTHER = 0;
+    private int SHOW_TYPE_MYSELF = 1;
+    private int SHOW_TYPE_ALL = 2;
     public Boolean hasmore;
 
     class WordViewHolder extends RecyclerView.ViewHolder
             implements View.OnClickListener {
-        public final TextView dynamicTitleView, dynamicDetailView, dynamicLocationView, dynamicTimeView, dynamicTypeView, dynamicFootView;
+        public final TextView dynamicTitleView, dynamicDetailView, dynamicLocationView, dynamicTimeView, dynamicTypeView, dynamicFootView, authorNameView;
         public final LinearLayout dynamicNormalView;
-        public final Button deleteButtonView;
+        public final RelativeLayout authorInfoView;
+        public final Button deleteButtonView, followButtonView;
+        public final ImageView avatar;
         public final NineGridlayout picView;
         public JSONObject obj;
-        private List<String> path;
-        public int type, dynamic_num;
+//        private List<String> path;
+        public int type, dynamic_num, show_type;
+        public String author_email;
         final DynamicListAdapter mAdapter;
-
+        private Boolean isFollow;
         /**
          * Creates a new custom view holder to hold the view to display in
          * the RecyclerView.
@@ -81,7 +87,7 @@ public class DynamicListAdapter extends
          * @param adapter The adapter that manages the the data and views
          *                for the RecyclerView.
          */
-        public WordViewHolder(View itemView, DynamicListAdapter adapter, Boolean ifMyDynamic) {
+        public WordViewHolder(View itemView, DynamicListAdapter adapter, int showType) {
             super(itemView);
             dynamicTitleView = itemView.findViewById(R.id.dynamic_title);
             dynamicDetailView = itemView.findViewById(R.id.dynamic_detail);
@@ -91,11 +97,24 @@ public class DynamicListAdapter extends
             dynamicTypeView = itemView.findViewById(R.id.dynamic_type);
             dynamicFootView = itemView.findViewById(R.id.dynamic_loading);
             dynamicNormalView = itemView.findViewById(R.id.dynamic_normal);
-            path = new ArrayList<>();
-            if (!ifMyDynamic){
-                deleteButtonView.setVisibility(View.GONE);
-            }
+            authorNameView = itemView.findViewById(R.id.author_name);
+            authorInfoView = itemView.findViewById(R.id.author_info);
+            followButtonView = itemView.findViewById(R.id.author_follow);
+            avatar =  itemView.findViewById(R.id.author_avatar);
+//            path = new ArrayList<>();
+            show_type = showType;
 
+            if (show_type == 0){
+                deleteButtonView.setVisibility(View.GONE);
+                authorInfoView.setVisibility(View.GONE);
+            }
+            if (show_type == 1){
+                deleteButtonView.setVisibility(View.VISIBLE);
+                authorInfoView.setVisibility(View.GONE);
+            }
+            if (show_type == 2){
+                authorInfoView.setVisibility(View.VISIBLE);
+            }
             picView  = itemView.findViewById(R.id.grid_layout_pic);
             this.mAdapter = adapter;
             itemView.setOnClickListener(this);
@@ -145,7 +164,7 @@ public class DynamicListAdapter extends
         this.hasmore = true;
         this.dynamic_list = num;
         this.context = context;
-        this.deleteType = type;
+        this.showtype = type;
     }
 
     /**
@@ -173,15 +192,7 @@ public class DynamicListAdapter extends
         // Inflate an item view.
         View mItemView;
         Boolean isDeleteShow = true;
-        if (deleteType == DELETE_TYPE_BAN){
-            isDeleteShow = false;
-        }
-        else if (deleteType == DELETE_TYPE_USE){
-            isDeleteShow = true;
-        }
-        else if (deleteType == DELETE_TYPE_JUDGE){
-            isDeleteShow = true;
-        }
+
         if (viewType == TYPE_PIC) {
             mItemView = mInflater.inflate(
                     R.layout.dynamic_item_pic, parent, false);
@@ -199,7 +210,7 @@ public class DynamicListAdapter extends
                     R.layout.dynamic_item_pic, parent, false);
         }
 
-        return new WordViewHolder(mItemView, this, isDeleteShow);
+        return new WordViewHolder(mItemView, this, this.showtype);
     }
 
     //返回不同布局
@@ -261,6 +272,7 @@ public class DynamicListAdapter extends
             } else if (holder.type == TYPE_AUDIO){
                 holder.dynamicTypeView.setText("音频");
             } else if (holder.type == TYPE_PIC){
+                holder.dynamicTypeView.setText("图片");
                 // 注释部分用于在动态展示页面显示图片，但由于过卡，所以暂时注释掉
 //                JSONArray picList = holder.obj.getJSONArray("pic_list");
 //                holder.path.clear();
@@ -270,7 +282,31 @@ public class DynamicListAdapter extends
 //                PicListAdapter adapter = new PicListAdapter(context, holder.path);
 //                holder.picView.setAdapter(adapter);
 //                holder.picView.setVisibility(View.VISIBLE);
-                holder.dynamicTypeView.setText("图片");
+            }
+
+            if (holder.show_type == SHOW_TYPE_ALL){
+//                try {
+//                    holder.authorNameView.setText(holder.obj.getString("author_nickname"));
+//                    holder.author_email = holder.obj.getString("author");
+//
+//
+                    if (holder.obj.getInt("author_ismfollow") == 1){
+                        holder.isFollow = true;
+                        holder.followButtonView.setText("取消关注");
+                    } else if (holder.obj.getInt("author_ismfollow") == 0){
+                        holder.isFollow = false;
+                        holder.followButtonView.setText("关注");
+                    }
+                    if (holder.obj.getBoolean("author_ismyself") ){
+                        holder.deleteButtonView.setVisibility(View.VISIBLE);
+                    } else if (!holder.obj.getBoolean("author_ismyself") ){
+                        holder.deleteButtonView.setVisibility(View.GONE);
+                    }
+//                } catch (JSONException e) {
+//                    e.printStackTrace();
+//                }
+//                String avatarPath = "http://43.138.84.226:8080/user/show_avator/" + holder.obj.getString("author_avatar");
+//                Picasso.with(context).load(avatarPath).into(holder.avatar);
             }
             holder.dynamic_num = holder.obj.getInt("dynamic_id");
             holder.deleteButtonView.setOnClickListener(new View.OnClickListener() {
