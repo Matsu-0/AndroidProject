@@ -46,11 +46,19 @@ public View getView(int i, View view) {
         ImageView iv = new ImageView(context);
         iv.setScaleType(ImageView.ScaleType.CENTER_CROP);
         iv.setBackgroundColor(Color.parseColor("#f5f5f5"));
-
-        Picasso.with(context)
-                .load( new File(getUrl(i))  )
-                .placeholder(new ColorDrawable(Color.parseColor("#f5f5f5")))
-                .into(iv);
+        Log.d("2222", getUrl(i));
+        if (getUrl(i).startsWith("http://")){
+                Picasso.with(context)
+                        .load( getUrl(i)  )
+                        .placeholder(new ColorDrawable(Color.parseColor("#f5f5f5")))
+                        .into(iv);
+        }
+        else {
+                Picasso.with(context)
+                        .load(new File(getUrl(i)))
+                        .placeholder(new ColorDrawable(Color.parseColor("#f5f5f5")))
+                        .into(iv);
+        }
         return iv;
         }
 }

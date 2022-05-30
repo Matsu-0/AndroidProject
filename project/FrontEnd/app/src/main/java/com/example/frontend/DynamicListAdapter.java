@@ -69,7 +69,7 @@ public class DynamicListAdapter extends
         public final Button deleteButtonView;
         public final NineGridlayout picView;
         public JSONObject obj;
-
+        private List<String> path;
         public int type, dynamic_num;
         final DynamicListAdapter mAdapter;
 
@@ -91,7 +91,7 @@ public class DynamicListAdapter extends
             dynamicTypeView = itemView.findViewById(R.id.dynamic_type);
             dynamicFootView = itemView.findViewById(R.id.dynamic_loading);
             dynamicNormalView = itemView.findViewById(R.id.dynamic_normal);
-
+            path = new ArrayList<>();
             if (!ifMyDynamic){
                 deleteButtonView.setVisibility(View.GONE);
             }
@@ -261,6 +261,14 @@ public class DynamicListAdapter extends
             } else if (holder.type == TYPE_AUDIO){
                 holder.dynamicTypeView.setText("音频");
             } else if (holder.type == TYPE_PIC){
+                JSONArray picList = holder.obj.getJSONArray("pic_list");
+                holder.path.clear();
+                for (int i = 0; i < picList.length(); ++i){
+                    holder.path.add("http://43.138.84.226:8080/demonstrate/show_picture/" + picList.getString(i));
+                }
+                PicListAdapter adapter = new PicListAdapter(context, holder.path);
+                holder.picView.setAdapter(adapter);
+                holder.picView.setVisibility(View.VISIBLE);
                 holder.dynamicTypeView.setText("图片");
             }
             holder.dynamic_num = holder.obj.getInt("dynamic_id");
