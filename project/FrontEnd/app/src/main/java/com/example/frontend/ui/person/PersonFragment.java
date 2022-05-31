@@ -41,6 +41,7 @@ import com.example.frontend.FollowersActivity;
 import com.example.frontend.InfoeditActivity;
 import com.example.frontend.FollowersActivity;
 import com.example.frontend.BlackListActivity;
+import com.example.frontend.LoginActivity;
 import com.example.frontend.OthersActivity;
 import com.example.frontend.R;
 import com.example.frontend.SignupActivity;
@@ -89,6 +90,7 @@ public class PersonFragment extends Fragment {
     private static final int handlerStateGetDynamics = 7;
     private static final int handlerStateDynamicsFinish = 8;
 
+    private static final int handlerStateDeleteSucceed = 100;
     private JSONArray dynamic_list;
     @SuppressLint("HandlerLeak")
     private Handler handler = new Handler(){
@@ -153,6 +155,20 @@ public class PersonFragment extends Fragment {
                 isFinish = true;
                 mAdapter.hasmore = false;
                 mAdapter.notifyDataSetChanged();
+            }
+            else if (msg.what == handlerStateDeleteSucceed) {
+                try {
+                    int res = (int) msg.obj;
+                    for (int i = 0; i < dynamic_list.length(); ++i) {
+                        if (dynamic_list.getJSONObject(i).getInt("dynamic_id") == res) {
+                            dynamic_list.remove(i);
+                            mAdapter.notifyDataSetChanged();
+                            return;
+                        }
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
             }
         }
     };
@@ -229,7 +245,7 @@ public class PersonFragment extends Fragment {
         myThread3.start();// TO DO
 
 
-        mAdapter = new DynamicListAdapter(getActivity(), dynamic_list, 1);
+        mAdapter = new DynamicListAdapter(getActivity(), dynamic_list, 1, handler);
         // Connect the adapter with the recycler view.
         mRecyclerView.setAdapter(mAdapter);
         // Give the recycler view a default layout manager.
@@ -523,4 +539,7 @@ public class PersonFragment extends Fragment {
             }
         }
     }
+
+
+
 }
