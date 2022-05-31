@@ -238,7 +238,6 @@ public class ShowDynamicActivity extends AppCompatActivity {
         mRecyclerView.setAdapter(mAdapter);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-
         Intent intent = getIntent();
         DynamicID = intent.getIntExtra("dynamic_id", 0);
         String requestUrl1 = "http://43.138.84.226:8080/demonstrate/show_dynamic/" + DynamicID;
