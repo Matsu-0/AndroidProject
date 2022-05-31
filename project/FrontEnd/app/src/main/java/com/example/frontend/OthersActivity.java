@@ -207,7 +207,7 @@ public class OthersActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        mAdapter = new DynamicListAdapter(OthersActivity.this, dynamic_list, 0);
+        mAdapter = new DynamicListAdapter(OthersActivity.this, dynamic_list, 0, handler);
         // Connect the adapter with the recycler view.
         mRecyclerView.setAdapter(mAdapter);
         // Give the recycler view a default layout manager.

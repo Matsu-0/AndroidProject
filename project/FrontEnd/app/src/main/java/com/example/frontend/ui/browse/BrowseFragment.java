@@ -60,6 +60,7 @@ public class BrowseFragment extends Fragment {
     private static final String LOG_TAG = BrowseFragment.class.getSimpleName();
 
     private RadioGroup radio_choose_sequence, radio_choose_range, radio_choose_type;
+    private RadioButton radio_all_type;
     private RelativeLayout search_list;
     private Button search_option, search, search_clear;
     private Boolean isTimeSeq, isAllRange, isFinish;
@@ -69,6 +70,9 @@ public class BrowseFragment extends Fragment {
     private static final int handlerStateWarning = 0;
     private static final int handlerStateGetDynamics = 1;
     private static final int handlerStateDynamicsFinish = 2;
+
+    private static final int handlerStateDeleteSucceed = 100;
+    private static final int handlerStateUpdateAllFollowButton = 101;
     @SuppressLint("HandlerLeak")
     private Handler handler = new Handler(){
         @Override
@@ -102,6 +106,34 @@ public class BrowseFragment extends Fragment {
                 mAdapter.hasmore = false;
                 mAdapter.notifyDataSetChanged();
             }
+            else if (msg.what == handlerStateDeleteSucceed) {
+                try {
+                    int res = (int) msg.obj;
+                    for (int i = 0; i < dynamic_list.length(); ++i) {
+                        if (dynamic_list.getJSONObject(i).getInt("dynamic_id") == res) {
+                            dynamic_list.remove(i);
+                            mAdapter.notifyDataSetChanged();
+                            return;
+                        }
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+            else if (msg.what == handlerStateUpdateAllFollowButton) {
+                try {
+                    String tempEmail = (String) msg.obj;
+                    for (int i = 0; i < dynamic_list.length(); ++i) {
+                        if (dynamic_list.getJSONObject(i).getString("author").equals(tempEmail) ) {
+                            dynamic_list.getJSONObject(i).put("author_ismfollow", msg.arg1);
+                        }
+                    }
+                    mAdapter.notifyDataSetChanged();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+
         }
     };
 
@@ -125,7 +157,7 @@ public class BrowseFragment extends Fragment {
         radio_choose_sequence = (RadioGroup) getActivity().findViewById(R.id.choose_sequence);
         radio_choose_range = (RadioGroup) getActivity().findViewById(R.id.choose_range);
         radio_choose_type = (RadioGroup) getActivity().findViewById(R.id.search_dynamic_type);
-
+        radio_all_type =  (RadioButton) getActivity().findViewById(R.id.choose_all_type);
         search_list = (RelativeLayout) getActivity().findViewById(R.id.search_list);
         search_option = (Button) getActivity().findViewById(R.id.search_option);
         search = (Button) getActivity().findViewById(R.id.search_begin);
@@ -180,6 +212,11 @@ public class BrowseFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 search_detail = new JSONObject();
+                title.setText("");
+                content.setText("");
+                nickname.setText("");
+                type = 0;
+                radio_all_type.setChecked(true);
                 reset();
                 getMoreData();
             }
@@ -252,7 +289,7 @@ public class BrowseFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-        mAdapter = new DynamicListAdapter(getActivity(), dynamic_list, 2);
+        mAdapter = new DynamicListAdapter(getActivity(), dynamic_list, 2, handler);
         // Connect the adapter with the recycler view.
         mRecyclerView.setAdapter(mAdapter);
         // Give the recycler view a default layout manager.
@@ -301,7 +338,7 @@ public class BrowseFragment extends Fragment {
         page = 1;
         dynamic_list = new JSONArray();
         isFinish = false;
-        mAdapter = new DynamicListAdapter(getActivity(), dynamic_list, 2);
+        mAdapter = new DynamicListAdapter(getActivity(), dynamic_list, 2, handler);
         // Connect the adapter with the recycler view.
         mRecyclerView.setAdapter(mAdapter);
     }
@@ -366,7 +403,7 @@ public class BrowseFragment extends Fragment {
                     builder.add("content", content);
                 }
                 if (nickname != null && nickname.length() != 0) {
-                    builder.add("author", nickname);
+                    builder.add("nickname", nickname);
                 }
                 if (type != 0) {
                     builder.add("type", type+"");
