@@ -42,6 +42,7 @@ import com.example.frontend.InfoeditActivity;
 import com.example.frontend.FollowersActivity;
 import com.example.frontend.BlackListActivity;
 import com.example.frontend.LoginActivity;
+import com.example.frontend.NoticeActivity;
 import com.example.frontend.OthersActivity;
 import com.example.frontend.R;
 import com.example.frontend.SignupActivity;
@@ -77,7 +78,7 @@ public class PersonFragment extends Fragment {
     private Button edit_button;
     private Bitmap image;
     private ImageView pic;
-    private TextView name, introduction, blacker, follower;
+    private TextView name, introduction, notice, blacker, follower;
     private Boolean isFinish;
     private int page = 1;
     private static final int handlerStateWarning = 0;
@@ -195,6 +196,7 @@ public class PersonFragment extends Fragment {
         pic = (ImageView) getActivity().findViewById(R.id.person_image);
         name = (TextView) getActivity().findViewById(R.id.person_name);
         introduction = (TextView) getActivity().findViewById(R.id.person_introduction);
+        notice = (TextView) getActivity().findViewById(R.id.notice);
         follower = (TextView) getActivity().findViewById(R.id.follow);
         blacker =(TextView) getActivity().findViewById(R.id.blacklist);
 
@@ -212,6 +214,14 @@ public class PersonFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getActivity(),InfoeditActivity.class);//想调到哪个界面就把login改成界面对应的activity名
+                startActivity(intent);
+            }
+        });
+
+        notice.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity(), NoticeActivity.class);//想调到哪个界面就把login改成界面对应的activity名
                 startActivity(intent);
             }
         });
