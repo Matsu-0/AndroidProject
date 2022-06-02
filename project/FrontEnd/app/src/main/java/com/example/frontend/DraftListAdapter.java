@@ -20,16 +20,21 @@ import static android.content.Context.MODE_PRIVATE;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Shows how to implement a simple Adapter for a RecyclerView.
@@ -37,18 +42,20 @@ import java.util.List;
  */
 public class DraftListAdapter extends
         RecyclerView.Adapter<DraftListAdapter.WordViewHolder> {
+    private static final int handlerStateUpdate = 100;
     private final LayoutInflater mInflater;
     private final List<Integer> draft_num_list;
     private Context context;
     private String sharedPrefFile ="com.example.frontend.draft";
     private int TYPE_ITEM = 0;//正常的Item
-
+    private Handler handler;
     class WordViewHolder extends RecyclerView.ViewHolder
             implements View.OnClickListener {
         public final TextView draftTitleView, draftDetailView, draftTypeView;
         public int type, draft_num;
         final DraftListAdapter mAdapter;
-
+        public final Button deleteButtonView;
+        public final LinearLayout deleteView;
         /**
          * Creates a new custom view holder to hold the view to display in
          * the RecyclerView.
@@ -62,6 +69,8 @@ public class DraftListAdapter extends
             draftTitleView = itemView.findViewById(R.id.draft_title);
             draftDetailView = itemView.findViewById(R.id.draft_detail);
             draftTypeView = itemView.findViewById(R.id.draft_type);
+            deleteButtonView = itemView.findViewById(R.id.draft_delete);
+            deleteView = itemView.findViewById(R.id.draft_menu);
             this.mAdapter = adapter;
             itemView.setOnClickListener(this);
         }
@@ -101,10 +110,11 @@ public class DraftListAdapter extends
         }
     }
 
-    public DraftListAdapter(Context context, LinkedList<Integer> num) {
+    public DraftListAdapter(Context context, LinkedList<Integer> num, Handler handler) {
         mInflater = LayoutInflater.from(context);
         this.draft_num_list = num;
         this.context = context;
+        this.handler = handler;
     }
 
     /**
@@ -170,9 +180,20 @@ public class DraftListAdapter extends
                 holder.draftTypeView.setText("音频");
             }
             else{
-                holder.draftTypeView.setText("未知");
+                holder.deleteView.setVisibility(View.GONE);
 
             }
+            holder.deleteButtonView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    SharedPreferences.Editor editor = mPreference.edit();
+                    editor.putInt("type", 0);
+                    editor.commit();
+                    Message msg = handler.obtainMessage(handlerStateUpdate);
+                    msg.obj = position;
+                    handler.sendMessage(msg);
+                }
+            });
         }
     }
 
