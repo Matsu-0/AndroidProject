@@ -68,7 +68,7 @@ public class ShowDynamicActivity extends AppCompatActivity {
     private List<String> path = new ArrayList<>();
     private MediaPlayer audio_View = new MediaPlayer();
 
-    private Bitmap image;
+    private String myName, myAvatar, myEmail;
     private RecyclerView mRecyclerView;
     private CommentListAdapter mAdapter;
     private final LinkedList<String> mNameList = new LinkedList<>();
@@ -86,7 +86,8 @@ public class ShowDynamicActivity extends AppCompatActivity {
     private static final int handlerGetLike = 6;
     private static final int handlerAddLike = 7;
     private static final int handlerCancelLike = 8;
-    private static final int handlerGetCommentInfo = 9;
+    private static final int handlerCommentSuccess = 9;
+    private static final int handlerCommentInit = 10;
 
     @SuppressLint("HandlerLeak")
     private Handler handler = new Handler(){
@@ -199,7 +200,7 @@ public class ShowDynamicActivity extends AppCompatActivity {
                     likeListNum.setText("点赞：" + like_num + "人");
                 }
             }
-            else if (msg.what == handlerGetCommentInfo) {
+            else if (msg.what == handlerCommentSuccess) {
 //                JSONObject data = (JSONObject) msg.obj;
 //
 //                try{
@@ -209,6 +210,15 @@ public class ShowDynamicActivity extends AppCompatActivity {
 //                } catch (JSONException e) {
 //                    e.printStackTrace();
 //                }
+                String res = (String) msg.obj;
+                AlertDialog textTips = new AlertDialog.Builder(ShowDynamicActivity.this)
+                        .setTitle("Tips:")
+                        .setMessage(res)
+                        .create();
+                textTips.show();
+                mAdapter.notifyDataSetChanged();
+            }
+            else if (msg.what == handlerCommentInit){
                 mAdapter.notifyDataSetChanged();
             }
         }
@@ -245,9 +255,13 @@ public class ShowDynamicActivity extends AppCompatActivity {
         ShowDynamicActivity.MyThreadInitData myThread1 = new ShowDynamicActivity.MyThreadInitData(requestUrl1);
         myThread1.start();
 
+        String requestUrl2 = "http://43.138.84.226:8080/user/show_user_data";
+        ShowDynamicActivity.MyThreadGetUserData myThreadGetUserData = new ShowDynamicActivity.MyThreadGetUserData(requestUrl2);
+        myThreadGetUserData.start();
+
         // 查询点赞状态
-        String requestUrl2 = "http://43.138.84.226:8080/interact/is_like";
-        ShowDynamicActivity.MyThreadGetLike myThreadGetLike = new ShowDynamicActivity.MyThreadGetLike(requestUrl2, DynamicID);
+        String requestUrl3 = "http://43.138.84.226:8080/interact/is_like";
+        ShowDynamicActivity.MyThreadGetLike myThreadGetLike = new ShowDynamicActivity.MyThreadGetLike(requestUrl3, DynamicID);
         myThreadGetLike.start();
 
         likeListNum.setOnClickListener(new View.OnClickListener() {
@@ -363,7 +377,7 @@ public class ShowDynamicActivity extends AppCompatActivity {
                             throw new IOException("Unexpected dynamic type");
                         }
 
-                        String requestUrl = "http://43.138.84.226:8080/user/show_avator/";
+                        String avatarUrl = "http://43.138.84.226:8080/user/show_avator/";
                         comment_num = result.getInt("comment_sum");
                         JSONArray array = result.getJSONArray("comment");
                         for (int i = 0; i < comment_num; i++) {
@@ -373,9 +387,13 @@ public class ShowDynamicActivity extends AppCompatActivity {
                             JSONObject t = (JSONObject) array.getJSONObject(i);
                             mNameList.addLast(t.getString("nickname"));
                             mEmailList.addLast(t.getString("email"));
-                            mBitmapList.addLast(requestUrl + t.getString("avator"));
+                            mBitmapList.addLast(avatarUrl + t.getString("avator"));
                             mCommentList.addLast(t.getString("content"));
                         }
+
+                        Message msg4 = handler.obtainMessage(handlerCommentInit);
+                        msg4.obj = Objects.requireNonNull(dynamic_info);
+                        handler.sendMessage(msg4);
                     }
                     else {
                         Message msg = handler.obtainMessage(handlerStateWarning);
@@ -436,7 +454,13 @@ public class ShowDynamicActivity extends AppCompatActivity {
                 Call call = client.newCall(request);
                 Response response = call.execute();
                 if (response.isSuccessful()) {
-                    Message msg = handler.obtainMessage(handlerStateWarning);
+                    String avatarUrl = "http://43.138.84.226:8080/user/show_avator/";
+                    mNameList.addLast(myName);
+                    mEmailList.addLast(myEmail);
+                    mBitmapList.addLast(avatarUrl + myAvatar);
+                    mCommentList.addLast(comment);
+
+                    Message msg = handler.obtainMessage(handlerCommentSuccess);
                     msg.obj = Objects.requireNonNull(response.body()).string();
                     handler.sendMessage(msg);
 
@@ -594,28 +618,19 @@ public class ShowDynamicActivity extends AppCompatActivity {
             }
         }
     }
-
-    class MyThreadGetPhoto extends Thread{
-        private String requestUrl;
-        private JSONObject t;
-        MyThreadGetPhoto(String request, String str){
-            try {
-                t = new JSONObject(str);
-                requestUrl = request + "/" + t.getString("avator");
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
+    class MyThreadGetUserData extends Thread{
+        private  String requestUrl;
+        MyThreadGetUserData(String request){
+            requestUrl = request;
         }
         @Override
         public void run() {
             try {
-                Log.d(LOG_TAG, "1");
                 OkHttpClient client = new OkHttpClient();
                 //3.构建MultipartBody
-                SharedPreferences sharedPreferences = getSharedPreferences("login",MODE_PRIVATE);
+                SharedPreferences sharedPreferences = ShowDynamicActivity.this.getSharedPreferences("login",MODE_PRIVATE);
                 String cookie = sharedPreferences.getString("session","");
                 Log.d(LOG_TAG, cookie);
-
                 Request request = new Request.Builder()
                         .url(requestUrl)
                         .get()
@@ -625,27 +640,20 @@ public class ShowDynamicActivity extends AppCompatActivity {
                 Call call = client.newCall(request);
                 Response response = call.execute();
                 Log.d(LOG_TAG, response.toString());
-                if (response.isSuccessful()){
+                if (response.isSuccessful()) {
+
                     if (response.code() == 200){
-                        InputStream inputStream = response.body().byteStream();
-                        image = BitmapFactory.decodeStream(inputStream);
-                        Message msg = handler.obtainMessage(handlerGetCommentInfo);
-                        JSONObject data = new JSONObject();
+                        JSONObject result = new JSONObject(Objects.requireNonNull(response.body()).string()); // String 转 JSONObject
 
-                        data.put("nickname", t.getString("nickname"));
-                        data.put("email", t.getString("email"));
-                        data.put("comment", t.getString("content"));
-                        msg.obj = data;
-                        handler.sendMessage(msg);
-
+                        myName = result.getString("nickname");
+                        myEmail = result.getString("email");
+                        myAvatar = result.getString("avator");
                     }
                     else {
                         Message msg = handler.obtainMessage(handlerStateWarning);
                         msg.obj = Objects.requireNonNull(response.body()).string();
                         handler.sendMessage(msg);
                     }
-
-
                 } else {
                     throw new IOException("Unexpected code " + response);
                 }

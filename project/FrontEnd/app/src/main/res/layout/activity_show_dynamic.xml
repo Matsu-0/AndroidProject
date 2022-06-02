@@ -16,7 +16,7 @@
         <LinearLayout
             android:id="@+id/show_dynamic"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:gravity="center_horizontal"
             android:orientation="vertical"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -163,10 +163,14 @@
                 android:text=" 评论"
                 android:textSize="28dp" />
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/commentRecyclerView"
+            <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"/>
+                android:layout_height="wrap_content">
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/commentRecyclerView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+            </RelativeLayout>
         </LinearLayout>
     </ScrollView>
 

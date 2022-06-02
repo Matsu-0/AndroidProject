@@ -58,6 +58,7 @@ public class NoticeAdapter extends
         public final TextView nameItemView, noticeItemView, commentItemView;
         public final TextView dynamicTitleItemView, dynamicContentItemView, dynamicTypeItemView;
         public int DynamicID;
+        public String author_email;
         final NoticeAdapter mAdapter;
 
         /**
@@ -136,7 +137,7 @@ public class NoticeAdapter extends
                                                          int viewType) {
         // Inflate an item view.
         View mItemView = mInflater.inflate(
-                R.layout.follower_item, parent, false);
+                R.layout.notice_item, parent, false);
         return new WordViewHolder(mItemView, this);
     }
 
@@ -160,6 +161,7 @@ public class NoticeAdapter extends
     public void onBindViewHolder(NoticeAdapter.WordViewHolder holder,
                                  int position) {
         if (getItemViewType(position) == TYPE_ITEM) {
+            Log.d("path", mAvatarList.get(position));
             Picasso.with(context).load(mAvatarList.get(position)).into(holder.avatarItemView);
 //            holder.avatarItemView.setImageBitmap(mBitmapList.get(position));
 
@@ -169,6 +171,7 @@ public class NoticeAdapter extends
             String comment = mCommentDetailList.get(position);
             if (comment != null && comment.length() != 0){
                 holder.commentItemView.setText(comment);
+                holder.commentItemView.setVisibility(View.VISIBLE);
             }
             holder.dynamicTitleItemView.setText(mDynamicTitleList.get(position));
             holder.dynamicContentItemView.setText(mDynamicContentList.get(position));

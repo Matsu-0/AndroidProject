@@ -69,7 +69,7 @@ public class NoticeActivity extends AppCompatActivity {
 
     private void getData(){
         // 引入数据
-        String requestUrl = "http://43.138.84.226:8080/interact/user/notice_list";
+        String requestUrl = "http://43.138.84.226:8080/user/notice_list";
         NoticeActivity.MyThreadGetData myThread = new NoticeActivity.MyThreadGetData(requestUrl);// TO DO
         myThread.start();
 
@@ -97,14 +97,14 @@ public class NoticeActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        mNameList.clear();
-        mAvatarList.clear();
-        mNoticeDetailList.clear();
-        mCommentDetailList.clear();
-        mDynamicTitleList.clear();
-        mDynamicContentList.clear();
-        mDynamicTypeList.clear();
-        mDynamicIDList.clear();
+//        mNameList.clear();
+//        mAvatarList.clear();
+//        mNoticeDetailList.clear();
+//        mCommentDetailList.clear();
+//        mDynamicTitleList.clear();
+//        mDynamicContentList.clear();
+//        mDynamicTypeList.clear();
+//        mDynamicIDList.clear();
         getData();
 
     }
