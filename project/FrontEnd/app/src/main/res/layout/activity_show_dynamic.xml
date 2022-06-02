@@ -59,26 +59,14 @@
                 android:textStyle="bold" />
 
             <LinearLayout
-                android:id="@+id/time_and_like"
+                android:id="@+id/layout_like"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center">
 
                 <TextView
-                    android:id="@+id/dynamic_time"
-                    android:layout_width="120dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginEnd="10dp"
-                    android:layout_marginBottom="10dp"
-                    android:gravity="left"
-                    android:text="时间："
-                    android:textSize="20dp" />
-
-                <TextView
                     android:id="@+id/dynamic_like"
-                    android:layout_width="120dp"
+                    android:layout_width="200dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="10dp"
                     android:layout_marginTop="10dp"
@@ -93,6 +81,32 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="点赞" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/time_and_share"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center">
+
+                <TextView
+                    android:id="@+id/dynamic_time"
+                    android:layout_width="200dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:layout_marginBottom="10dp"
+                    android:gravity="left"
+                    android:text="时间："
+                    android:textSize="20dp" />
+
+                <Button
+                    android:id="@+id/button_share"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="分享" />
 
             </LinearLayout>
 

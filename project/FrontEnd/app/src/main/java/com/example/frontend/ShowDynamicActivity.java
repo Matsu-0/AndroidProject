@@ -27,6 +27,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+import androidx.core.app.ShareCompat;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -58,7 +59,7 @@ public class ShowDynamicActivity extends AppCompatActivity {
     private static final String LOG_TAG = ShowDynamicActivity.class.getSimpleName();
     private TextView title, detail, location, audioFilename, timeText, likeListNum;
     private EditText commentText;
-    private Button audioPlayer, addComment, likeButton;
+    private Button audioPlayer, addComment, likeButton, shareButton;
     private RelativeLayout audioLayout;
     private NineGridlayout nineGridlayout;
     private VideoView videoLayout;
@@ -75,6 +76,8 @@ public class ShowDynamicActivity extends AppCompatActivity {
     private final LinkedList<String> mBitmapList = new LinkedList<>();
     private final LinkedList<String> mEmailList = new LinkedList<>();
     private final LinkedList<String> mCommentList = new LinkedList<>();
+    private final LinkedList<Integer> mFlagList = new LinkedList<>();
+    private final LinkedList<Integer> mCommentIDList = new LinkedList<>();
 
 
     private static final int handlerStateWarning = 0;
@@ -89,6 +92,7 @@ public class ShowDynamicActivity extends AppCompatActivity {
     private static final int handlerCommentSuccess = 9;
     private static final int handlerCommentInit = 10;
 
+    private static final int handlerCancelCommentSuccess = 101;
     @SuppressLint("HandlerLeak")
     private Handler handler = new Handler(){
         @Override
@@ -221,6 +225,17 @@ public class ShowDynamicActivity extends AppCompatActivity {
             else if (msg.what == handlerCommentInit){
                 mAdapter.notifyDataSetChanged();
             }
+            else if (msg.what == handlerCancelCommentSuccess) {
+                int res = (int) msg.obj;
+                int index = mCommentIDList.indexOf(res);
+                mNameList.remove(index);
+                mEmailList.remove(index);
+                mBitmapList.remove(index);
+                mCommentList.remove(index);
+                mFlagList.remove(index);
+                mCommentIDList.remove(index);
+                mAdapter.notifyDataSetChanged();
+            }
         }
     };
 
@@ -238,13 +253,14 @@ public class ShowDynamicActivity extends AppCompatActivity {
         audioPlayer = (Button) findViewById(R.id.audio_play);
         addComment = (Button) findViewById(R.id.add_comment);
         likeButton = (Button) findViewById(R.id.button_like);
+        shareButton = (Button) findViewById(R.id.button_share);
         audioLayout = (RelativeLayout) findViewById(R.id.audio_layout);
         commentText = (EditText) findViewById(R.id.comment_text);
         nineGridlayout = findViewById(R.id.iv_ngrid_layout);
         videoLayout = (VideoView) findViewById(R.id.video_layout);
         mRecyclerView = (RecyclerView) findViewById(R.id.commentRecyclerView);
 
-        mAdapter = new CommentListAdapter(this, mBitmapList, mNameList, mEmailList, mCommentList);
+        mAdapter = new CommentListAdapter(this, mBitmapList, mNameList, mEmailList, mCommentList, mFlagList, mCommentIDList, handler);
         mRecyclerView.setAdapter(mAdapter);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
@@ -311,6 +327,19 @@ public class ShowDynamicActivity extends AppCompatActivity {
                     audio_View.start();
                     audioPlayer.setText("暂停");
                 }
+            }
+        });
+        shareButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String txt = title.getText().toString() + "\n" + detail.getText().toString();
+                String mimeType = "text/plain";
+                ShareCompat.IntentBuilder
+                        .from(ShowDynamicActivity.this)
+                        .setType(mimeType)
+                        .setChooserTitle("分享此动态到")
+                        .setText(txt)
+                        .startChooser();
             }
         });
     }
@@ -389,6 +418,8 @@ public class ShowDynamicActivity extends AppCompatActivity {
                             mEmailList.addLast(t.getString("email"));
                             mBitmapList.addLast(avatarUrl + t.getString("avator"));
                             mCommentList.addLast(t.getString("content"));
+                            mFlagList.addLast(t.getInt("check_user"));
+                            mCommentIDList.addLast(t.getInt("comment_id"));
                         }
 
                         Message msg4 = handler.obtainMessage(handlerCommentInit);
@@ -459,6 +490,8 @@ public class ShowDynamicActivity extends AppCompatActivity {
                     mEmailList.addLast(myEmail);
                     mBitmapList.addLast(avatarUrl + myAvatar);
                     mCommentList.addLast(comment);
+                    mFlagList.addLast(1);
+                    mCommentIDList.addLast(999);
 
                     Message msg = handler.obtainMessage(handlerCommentSuccess);
                     msg.obj = Objects.requireNonNull(response.body()).string();
