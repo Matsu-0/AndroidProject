@@ -322,7 +322,6 @@ public class DynamicListAdapter extends
                     }
                     if (holder.obj.getBoolean("author_ismyself") ){
                         holder.deleteButtonView.setVisibility(View.VISIBLE);
-                        holder.followButtonView.setVisibility(View.GONE);
                     } else if (!holder.obj.getBoolean("author_ismyself") ){
                         holder.deleteButtonView.setVisibility(View.GONE);
                     }
