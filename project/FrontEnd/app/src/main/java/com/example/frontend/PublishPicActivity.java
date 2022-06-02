@@ -78,8 +78,9 @@ public class PublishPicActivity extends AppCompatActivity {
     private String currentPhotoPath;
     private static final int handlerStateWarning = 0;
     private static final int handlerGPSError = 1;
-    private static final int handlerOpenGPS = 2;
-    private static final int handlerChangeLocation = 3;
+    private static final int handlerLocationSuccess = 2;
+
+    private boolean GPSFlag = false;
     LocationManager locationManager;
 
     private SharedPreferences mPreferences;
@@ -110,9 +111,14 @@ public class PublishPicActivity extends AppCompatActivity {
                         .create();
                 textTips.show();
             }
-            else if (msg.what == handlerChangeLocation){
+            else if (msg.what == handlerLocationSuccess){
                 if (location != null && location.length() != 0){
-                    location_text.setText("位置："+location);
+                    if (GPSFlag){
+                        location_text.setText("位置："+location);
+                    }
+                    else {
+                        location_text.setText(location);
+                    }
                 }
                 else{
                     location_text.setText("位置：");
@@ -436,7 +442,7 @@ public class PublishPicActivity extends AppCompatActivity {
         @Override
         public void run(){
             location = getProvince();
-            Message msg = handler.obtainMessage(handlerChangeLocation);
+            Message msg = handler.obtainMessage(handlerLocationSuccess);
             handler.sendMessage(msg);
             return;
         }
@@ -492,9 +498,15 @@ public class PublishPicActivity extends AppCompatActivity {
                     Log.i("GPS ", "经度：" + location.getLatitude());
                     Log.i("GPS ", "纬度：" + location.getLongitude());
 
-                    // 获取地址信息
-                    p = getAddress(location.getLatitude(), location.getLongitude());
-                    Log.i("GPS ", "location：" + p);
+                    try{
+                        // 获取地址信息
+                        p = getAddress(location.getLatitude(), location.getLongitude());
+                        GPSFlag = true;
+                        Log.i("GPS ", "location：" + p);
+                    } catch(Exception e){
+                        p = "经度：" + location.getLatitude() + "\n" + "纬度：" + location.getLongitude();
+                        GPSFlag = false;
+                    }
                 } else {
                     Log.i("GPS ", "获取位置信息失败，请检查是否开启GPS,是否授权");
                     Message msg = handler.obtainMessage(handlerGPSError);
