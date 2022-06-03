@@ -60,12 +60,16 @@
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.20288753799392098" />
         <entry key="app/src/main/res/layout/activity_others.xml" value="0.20288753799392098" />
         <entry key="app/src/main/res/layout/activity_publish_audio.xml" value="0.33" />
+        <entry key="app/src/main/res/layout/activity_publish_draft.xml" value="0.2984375" />
         <entry key="app/src/main/res/layout/activity_publish_pic.xml" value="0.20288753799392098" />
         <entry key="app/src/main/res/layout/activity_signup.xml" value="0.20288753799392098" />
+        <entry key="app/src/main/res/layout/draft_item.xml" value="0.2984375" />
+        <entry key="app/src/main/res/layout/dynamic_item_pic.xml" value="0.2984375" />
         <entry key="app/src/main/res/layout/follower_item.xml" value="0.20288753799392098" />
         <entry key="app/src/main/res/layout/fragment_browse.xml" value="0.20288753799392098" />
         <entry key="app/src/main/res/layout/fragment_person.xml" value="0.20288753799392098" />
         <entry key="app/src/main/res/layout/fragment_publish.xml" value="0.20288753799392098" />
+        <entry key="app/src/main/res/menu/bottom_nav_menu.xml" value="0.2984375" />
       </map>
     </option>
   </component>
