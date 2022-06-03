@@ -76,6 +76,7 @@ public class PublishPicActivity extends AppCompatActivity {
     static final int TAKE_PHOTO_RETURN_CODE = 1;
     private static final int PERMISSION_APPLY = 2;
     private static final int PERMISSION_APPLY_CAMERA = 3;
+    private static final int REQUEST_EXTERNAL_STORAGE = 4;
     private static final String TAG = "PublishPic";
 
     private List<String> path = new ArrayList<>();
@@ -209,17 +210,18 @@ public class PublishPicActivity extends AppCompatActivity {
         button_loadPic.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getPermission();
-                Intent intent = new Intent(PublishPicActivity.this, MultiImageSelectorActivity.class);
-                // whether show camera
-                intent.putExtra(MultiImageSelectorActivity.EXTRA_SHOW_CAMERA, false);
-                // max select image amount
-                intent.putExtra(MultiImageSelectorActivity.EXTRA_SELECT_COUNT, 9);
-                // select mode (MultiImageSelectorActivity.MODE_SINGLE OR MultiImageSelectorActivity.MODE_MULTI)
-                intent.putExtra(MultiImageSelectorActivity.EXTRA_SELECT_MODE, MultiImageSelectorActivity.MODE_MULTI);
-                // default select images (support array list)
-                intent.putStringArrayListExtra(MultiImageSelectorActivity.EXTRA_DEFAULT_SELECTED_LIST, (ArrayList<String>) path);
-                startActivityForResult(intent, PHOTO_RETURN_CODE);
+                if (getPermission()) {
+                    Intent intent = new Intent(PublishPicActivity.this, MultiImageSelectorActivity.class);
+                    // whether show camera
+                    intent.putExtra(MultiImageSelectorActivity.EXTRA_SHOW_CAMERA, false);
+                    // max select image amount
+                    intent.putExtra(MultiImageSelectorActivity.EXTRA_SELECT_COUNT, 9);
+                    // select mode (MultiImageSelectorActivity.MODE_SINGLE OR MultiImageSelectorActivity.MODE_MULTI)
+                    intent.putExtra(MultiImageSelectorActivity.EXTRA_SELECT_MODE, MultiImageSelectorActivity.MODE_MULTI);
+                    // default select images (support array list)
+                    intent.putStringArrayListExtra(MultiImageSelectorActivity.EXTRA_DEFAULT_SELECTED_LIST, (ArrayList<String>) path);
+                    startActivityForResult(intent, PHOTO_RETURN_CODE);
+                }
             }
         });
 
@@ -302,7 +304,7 @@ public class PublishPicActivity extends AppCompatActivity {
                             Manifest.permission.CAMERA) != PackageManager
                             .PERMISSION_GRANTED) {
                         ActivityCompat.requestPermissions(PublishPicActivity.this, new
-                                String[]{Manifest.permission.CAMERA }, 1);
+                                String[]{Manifest.permission.CAMERA }, PERMISSION_APPLY_CAMERA);
                         return;
                     }
                 }
@@ -395,11 +397,26 @@ public class PublishPicActivity extends AppCompatActivity {
                 }
             }
         }
+        else if (requestCode == REQUEST_EXTERNAL_STORAGE){
+
+            if(resultCode == RESULT_OK){
+                Intent intent = new Intent(PublishPicActivity.this, MultiImageSelectorActivity.class);
+                // whether show camera
+                intent.putExtra(MultiImageSelectorActivity.EXTRA_SHOW_CAMERA, false);
+                // max select image amount
+                intent.putExtra(MultiImageSelectorActivity.EXTRA_SELECT_COUNT, 9);
+                // select mode (MultiImageSelectorActivity.MODE_SINGLE OR MultiImageSelectorActivity.MODE_MULTI)
+                intent.putExtra(MultiImageSelectorActivity.EXTRA_SELECT_MODE, MultiImageSelectorActivity.MODE_MULTI);
+                // default select images (support array list)
+                intent.putStringArrayListExtra(MultiImageSelectorActivity.EXTRA_DEFAULT_SELECTED_LIST, (ArrayList<String>) path);
+                startActivityForResult(intent, PHOTO_RETURN_CODE);
+            }
+        }
     }
 
-    private void getPermission() {
+    private boolean getPermission() {
 
-        final int REQUEST_EXTERNAL_STORAGE = 1;
+
         String[] PERMISSIONS_STORAGE = {
                 "android.permission.READ_EXTERNAL_STORAGE",
                 "android.permission.WRITE_EXTERNAL_STORAGE" };
@@ -409,12 +426,12 @@ public class PublishPicActivity extends AppCompatActivity {
         if (permission != PackageManager.PERMISSION_GRANTED) {
             // We don't have permission so prompt the user
             ActivityCompat.requestPermissions(
-                    PublishPicActivity.this,
-                    PERMISSIONS_STORAGE,
-                    REQUEST_EXTERNAL_STORAGE
+                    PublishPicActivity.this, PERMISSIONS_STORAGE,REQUEST_EXTERNAL_STORAGE
+
             );
+            return false;
         }
-        return;
+        return true;
     }
 
     class MyThreadPhoto extends Thread{

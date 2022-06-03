@@ -61,6 +61,7 @@ public class PublishAudioActivity extends AppCompatActivity {
     private final int REQUEST_CODE = 111;
     static final int LOAD_AUDIO_RETURN_CODE = 1;
     private static final int PERMISSION_APPLY = 2;
+    private static final int PERMISSION_APPLY_EXTERNAL = 3;
     private static final String TAG = "PublishAudioActivity";
     private EditText edit_title, edit_detail;
     private TextView location_text, audio_filename;
@@ -206,18 +207,23 @@ public class PublishAudioActivity extends AppCompatActivity {
         button_recordAudio.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(MediaStore.Audio.Media.RECORD_SOUND_ACTION);
-                startActivityForResult(intent, REQUEST_CODE);
+                if (getPermission()) {
+                    Intent intent = new Intent(MediaStore.Audio.Media.RECORD_SOUND_ACTION);
+                    startActivityForResult(intent, REQUEST_CODE);
+                }
+
             }
         });
 
         button_loadAudio.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent();
-                intent.setType("audio/*");
-                intent.setAction(Intent.ACTION_GET_CONTENT);
-                startActivityForResult(intent, LOAD_AUDIO_RETURN_CODE);
+                if (getPermission()) {
+                    Intent intent = new Intent();
+                    intent.setType("audio/*");
+                    intent.setAction(Intent.ACTION_GET_CONTENT);
+                    startActivityForResult(intent, LOAD_AUDIO_RETURN_CODE);
+                }
             }
         });
 
@@ -316,8 +322,6 @@ public class PublishAudioActivity extends AppCompatActivity {
                     audio_View.release();
                     audio_View = null;
                     audio_View = new MediaPlayer();
-
-                    getPermission();
                     audio_View.setDataSource(dataFile);
                     audio_View.prepare();
                 }
@@ -337,7 +341,6 @@ public class PublishAudioActivity extends AppCompatActivity {
                     audio_View.release();
                     audio_View = null;
                     audio_View = new MediaPlayer();
-                    getPermission();
                     audio_View.setDataSource(dataFile);
                     audio_View.prepare();
                 }
@@ -459,9 +462,7 @@ public class PublishAudioActivity extends AppCompatActivity {
         }
     }
 
-    private void getPermission() {
-
-        final int REQUEST_EXTERNAL_STORAGE = 1;
+    private boolean getPermission() {
         String[] PERMISSIONS_STORAGE = {
                 "android.permission.READ_EXTERNAL_STORAGE",
                 "android.permission.WRITE_EXTERNAL_STORAGE" };
@@ -473,10 +474,11 @@ public class PublishAudioActivity extends AppCompatActivity {
             ActivityCompat.requestPermissions(
                     PublishAudioActivity.this,
                     PERMISSIONS_STORAGE,
-                    REQUEST_EXTERNAL_STORAGE
+                    PERMISSION_APPLY_EXTERNAL
             );
+            return false;
         }
-        return;
+        return true;
     }
 
     class MyThreadGetLocation extends Thread {

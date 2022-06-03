@@ -6,6 +6,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.core.content.FileProvider;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
@@ -25,6 +26,7 @@ import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.FileUtils;
 import android.os.Handler;
 import android.os.Looper;
@@ -44,9 +46,13 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
+import me.nereo.multi_image_selector.MultiImageSelectorActivity;
 import okhttp3.Call;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
@@ -61,6 +67,8 @@ public class PublishVideoActivity extends AppCompatActivity {
     static final int VIDEO_RETURN_CODE = 0;
     static final int TAKE_VIDEO_RETURN_CODE = 1;
     static final int PERMISSION_APPLY = 2;
+    static final int PERMISSION_APPLY_CAMERA = 3;
+    static final int REQUEST_EXTERNAL_STORAGE = 4;
     private Uri videoUri;
     private String dataFile;
     private EditText edit_title, edit_detail;
@@ -200,6 +208,15 @@ public class PublishVideoActivity extends AppCompatActivity {
         button_takeVideo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                    if (ContextCompat.checkSelfPermission(PublishVideoActivity.this,
+                            Manifest.permission.CAMERA) != PackageManager
+                            .PERMISSION_GRANTED) {
+                        ActivityCompat.requestPermissions(PublishVideoActivity.this, new
+                                String[]{Manifest.permission.CAMERA }, PERMISSION_APPLY_CAMERA);
+                        return;
+                    }
+                }
                 Intent takeVideoIntent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
                 startActivityForResult(takeVideoIntent, TAKE_VIDEO_RETURN_CODE);
             }
@@ -218,10 +235,13 @@ public class PublishVideoActivity extends AppCompatActivity {
         button_loadVideo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent();
-                intent.setType("video/*"); //选择视频 (mp4 3gp 是android支持的视频格式)
-                intent.setAction(Intent.ACTION_GET_CONTENT);
-                startActivityForResult(intent, VIDEO_RETURN_CODE);
+                if (getPermission()) {
+                    Intent intent = new Intent();
+                    intent.setType("video/*"); //选择视频 (mp4 3gp 是android支持的视频格式)
+                    intent.setAction(Intent.ACTION_GET_CONTENT);
+                    startActivityForResult(intent, VIDEO_RETURN_CODE);
+                }
+
             }
         });
 
@@ -308,6 +328,12 @@ public class PublishVideoActivity extends AppCompatActivity {
                 videoLayout.start();
             }
         }
+        else if (requestCode == PERMISSION_APPLY_CAMERA){
+            if(resultCode == RESULT_OK) {
+                Intent takeVideoIntent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
+                startActivityForResult(takeVideoIntent, TAKE_VIDEO_RETURN_CODE);
+            }
+        }
     }
 
     @RequiresApi(api = Build.VERSION_CODES.Q)
@@ -336,6 +362,26 @@ public class PublishVideoActivity extends AppCompatActivity {
             }
         }
         return file;
+    }
+
+    private boolean getPermission() {
+
+
+        String[] PERMISSIONS_STORAGE = {
+                "android.permission.READ_EXTERNAL_STORAGE",
+                "android.permission.WRITE_EXTERNAL_STORAGE" };
+
+        int permission = ActivityCompat.checkSelfPermission(PublishVideoActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+
+        if (permission != PackageManager.PERMISSION_GRANTED) {
+            // We don't have permission so prompt the user
+            ActivityCompat.requestPermissions(
+                    PublishVideoActivity.this, PERMISSIONS_STORAGE,REQUEST_EXTERNAL_STORAGE
+
+            );
+            return false;
+        }
+        return true;
     }
 
     class MyThreadVideo extends Thread{
