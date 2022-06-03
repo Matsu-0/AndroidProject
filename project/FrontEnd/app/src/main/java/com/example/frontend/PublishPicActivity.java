@@ -72,6 +72,7 @@ public class PublishPicActivity extends AppCompatActivity {
     static final int PHOTO_RETURN_CODE = 0;
     static final int TAKE_PHOTO_RETURN_CODE = 1;
     private static final int PERMISSION_APPLY = 2;
+    private static final int PERMISSION_APPLY_CAMERA = 3;
     private static final String TAG = "PublishPic";
 
     private List<String> path = new ArrayList<>();
@@ -292,34 +293,44 @@ public class PublishPicActivity extends AppCompatActivity {
                     handler.sendMessage(msg);
                     return;
                 }
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                    if (ContextCompat.checkSelfPermission(PublishPicActivity.this,
+                            Manifest.permission.CAMERA) != PackageManager
+                            .PERMISSION_GRANTED) {
+                        ActivityCompat.requestPermissions(PublishPicActivity.this, new
+                                String[]{Manifest.permission.CAMERA }, 1);
+                        return;
+                    }
+                }
                 Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                 // Ensure that there's a camera activity to handle the intent
 
                     // Create the File where the photo should go
-                    File photoFile = null;
-                    try {
-                        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-                        String imageFileName = "JPEG_" + timeStamp + "_";
-                        File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-                        photoFile = File.createTempFile(
-                                imageFileName,  /* prefix */
-                                ".jpg",         /* suffix */
-                                storageDir      /* directory */
-                        );
-                        // Save a file: path for use with ACTION_VIEW intents
-                        currentPhotoPath = photoFile.getAbsolutePath();
-                    } catch (IOException ex) {
-                        Log.d("111","111");
-                        // Error occurred while creating the File
-                    }
-                    // Continue only if the File was successfully created
-                    if (photoFile != null) {
-                        Uri photoURI = FileProvider.getUriForFile(PublishPicActivity.this,
-                                "com.example.android.frontend",
-                                photoFile);
-                        takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
-                        startActivityForResult(takePictureIntent, TAKE_PHOTO_RETURN_CODE);
-                    }
+                File photoFile = null;
+                try {
+                    String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+                    String imageFileName = "JPEG_" + timeStamp + "_";
+                    File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+                    photoFile = File.createTempFile(
+                            imageFileName,  /* prefix */
+                            ".jpg",         /* suffix */
+                            storageDir      /* directory */
+                    );
+                    // Save a file: path for use with ACTION_VIEW intents
+                    currentPhotoPath = photoFile.getAbsolutePath();
+                } catch (IOException ex) {
+                    Log.d("111","111");
+                    // Error occurred while creating the File
+                }
+
+                // Continue only if the File was successfully created
+                if (photoFile != null) {
+                    Uri photoURI = FileProvider.getUriForFile(PublishPicActivity.this,
+                            "com.example.android.frontend",
+                            photoFile);
+                    takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+                    startActivityForResult(takePictureIntent, TAKE_PHOTO_RETURN_CODE);
+                }
 
             }
         });
@@ -345,6 +356,39 @@ public class PublishPicActivity extends AppCompatActivity {
                 path.add(currentPhotoPath);
                 PicListAdapter adapter = new PicListAdapter(PublishPicActivity.this, path);
                 nineGridlayout.setAdapter(adapter);
+            }
+        }
+        else if (requestCode == PERMISSION_APPLY_CAMERA){
+            if(resultCode == RESULT_OK){
+                Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                // Ensure that there's a camera activity to handle the intent
+
+                // Create the File where the photo should go
+                File photoFile = null;
+                try {
+                    String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+                    String imageFileName = "JPEG_" + timeStamp + "_";
+                    File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+                    photoFile = File.createTempFile(
+                            imageFileName,  /* prefix */
+                            ".jpg",         /* suffix */
+                            storageDir      /* directory */
+                    );
+                    // Save a file: path for use with ACTION_VIEW intents
+                    currentPhotoPath = photoFile.getAbsolutePath();
+                } catch (IOException ex) {
+                    Log.d("111","111");
+                    // Error occurred while creating the File
+                }
+
+                // Continue only if the File was successfully created
+                if (photoFile != null) {
+                    Uri photoURI = FileProvider.getUriForFile(PublishPicActivity.this,
+                            "com.example.android.frontend",
+                            photoFile);
+                    takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+                    startActivityForResult(takePictureIntent, TAKE_PHOTO_RETURN_CODE);
+                }
             }
         }
     }
