@@ -35,6 +35,7 @@ import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -54,6 +55,7 @@ public class InfoeditActivity extends AppCompatActivity {
     private Button button, confirm_edit_button, password_edit_button;
     private Bitmap image;
     private ImageView pic;
+    private Uri uri;
     private EditText name, introduction, old_password, new_password, new_password_confirm;
     private static final int PERMISSION_APPLY = 1;
     private static final int PHOTO_PICK = 2;
@@ -177,16 +179,32 @@ public class InfoeditActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         // TODO 自动生成的方法存根
+        super.onActivityResult(requestCode, resultCode, data);
         System.out.println(requestCode+"");
         if(requestCode==PERMISSION_APPLY){
             System.out.println(resultCode);
         }
         if(requestCode==PHOTO_PICK){
-            Uri uri = data.getData();
+            uri = data.getData();
             pictureCropping(uri);
         }
         if(requestCode==PICTURE_CROPPING_CODE)
         {
+            if (resultCode == 0){
+                pic.setImageURI(uri);
+                InputStream image_stream = null;
+                try {
+                    image_stream = getContentResolver().openInputStream(uri);
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                }
+
+                image = BitmapFactory.decodeStream(image_stream );
+                String requestUrl = "http://43.138.84.226:8080/user/modify_avator";
+                InfoeditActivity.MyThreadPhoto myThread = new InfoeditActivity.MyThreadPhoto(requestUrl);// TO DO
+                myThread.start();// TO DO
+                return;
+            }
             Bundle bundle = data.getExtras();
             if (bundle != null) {
                 //在这里获得了剪裁后的Bitmap对象，可以用于上传
@@ -195,7 +213,7 @@ public class InfoeditActivity extends AppCompatActivity {
                 pic.setImageBitmap(image);
 
                 // 上传图片
-                super.onActivityResult(requestCode, resultCode, data);
+
                 String requestUrl = "http://43.138.84.226:8080/user/modify_avator";
                 InfoeditActivity.MyThreadPhoto myThread = new InfoeditActivity.MyThreadPhoto(requestUrl);// TO DO
                 myThread.start();// TO DO
