@@ -2,19 +2,35 @@ package com.example.frontend;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
+import android.annotation.TargetApi;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.location.Address;
+import android.location.Criteria;
+import android.location.Geocoder;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.os.Message;
 import android.provider.MediaStore;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -23,6 +39,7 @@ import android.widget.TextView;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 import java.util.Objects;
 
 import okhttp3.Call;
@@ -38,12 +55,21 @@ public class PublishAudioActivity extends AppCompatActivity {
     //private VideoView audio_View;
     private MediaPlayer audio_View = new MediaPlayer();
     private static final int handlerStateWarning = 0;
+    private static final int handlerGPSError = 1;
+    private static final int handlerLocationSuccess = 2;
+
     private final int REQUEST_CODE = 111;
     static final int LOAD_AUDIO_RETURN_CODE = 1;
+    private static final int PERMISSION_APPLY = 2;
     private static final String TAG = "PublishAudioActivity";
     private EditText edit_title, edit_detail;
     private TextView location_text, audio_filename;
     private String title, content, location = null;
+    private AlertDialog textTips;
+
+
+    private boolean GPSFlag = false;
+    LocationManager locationManager;
 
     private SharedPreferences mPreferences;
     private String sharedPrefFile ="com.example.frontend.draft";
@@ -66,6 +92,27 @@ public class PublishAudioActivity extends AppCompatActivity {
                 if (res.equals("发布成功")){
                     tag_send_succeed = true;
                     finish();
+                }
+            }
+            else if (msg.what == handlerGPSError){
+                String res = (String) msg.obj;
+                textTips = new AlertDialog.Builder(PublishAudioActivity.this)
+                        .setTitle("Tips:")
+                        .setMessage(res)
+                        .create();
+                textTips.show();
+            }
+            else if (msg.what == handlerLocationSuccess){
+                if (location != null && location.length() != 0){
+                    if (GPSFlag){
+                        location_text.setText("位置："+location);
+                    }
+                    else {
+                        location_text.setText(location);
+                    }
+                }
+                else{
+                    location_text.setText("位置：");
                 }
             }
         }
@@ -204,7 +251,51 @@ public class PublishAudioActivity extends AppCompatActivity {
                 }
             }
         });
-    }
+        button_loadPos.setOnClickListener(new View.OnClickListener() {
+            @RequiresApi(api = Build.VERSION_CODES.M)
+            @Override
+            public void onClick(View v) {
+                // 动态权限申请
+                if (Build.VERSION.SDK_INT >= 23) {
+                    if(ContextCompat.checkSelfPermission(PublishAudioActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION)
+                            != PackageManager.PERMISSION_GRANTED) {
+                        // 申请读写内存卡内容的权限
+                        Log.d("是否授权","false1");
+                        ActivityCompat.requestPermissions(PublishAudioActivity.this,
+                                new String[]{Manifest.permission.ACCESS_COARSE_LOCATION},
+                                PERMISSION_APPLY);
+                    }
+                }
+
+                // 动态权限申请
+                if (Build.VERSION.SDK_INT >= 23) {
+                    if(ContextCompat.checkSelfPermission(PublishAudioActivity.this, Manifest.permission.ACCESS_FINE_LOCATION)
+                            != PackageManager.PERMISSION_GRANTED) {
+                        // 申请读写内存卡内容的权限
+                        Log.d("是否授权","false2");
+                        ActivityCompat.requestPermissions(PublishAudioActivity.this,
+                                new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                                PERMISSION_APPLY);
+                    }
+                }
+                locationManager = (LocationManager) PublishAudioActivity.this.getSystemService(Context.LOCATION_SERVICE);        // 默认Android GPS定位实例
+                if (PublishAudioActivity.this.checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION)
+                        == PackageManager.PERMISSION_GRANTED) {
+                    //判断GPS是否开启，没有开启，则开启
+                    //Log.d("是否授权","true");
+                    if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+                        //Log.d("是否开启","false");
+                        //跳转到手机打开GPS页面
+                        Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                        PublishAudioActivity.this.startActivity(intent);
+                    }
+                    else {
+                        PublishAudioActivity.MyThreadGetLocation locationThread = new PublishAudioActivity.MyThreadGetLocation();// TO DO
+                        locationThread.start();// TO DO
+                    }
+                }
+            }
+        });    }
 
     @Override
     protected void onDestroy(){
@@ -364,5 +455,106 @@ public class PublishAudioActivity extends AppCompatActivity {
             }
         }
     }
+    class MyThreadGetLocation extends Thread {
+        @Override
+        public void run(){
+            Looper.prepare();
+            location = getProvince();
+            Message msg = handler.obtainMessage(handlerLocationSuccess);
+            handler.sendMessage(msg);
+            Looper.loop();
+        }
+
+        @TargetApi(Build.VERSION_CODES.M)
+        public String getProvince() {
+
+            Log.i("GPS ", "getProvince");
+
+            Location location = null;
+            String p = "";
+            // 是否已经授权
+            if (PublishAudioActivity.this.checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION)
+                    == PackageManager.PERMISSION_GRANTED) {
+                //判断GPS是否开启，没有开启，则开启
+                //Log.d("是否授权","true");
+
+                Criteria criteria = new Criteria();
+                criteria.setAccuracy(Criteria.ACCURACY_FINE);
+                String provider = locationManager.getBestProvider(criteria, true);
+                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
+                        2000, 8, new LocationListener() {
+                            // Provider的状态在可用、暂时不可用和无服务三个状态直接切换时触发此函数
+                            @Override
+                            public void onStatusChanged(String provider, int status, Bundle extras) {
+                                Log.d(TAG, "onStatusChanged");
+                            }
+                            // Provider被enable时触发此函数，比如GPS被打开
+                            @Override
+                            public void onProviderEnabled(String provider) {
+                                Log.d(TAG, "onProviderEnabled");
+                            }
+
+                            // Provider被disable时触发此函数，比如GPS被关闭
+                            @Override
+                            public void onProviderDisabled(String provider) {
+                                Log.d(TAG, "onProviderDisabled");
+                            }
+
+                            //当坐标改变时触发此函数，如果Provider传进相同的坐标，它就不会被触发
+                            @Override
+                            public void onLocationChanged(Location location) {
+                                Log.d(TAG, String.format("location: longitude: %f, latitude: %f", location.getLongitude(),
+                                        location.getLatitude()));
+                                //更新位置信息
+                            }
+                        });
+                location = locationManager.getLastKnownLocation(provider);
+
+
+                if (location != null) {
+                    Log.i("GPS ", "获取位置信息成功");
+                    Log.i("GPS ", "经度：" + location.getLatitude());
+                    Log.i("GPS ", "纬度：" + location.getLongitude());
+
+
+                    p = getAddress(location.getLatitude(), location.getLongitude());
+
+                } else {
+                    Log.i("GPS ", "获取位置信息失败，请检查是否开启GPS,是否授权");
+                    Message msg = handler.obtainMessage(handlerGPSError);
+                    msg.obj = "定位失败，请重试";
+                    handler.sendMessage(msg);
+                }
+            }
+            return p;
+        }
+
+        /*
+         * 根据经度纬度 获取国家，省份
+         * */
+        public String getAddress(double latitude, double longitude) {
+            String cityName = "";
+            List<Address> addList = null;
+            Geocoder ge = new Geocoder(PublishAudioActivity.this);
+            try {
+                addList = ge.getFromLocation(latitude, longitude, 1);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            if (addList != null && addList.size() > 0) {
+                for (int i = 0; i < addList.size(); i++) {
+                    Address ad = addList.get(i);
+                    cityName += ad.getCountryName() + " " + ad.getLocality();
+                }
+                GPSFlag = true;
+            }
+            else {
+                cityName += "经度：" + latitude + "\n" + "纬度：" + longitude;
+                GPSFlag = false;
+            }
+            return cityName;
+        }
+    }
+
 }
 
