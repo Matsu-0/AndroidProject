@@ -512,7 +512,7 @@ public class PublishVideoActivity extends AppCompatActivity {
                 GPSFlag = true;
             }
             else {
-                cityName += "经度：" + latitude + "\n" + "纬度：" + longitude;
+                cityName += "经度：" + String.format("%.3f",latitude) + "\n" + "纬度：" + String.format("%.3f",longitude);
                 GPSFlag = false;
             }
             return cityName;

@@ -209,6 +209,7 @@ public class PublishPicActivity extends AppCompatActivity {
         button_loadPic.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                getPermission();
                 Intent intent = new Intent(PublishPicActivity.this, MultiImageSelectorActivity.class);
                 // whether show camera
                 intent.putExtra(MultiImageSelectorActivity.EXTRA_SHOW_CAMERA, false);
@@ -396,6 +397,26 @@ public class PublishPicActivity extends AppCompatActivity {
         }
     }
 
+    private void getPermission() {
+
+        final int REQUEST_EXTERNAL_STORAGE = 1;
+        String[] PERMISSIONS_STORAGE = {
+                "android.permission.READ_EXTERNAL_STORAGE",
+                "android.permission.WRITE_EXTERNAL_STORAGE" };
+
+        int permission = ActivityCompat.checkSelfPermission(PublishPicActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+
+        if (permission != PackageManager.PERMISSION_GRANTED) {
+            // We don't have permission so prompt the user
+            ActivityCompat.requestPermissions(
+                    PublishPicActivity.this,
+                    PERMISSIONS_STORAGE,
+                    REQUEST_EXTERNAL_STORAGE
+            );
+        }
+        return;
+    }
+
     class MyThreadPhoto extends Thread{
         private String requestUrl;
         MyThreadPhoto(String request){
@@ -579,7 +600,7 @@ public class PublishPicActivity extends AppCompatActivity {
                 GPSFlag = true;
             }
             else {
-                cityName += "经度：" + latitude + "\n" + "纬度：" + longitude;
+                cityName += "经度：" + String.format("%.3f",latitude) + "\n" + "纬度：" + String.format("%.3f",longitude);
                 GPSFlag = false;
             }
             return cityName;
