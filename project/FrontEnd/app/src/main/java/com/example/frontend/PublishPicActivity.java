@@ -33,6 +33,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
+import android.os.Looper;
 import android.os.Message;
 import android.provider.MediaStore;
 import android.provider.Settings;
@@ -51,6 +52,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
+
+import javax.crypto.spec.GCMParameterSpec;
 
 import me.nereo.multi_image_selector.MultiImageSelectorActivity;
 import okhttp3.Call;
@@ -485,10 +488,11 @@ public class PublishPicActivity extends AppCompatActivity {
     class MyThreadGetLocation extends Thread {
         @Override
         public void run(){
+            Looper.prepare();
             location = getProvince();
             Message msg = handler.obtainMessage(handlerLocationSuccess);
             handler.sendMessage(msg);
-            return;
+            Looper.loop();
         }
 
         @TargetApi(Build.VERSION_CODES.M)
@@ -542,15 +546,9 @@ public class PublishPicActivity extends AppCompatActivity {
                     Log.i("GPS ", "经度：" + location.getLatitude());
                     Log.i("GPS ", "纬度：" + location.getLongitude());
 
-                    try{
-                        // 获取地址信息
-                        p = getAddress(location.getLatitude(), location.getLongitude());
-                        GPSFlag = true;
-                        Log.i("GPS ", "location：" + p);
-                    } catch(Exception e){
-                        p = "经度：" + location.getLatitude() + "\n" + "纬度：" + location.getLongitude();
-                        GPSFlag = false;
-                    }
+
+                    p = getAddress(location.getLatitude(), location.getLongitude());
+
                 } else {
                     Log.i("GPS ", "获取位置信息失败，请检查是否开启GPS,是否授权");
                     Message msg = handler.obtainMessage(handlerGPSError);
@@ -578,6 +576,11 @@ public class PublishPicActivity extends AppCompatActivity {
                     Address ad = addList.get(i);
                     cityName += ad.getCountryName() + " " + ad.getLocality();
                 }
+                GPSFlag = true;
+            }
+            else {
+                cityName += "经度：" + latitude + "\n" + "纬度：" + longitude;
+                GPSFlag = false;
             }
             return cityName;
         }

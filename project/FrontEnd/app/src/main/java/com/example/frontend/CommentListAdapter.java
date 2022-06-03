@@ -15,13 +15,19 @@ package com.example.frontend;
  * limitations under the License.
  */
 
+import static android.content.Context.MODE_PRIVATE;
+
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
+import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -29,7 +35,16 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.squareup.picasso.Picasso;
 
+import java.io.IOException;
 import java.util.LinkedList;
+import java.util.Objects;
+
+import okhttp3.Call;
+import okhttp3.FormBody;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 /**
  * Shows how to implement a simple Adapter for a RecyclerView.
@@ -42,16 +57,24 @@ public class CommentListAdapter extends
     private final LinkedList<String> mEmailList;
     private final LinkedList<String> mCommentList;
     private final LinkedList<String> mBitmapList;
+    private final LinkedList<Integer> mFlagList;
+    private final LinkedList<Integer> mCommentIDList;
     private final LayoutInflater mInflater;
     private int TYPE_ITEM = 0;//正常的Item
     private int TYPE_FOOT = 1;//尾部刷新
     private Context context;
+    private Handler handler;
+
+    private static final int handlerStateWarning = 0;
+    private static final int handlerCancelCommentSuccess = 101;
 
     class WordViewHolder extends RecyclerView.ViewHolder
             implements View.OnClickListener {
         public final ImageView avatarItemView;
         public final TextView nameItemView, detailItemView;
+        public final Button cancelComment;
         public String email;
+        public int flag, commentID;
         final CommentListAdapter mAdapter;
 
         /**
@@ -67,6 +90,7 @@ public class CommentListAdapter extends
             detailItemView = itemView.findViewById(R.id.comment_detail);
             nameItemView = itemView.findViewById(R.id.comment_nickname);
             avatarItemView = itemView.findViewById(R.id.comment_avatar);
+            cancelComment = itemView.findViewById(R.id.cancel_comment);
 
             this.mAdapter = adapter;
             itemView.setOnClickListener(this);
@@ -93,13 +117,18 @@ public class CommentListAdapter extends
         }
     }
 
-    public CommentListAdapter(Context context, LinkedList<String> AvatarList, LinkedList<String> NameList, LinkedList<String> EmailList, LinkedList<String> CommentList) {
+    public CommentListAdapter(Context context, LinkedList<String> AvatarList, LinkedList<String> NameList,
+                              LinkedList<String> EmailList, LinkedList<String> CommentList, LinkedList<Integer> FlagList,
+                              LinkedList<Integer> CommentIDList, Handler mHandler) {
         mInflater = LayoutInflater.from(context);
         this.mNameList = NameList;
         this.mBitmapList = AvatarList;
         this.mEmailList = EmailList;
         this.mCommentList = CommentList;
+        this.mFlagList = FlagList;
+        this.mCommentIDList = CommentIDList;
         this.context = context;
+        this.handler = mHandler;
     }
 
     /**
@@ -158,7 +187,25 @@ public class CommentListAdapter extends
             holder.detailItemView.setText(mCommentList.get(position));
 
             holder.email = mEmailList.get(position);
+            holder.flag = mFlagList.get(position);
+            holder.commentID = mCommentIDList.get(position);
+
+            if (holder.flag == 1) {
+                holder.cancelComment.setVisibility(View.VISIBLE);
+            }
+            else if (holder.flag == 2) {
+                holder.cancelComment.setVisibility(View.GONE);
+            }
         }
+
+        holder.cancelComment.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String requestUrl = "http://43.138.84.226:8080/interact/cancel_comment";
+                CommentListAdapter.MyThreadCancelComment myThread = new CommentListAdapter.MyThreadCancelComment(requestUrl, holder.commentID );// TO DO
+                myThread.start();
+            }
+        });
     }
 
     /**
@@ -171,4 +218,54 @@ public class CommentListAdapter extends
         return mNameList.size();
     }
 
+    class MyThreadCancelComment extends Thread{
+        private String requestUrl;
+        private int commentID;
+
+        MyThreadCancelComment(String request, int comment_id){
+            this.requestUrl = request;
+            this.commentID = comment_id;
+        }
+        @Override
+        public void run() {
+            try {
+                OkHttpClient client = new OkHttpClient();
+                //3.构建MultipartBody
+                SharedPreferences sharedPreferences = context.getSharedPreferences("login",MODE_PRIVATE);
+                String cookie = sharedPreferences.getString("session","");
+
+                RequestBody formBody = new FormBody.Builder()
+                        .add("comment_id", commentID + "")
+                        .build();
+
+                Request request = new Request.Builder()
+                        .url(requestUrl)
+                        .post(formBody)
+                        .addHeader("cookie",cookie)
+                        .build();
+
+                Call call = client.newCall(request);
+                Response response = call.execute();
+
+                if (response.isSuccessful()) {
+                    Message msg = handler.obtainMessage(handlerStateWarning);
+                    msg.obj = Objects.requireNonNull(response.body()).string();
+                    handler.sendMessage(msg);
+
+                    if (response.code() == 200){
+                        Message msg1 = handler.obtainMessage(handlerCancelCommentSuccess);
+                        msg1.obj = Objects.requireNonNull(commentID);
+                        handler.sendMessage(msg1);
+                    }
+
+                } else {
+                    throw new IOException("Unexpected code " + response);
+                }
+            }
+            catch (Exception e)
+            {
+                e.printStackTrace();
+            }
+        }
+    }
 }
