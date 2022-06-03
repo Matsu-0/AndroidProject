@@ -283,7 +283,13 @@ public class DynamicListAdapter extends
             holder.obj = dynamic_list.getJSONObject(position);
             holder.dynamicTitleView.setText(holder.obj.getString("title"));
             holder.dynamicDetailView.setText(holder.obj.getString("content"));
-            holder.dynamicLocationView.setText(holder.obj.getString("location"));
+            String location = holder.obj.getString("location");
+            if (!location.equals("None")){
+                holder.dynamicLocationView.setText(location);
+            }
+            else {
+                holder.dynamicLocationView.setText("");
+            }
             holder.dynamicTimeView.setText(holder.obj.getString("release_time"));
 
             if (holder.type == TYPE_VIDEO){

@@ -67,7 +67,6 @@ public class PublishAudioActivity extends AppCompatActivity {
     private String title, content, location = null;
     private AlertDialog textTips;
 
-
     private boolean GPSFlag = false;
     LocationManager locationManager;
 
@@ -312,10 +311,13 @@ public class PublishAudioActivity extends AppCompatActivity {
                 //得到录音的音频文件及路径
                 Uri dataUri = data.getData();
                 dataFile = getRealPathFromURI(dataUri);
+                Log.d("filepath", dataFile);
                 try{
                     audio_View.release();
                     audio_View = null;
                     audio_View = new MediaPlayer();
+
+                    getPermission();
                     audio_View.setDataSource(dataFile);
                     audio_View.prepare();
                 }
@@ -335,6 +337,7 @@ public class PublishAudioActivity extends AppCompatActivity {
                     audio_View.release();
                     audio_View = null;
                     audio_View = new MediaPlayer();
+                    getPermission();
                     audio_View.setDataSource(dataFile);
                     audio_View.prepare();
                 }
@@ -455,6 +458,27 @@ public class PublishAudioActivity extends AppCompatActivity {
             }
         }
     }
+
+    private void getPermission() {
+
+        final int REQUEST_EXTERNAL_STORAGE = 1;
+        String[] PERMISSIONS_STORAGE = {
+                "android.permission.READ_EXTERNAL_STORAGE",
+                "android.permission.WRITE_EXTERNAL_STORAGE" };
+
+        int permission = ActivityCompat.checkSelfPermission(PublishAudioActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+
+        if (permission != PackageManager.PERMISSION_GRANTED) {
+            // We don't have permission so prompt the user
+            ActivityCompat.requestPermissions(
+                    PublishAudioActivity.this,
+                    PERMISSIONS_STORAGE,
+                    REQUEST_EXTERNAL_STORAGE
+            );
+        }
+        return;
+    }
+
     class MyThreadGetLocation extends Thread {
         @Override
         public void run(){
@@ -549,7 +573,7 @@ public class PublishAudioActivity extends AppCompatActivity {
                 GPSFlag = true;
             }
             else {
-                cityName += "经度：" + latitude + "\n" + "纬度：" + longitude;
+                cityName += "经度：" + String.format("%.3f",latitude) + "\n" + "纬度：" + String.format("%.3f",longitude);
                 GPSFlag = false;
             }
             return cityName;
