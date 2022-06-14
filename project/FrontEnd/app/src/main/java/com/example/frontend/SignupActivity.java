@@ -38,6 +38,9 @@ public class SignupActivity extends AppCompatActivity {
                     .setMessage(res)
                     .create();
             textTips.show();
+            if (res.equals("注册成功")) {
+                finish();
+            }
         }
     };
 
