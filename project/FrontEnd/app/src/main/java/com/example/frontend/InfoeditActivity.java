@@ -127,12 +127,15 @@ public class InfoeditActivity extends AppCompatActivity {
             public void onClick(View v) {
                 // 动态权限申请
                 if (Build.VERSION.SDK_INT >= 23) {
-                    if(ContextCompat.checkSelfPermission(InfoeditActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                            != PackageManager.PERMISSION_GRANTED) {
+                    if((ContextCompat.checkSelfPermission(InfoeditActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE)
+                            != PackageManager.PERMISSION_GRANTED)
+                            || (ContextCompat.checkSelfPermission(InfoeditActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                            != PackageManager.PERMISSION_GRANTED )) {
                         // 申请读写内存卡内容的权限
                         ActivityCompat.requestPermissions(InfoeditActivity.this,
-                                new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                                new String[]{Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE},
                                 PERMISSION_APPLY);
+                        return;
                     }
                 }
 
@@ -182,7 +185,7 @@ public class InfoeditActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         System.out.println(requestCode+"");
         if(requestCode==PERMISSION_APPLY){
-            System.out.println(resultCode);
+            System.out.println("resultCode" + resultCode);
         }
         if(requestCode==PHOTO_PICK){
             uri = data.getData();
